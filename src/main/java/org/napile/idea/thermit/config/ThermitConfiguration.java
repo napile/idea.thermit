@@ -27,63 +27,71 @@ import com.intellij.openapi.vfs.VirtualFile;
 public abstract class ThermitConfiguration
 {
 
-  private final Project myProject;
-  @NonNls public static final String ACTION_ID_PREFIX = "Ant_";
+	private final Project myProject;
+	@NonNls
+	public static final String ACTION_ID_PREFIX = "Ant_";
 
-  protected ThermitConfiguration(final Project project) {
-    myProject = project;
-  }
+	protected ThermitConfiguration(final Project project)
+	{
+		myProject = project;
+	}
 
-  public static ThermitConfiguration getInstance(final Project project) {
-    return ServiceManager.getService(project, ThermitConfiguration.class);
-  }
+	public static ThermitConfiguration getInstance(final Project project)
+	{
+		return ServiceManager.getService(project, ThermitConfiguration.class);
+	}
 
-  private static final Key<Boolean> ANT_SUPPORT_INITIALIZED_KEY = new Key<Boolean>("AntSupportInitialized");
-  public static void initAntSupport(final Project project) {
-    if (!Boolean.TRUE.equals(project.getUserData(ANT_SUPPORT_INITIALIZED_KEY))) {
-      ServiceManager.getService(project, ThermitConfiguration.class);
-      project.putUserData(ANT_SUPPORT_INITIALIZED_KEY, Boolean.TRUE);
-    }
-  }
+	private static final Key<Boolean> ANT_SUPPORT_INITIALIZED_KEY = new Key<Boolean>("AntSupportInitialized");
 
-  public Project getProject() {
-    return myProject;
-  }
+	public static void initAntSupport(final Project project)
+	{
+		if(!Boolean.TRUE.equals(project.getUserData(ANT_SUPPORT_INITIALIZED_KEY)))
+		{
+			ServiceManager.getService(project, ThermitConfiguration.class);
+			project.putUserData(ANT_SUPPORT_INITIALIZED_KEY, Boolean.TRUE);
+		}
+	}
 
-  /**
-   * @param project
-   * @return prefix for all thermit actions registered withing this project
-   */
-  public static String getActionIdPrefix(Project project) {
-    return ACTION_ID_PREFIX + project.getLocationHash();
-  }
-  
-  public abstract boolean isInitialized();
-  
-  public abstract AntBuildFile[] getBuildFiles();
+	public Project getProject()
+	{
+		return myProject;
+	}
 
-  public abstract AntBuildFile addBuildFile(final VirtualFile file) throws AntNoFileException;
+	/**
+	 * @param project
+	 * @return prefix for all thermit actions registered withing this project
+	 */
+	public static String getActionIdPrefix(Project project)
+	{
+		return ACTION_ID_PREFIX + project.getLocationHash();
+	}
 
-  public abstract void removeBuildFile(final AntBuildFile file);
+	public abstract boolean isInitialized();
 
-  public abstract void addAntConfigurationListener(final AntConfigurationListener listener);
+	public abstract AntBuildFile[] getBuildFiles();
 
-  public abstract void removeAntConfigurationListener(final AntConfigurationListener listener);
+	public abstract AntBuildFile addBuildFile(final VirtualFile file) throws AntNoFileException;
 
-  public abstract AntBuildTarget[] getMetaTargets(final AntBuildFile buildFile);
+	public abstract void removeBuildFile(final AntBuildFile file);
 
-  public abstract void updateBuildFile(final AntBuildFile buildFile);
+	public abstract void addAntConfigurationListener(final AntConfigurationListener listener);
 
-  @Nullable
-  public abstract AntBuildModel getModelIfRegistered(final AntBuildFile buildFile);
+	public abstract void removeAntConfigurationListener(final AntConfigurationListener listener);
 
-  public abstract AntBuildModel getModel(final AntBuildFile buildFile);
+	public abstract AntBuildTarget[] getMetaTargets(final AntBuildFile buildFile);
 
-  @Nullable
-  public abstract AntBuildFile findBuildFileByActionId(final String id);
+	public abstract void updateBuildFile(final AntBuildFile buildFile);
 
-  public abstract boolean executeTargetBeforeCompile(DataContext context);
+	@Nullable
+	public abstract AntBuildModel getModelIfRegistered(final AntBuildFile buildFile);
 
-  public abstract boolean executeTargetAfterCompile(DataContext context);
+	public abstract AntBuildModel getModel(final AntBuildFile buildFile);
+
+	@Nullable
+	public abstract AntBuildFile findBuildFileByActionId(final String id);
+
+	public abstract boolean executeTargetBeforeCompile(DataContext context);
+
+	public abstract boolean executeTargetAfterCompile(DataContext context);
 
 }

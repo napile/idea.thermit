@@ -16,9 +16,11 @@
 
 package org.napile.idea.thermit.config.actions;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.napile.idea.thermit.config.AntBuildFile;
-import org.napile.idea.thermit.config.ThermitConfiguration;
 import org.napile.idea.thermit.config.AntConfigurationListener;
+import org.napile.idea.thermit.config.ThermitConfiguration;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -26,87 +28,106 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * @author Eugene Zhuravlev
  *         Date: Oct 3, 2007
  */
-public class TargetActionStub extends AnAction implements Disposable {
-  private final String myActionId;
-  private Project myProject;
-  private final AtomicBoolean myActionInvoked = new AtomicBoolean(false);
+public class TargetActionStub extends AnAction implements Disposable
+{
+	private final String myActionId;
+	private Project myProject;
+	private final AtomicBoolean myActionInvoked = new AtomicBoolean(false);
 
-  public TargetActionStub(String actionId, Project project) {
-    super("thermit target action stub");
-    myActionId = actionId;
-    myProject = project;
-    Disposer.register(project, this);
-  }
+	public TargetActionStub(String actionId, Project project)
+	{
+		super("thermit target action stub");
+		myActionId = actionId;
+		myProject = project;
+		Disposer.register(project, this);
+	}
 
-  public void dispose() {
-    ActionManager.getInstance().unregisterAction(myActionId);
-    myProject = null;
-  }
+	public void dispose()
+	{
+		ActionManager.getInstance().unregisterAction(myActionId);
+		myProject = null;
+	}
 
-  public void actionPerformed(final AnActionEvent e) {
-    if (myProject == null) {
-      return;
-    }
-    try {
-      final ThermitConfiguration config = ThermitConfiguration.getInstance(myProject);  // this call will also lead to thermit configuration loading
-      final AntConfigurationListener listener = new AntConfigurationListener() {
-        public void configurationLoaded() {
-          config.removeAntConfigurationListener(this);
-          invokeAction(e);
-        }
+	public void actionPerformed(final AnActionEvent e)
+	{
+		if(myProject == null)
+		{
+			return;
+		}
+		try
+		{
+			final ThermitConfiguration config = ThermitConfiguration.getInstance(myProject);  // this call will also lead to thermit configuration loading
+			final AntConfigurationListener listener = new AntConfigurationListener()
+			{
+				public void configurationLoaded()
+				{
+					config.removeAntConfigurationListener(this);
+					invokeAction(e);
+				}
 
-        public void buildFileChanged(final AntBuildFile buildFile) {/*empty*/}
-        public void buildFileAdded(final AntBuildFile buildFile) {/*empty*/}
-        public void buildFileRemoved(final AntBuildFile buildFile) {/*empty*/}
-      };
-      config.addAntConfigurationListener(listener);
-      Disposer.register(myProject, new ListenerRemover(config, listener));
-    }
-    finally {
-      invokeAction(e);
-      dispose();
-    }
-  }
-  
-  private void invokeAction(final AnActionEvent e) {
-    final AnAction action = ActionManager.getInstance().getAction(myActionId);
-    if (action == null || action instanceof TargetActionStub) {
-      return;
-    }
-    if (!myActionInvoked.getAndSet(true)) {
-      //final DataContext context = e.getDataContext();
-      //if (context instanceof DataManagerImpl.MyDataContext) {
-      //  // hack: macro.expand() can cause UI events such as showing dialogs ('Prompt' macro) which may 'invalidate' the datacontext
-      //  // since we know exactly that context is valid, we need to update its event count
-      //  ((DataManagerImpl.MyDataContext)context).setEventCount(IdeEventQueue.getInstance().getEventCount());
-      //}
-      action.actionPerformed(e);
-    }
-  }
-  
-  private static class ListenerRemover implements Disposable {
-    private ThermitConfiguration myConfig;
-    private AntConfigurationListener myListener;
+				public void buildFileChanged(final AntBuildFile buildFile)
+				{/*empty*/}
 
-    private ListenerRemover(ThermitConfiguration config, AntConfigurationListener listener) {
-      myConfig = config;
-      myListener = listener;
-    }
+				public void buildFileAdded(final AntBuildFile buildFile)
+				{/*empty*/}
 
-    public void dispose() {
-      final ThermitConfiguration configuration = myConfig;
-      final AntConfigurationListener listener = myListener;
-      myConfig = null;
-      myListener = null;
-      if (configuration != null && listener != null) {
-        configuration.removeAntConfigurationListener(listener);
-      }
-    }
-  }
+				public void buildFileRemoved(final AntBuildFile buildFile)
+				{/*empty*/}
+			};
+			config.addAntConfigurationListener(listener);
+			Disposer.register(myProject, new ListenerRemover(config, listener));
+		}
+		finally
+		{
+			invokeAction(e);
+			dispose();
+		}
+	}
+
+	private void invokeAction(final AnActionEvent e)
+	{
+		final AnAction action = ActionManager.getInstance().getAction(myActionId);
+		if(action == null || action instanceof TargetActionStub)
+		{
+			return;
+		}
+		if(!myActionInvoked.getAndSet(true))
+		{
+			//final DataContext context = e.getDataContext();
+			//if (context instanceof DataManagerImpl.MyDataContext) {
+			//  // hack: macro.expand() can cause UI events such as showing dialogs ('Prompt' macro) which may 'invalidate' the datacontext
+			//  // since we know exactly that context is valid, we need to update its event count
+			//  ((DataManagerImpl.MyDataContext)context).setEventCount(IdeEventQueue.getInstance().getEventCount());
+			//}
+			action.actionPerformed(e);
+		}
+	}
+
+	private static class ListenerRemover implements Disposable
+	{
+		private ThermitConfiguration myConfig;
+		private AntConfigurationListener myListener;
+
+		private ListenerRemover(ThermitConfiguration config, AntConfigurationListener listener)
+		{
+			myConfig = config;
+			myListener = listener;
+		}
+
+		public void dispose()
+		{
+			final ThermitConfiguration configuration = myConfig;
+			final AntConfigurationListener listener = myListener;
+			myConfig = null;
+			myListener = null;
+			if(configuration != null && listener != null)
+			{
+				configuration.removeAntConfigurationListener(listener);
+			}
+		}
+	}
 }

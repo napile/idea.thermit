@@ -15,87 +15,102 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.List;
+
+import org.apache.tools.ant.Task;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
-import org.apache.tools.ant.Task;
-
-import java.util.List;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Jul 1, 2010
  */
-public abstract class AntDomTypeDef extends AntDomCustomClasspathComponent{
+public abstract class AntDomTypeDef extends AntDomCustomClasspathComponent
+{
 
-  @Attribute("classname")
-  public abstract GenericAttributeValue<String> getClassName();
+	@Attribute("classname")
+	public abstract GenericAttributeValue<String> getClassName();
 
-  @Attribute("file")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
+	@Attribute("file")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
 
-  @Attribute("resource")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getResource();
+	@Attribute("resource")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getResource();
 
-  @Attribute("format")
-  public abstract GenericAttributeValue<String> getFormat();
+	@Attribute("format")
+	public abstract GenericAttributeValue<String> getFormat();
 
-  @Attribute("adapter")
-  public abstract GenericAttributeValue<String> getAdapter();
+	@Attribute("adapter")
+	public abstract GenericAttributeValue<String> getAdapter();
 
-  @Attribute("adaptto")
-  public abstract GenericAttributeValue<String> getAdaptto();
+	@Attribute("adaptto")
+	public abstract GenericAttributeValue<String> getAdaptto();
 
-  public final boolean hasTypeLoadingErrors() {
-    return CustomAntElementsRegistry.getInstance(getAntProject()).hasTypeLoadingErrors(this);
-  }
+	public final boolean hasTypeLoadingErrors()
+	{
+		return CustomAntElementsRegistry.getInstance(getAntProject()).hasTypeLoadingErrors(this);
+	}
 
-  public final List<String> getErrorDescriptions() {
-    return CustomAntElementsRegistry.getInstance(getAntProject()).getTypeLoadingErrors(this);
-  }
-  
-  public boolean isTask(final Class clazz) {
-    if ("taskdef".equals(getXmlTag().getName())) { // in taskdef, the adapter is always set to Task
-      return true;
-    }
+	public final List<String> getErrorDescriptions()
+	{
+		return CustomAntElementsRegistry.getInstance(getAntProject()).getTypeLoadingErrors(this);
+	}
 
-    final String adaptto = getAdaptto().getStringValue();
-    if (adaptto != null && isAssignableFrom(adaptto, clazz)) {
-      return isAssignableFrom(Task.class.getName(), clazz);
-    }
+	public boolean isTask(final Class clazz)
+	{
+		if("taskdef".equals(getXmlTag().getName()))
+		{ // in taskdef, the adapter is always set to Task
+			return true;
+		}
 
-    final String adapter = getAdapter().getStringValue();
-    if (adapter != null) {
-      try {
-        final Class adapterClass = clazz.getClassLoader().loadClass(adapter);
-        return isAssignableFrom(Task.class.getName(), adapterClass);
-      }
-      catch (ClassNotFoundException ignored) {
-      }
-      catch (NoClassDefFoundError ignored) {
-      }
-      catch (UnsupportedClassVersionError ignored) {
-      }
-    }
+		final String adaptto = getAdaptto().getStringValue();
+		if(adaptto != null && isAssignableFrom(adaptto, clazz))
+		{
+			return isAssignableFrom(Task.class.getName(), clazz);
+		}
 
-    return isAssignableFrom(Task.class.getName(), clazz);
-  }
+		final String adapter = getAdapter().getStringValue();
+		if(adapter != null)
+		{
+			try
+			{
+				final Class adapterClass = clazz.getClassLoader().loadClass(adapter);
+				return isAssignableFrom(Task.class.getName(), adapterClass);
+			}
+			catch(ClassNotFoundException ignored)
+			{
+			}
+			catch(NoClassDefFoundError ignored)
+			{
+			}
+			catch(UnsupportedClassVersionError ignored)
+			{
+			}
+		}
 
-  private static boolean isAssignableFrom(final String baseClassName, final Class clazz) {
-    try {
-      final ClassLoader loader = clazz.getClassLoader();
-      if (loader != null) {
-        final Class baseClass = loader.loadClass(baseClassName);
-        return baseClass.isAssignableFrom(clazz);
-      }
-    }
-    catch (ClassNotFoundException ignored) {
-    }
-    return false;
-  }
+		return isAssignableFrom(Task.class.getName(), clazz);
+	}
+
+	private static boolean isAssignableFrom(final String baseClassName, final Class clazz)
+	{
+		try
+		{
+			final ClassLoader loader = clazz.getClassLoader();
+			if(loader != null)
+			{
+				final Class baseClass = loader.loadClass(baseClassName);
+				return baseClass.isAssignableFrom(clazz);
+			}
+		}
+		catch(ClassNotFoundException ignored)
+		{
+		}
+		return false;
+	}
 
 
 }

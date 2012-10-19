@@ -22,9 +22,11 @@ import com.intellij.xml.util.XmlUtil;
 /**
  * @author yole
  */
-public class AntHighlightRangeExtension implements HighlightRangeExtension {
+public class AntHighlightRangeExtension implements HighlightRangeExtension
+{
 
-  public boolean isForceHighlightParents(final PsiFile file) {
-    return XmlUtil.isAntFile(file);
-  }
+	public boolean isForceHighlightParents(final PsiFile file)
+	{
+		return XmlUtil.isAntFile(file);
+	}
 }

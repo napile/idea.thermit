@@ -23,8 +23,9 @@ import com.intellij.util.xml.NameValue;
  * @author Eugene Zhuravlev
  *         Date: Jun 22, 2010
  */
-public abstract class AntDomNamedElement extends AntDomElement {
-  @Attribute("name")
-  @NameValue
-  public abstract GenericAttributeValue<String> getName();
+public abstract class AntDomNamedElement extends AntDomElement
+{
+	@Attribute("name")
+	@NameValue
+	public abstract GenericAttributeValue<String> getName();
 }

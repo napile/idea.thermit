@@ -15,6 +15,12 @@
  */
 package org.napile.idea.thermit.config.impl;
 
+import java.io.File;
+import java.util.List;
+
+import javax.swing.JComponent;
+
+import org.jdom.Element;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.roots.ui.CellAppearanceEx;
@@ -26,51 +32,51 @@ import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.config.Externalizer;
 import com.intellij.util.containers.ContainerUtil;
-import org.jdom.Element;
 
-import javax.swing.*;
-import java.io.File;
-import java.util.List;
+public interface AntClasspathEntry
+{
+	Externalizer<AntClasspathEntry> EXTERNALIZER = new Externalizer<AntClasspathEntry>()
+	{
+		public AntClasspathEntry readValue(Element dataElement) throws InvalidDataException
+		{
+			String pathUrl = dataElement.getAttributeValue(SinglePathEntry.PATH);
+			if(pathUrl != null)
+				return new SinglePathEntry(PathUtil.toPresentableUrl(pathUrl));
+			String dirUrl = dataElement.getAttributeValue(AllJarsUnderDirEntry.DIR);
+			if(dirUrl != null)
+				return new AllJarsUnderDirEntry(PathUtil.toPresentableUrl(dirUrl));
+			throw new InvalidDataException();
+		}
 
-public interface AntClasspathEntry {
-  Externalizer<AntClasspathEntry> EXTERNALIZER = new Externalizer<AntClasspathEntry>() {
-    public AntClasspathEntry readValue(Element dataElement) throws InvalidDataException {
-      String pathUrl = dataElement.getAttributeValue(SinglePathEntry.PATH);
-      if (pathUrl != null)
-        return new SinglePathEntry(PathUtil.toPresentableUrl(pathUrl));
-      String dirUrl = dataElement.getAttributeValue(AllJarsUnderDirEntry.DIR);
-      if (dirUrl != null)
-        return new AllJarsUnderDirEntry(PathUtil.toPresentableUrl(dirUrl));
-      throw new InvalidDataException();
-    }
+		public void writeValue(Element dataElement, AntClasspathEntry entry) throws WriteExternalException
+		{
+			entry.writeExternal(dataElement);
+		}
+	};
 
-    public void writeValue(Element dataElement, AntClasspathEntry entry) throws WriteExternalException {
-      entry.writeExternal(dataElement);
-    }
-  };
+	void writeExternal(Element dataElement) throws WriteExternalException;
 
-  void writeExternal(Element dataElement) throws WriteExternalException;
+	void addFilesTo(List<File> files);
 
-  void addFilesTo(List<File> files);
+	CellAppearanceEx getAppearance();
 
-  CellAppearanceEx getAppearance();
+	abstract class AddEntriesFactory implements NullableFactory<List<AntClasspathEntry>>
+	{
+		private final JComponent myParentComponent;
+		private final FileChooserDescriptor myDescriptor;
+		private final Function<VirtualFile, AntClasspathEntry> myMapper;
 
-  abstract class AddEntriesFactory implements NullableFactory<List<AntClasspathEntry>> {
-    private final JComponent myParentComponent;
-    private final FileChooserDescriptor myDescriptor;
-    private final Function<VirtualFile,AntClasspathEntry> myMapper;
+		public AddEntriesFactory(final JComponent parentComponent, final FileChooserDescriptor descriptor, final Function<VirtualFile, AntClasspathEntry> mapper)
+		{
+			myParentComponent = parentComponent;
+			myDescriptor = descriptor;
+			myMapper = mapper;
+		}
 
-    public AddEntriesFactory(final JComponent parentComponent,
-                             final FileChooserDescriptor descriptor,
-                             final Function<VirtualFile, AntClasspathEntry> mapper) {
-      myParentComponent = parentComponent;
-      myDescriptor = descriptor;
-      myMapper = mapper;
-    }
-
-    public List<AntClasspathEntry> create() {
-      final VirtualFile[] files = FileChooser.chooseFiles(myDescriptor, myParentComponent, null, null);
-      return files.length == 0 ? null : ContainerUtil.map(files, myMapper);
-    }
-  }
+		public List<AntClasspathEntry> create()
+		{
+			final VirtualFile[] files = FileChooser.chooseFiles(myDescriptor, myParentComponent, null, null);
+			return files.length == 0 ? null : ContainerUtil.map(files, myMapper);
+		}
+	}
 }

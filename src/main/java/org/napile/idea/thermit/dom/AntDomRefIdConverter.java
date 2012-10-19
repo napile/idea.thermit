@@ -15,6 +15,12 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.ThermitSupport;
 import com.intellij.openapi.util.Ref;
@@ -22,98 +28,123 @@ import com.intellij.pom.references.PomService;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.xml.*;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.Converter;
+import com.intellij.util.xml.CustomReferenceConverter;
+import com.intellij.util.xml.DomTarget;
+import com.intellij.util.xml.GenericDomValue;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 16, 2010
  */
-public class AntDomRefIdConverter extends Converter<AntDomElement> implements CustomReferenceConverter<AntDomElement>{
+public class AntDomRefIdConverter extends Converter<AntDomElement> implements CustomReferenceConverter<AntDomElement>
+{
 
-  public AntDomElement fromString(@Nullable @NonNls String s, ConvertContext context) {
-    if (s != null) {
-      final AntDomElement element = ThermitSupport.getInvocationAntDomElement(context);
-      if (element != null) {
-        return findElementById(element.getContextAntProject(), s, CustomAntElementsRegistry.ourIsBuildingClasspathForCustomTagLoading.get());
-      }
-    }
-    return null;
-  }
+	public AntDomElement fromString(@Nullable @NonNls String s, ConvertContext context)
+	{
+		if(s != null)
+		{
+			final AntDomElement element = ThermitSupport.getInvocationAntDomElement(context);
+			if(element != null)
+			{
+				return findElementById(element.getContextAntProject(), s, CustomAntElementsRegistry.ourIsBuildingClasspathForCustomTagLoading.get());
+			}
+		}
+		return null;
+	}
 
-  public String toString(@Nullable AntDomElement antDomElement, ConvertContext context) {
-    return antDomElement != null? antDomElement.getId().getRawText() : null;
-  }
+	public String toString(@Nullable AntDomElement antDomElement, ConvertContext context)
+	{
+		return antDomElement != null ? antDomElement.getId().getRawText() : null;
+	}
 
-  @NotNull
-  public PsiReference[] createReferences(final GenericDomValue<AntDomElement> genericDomValue, final PsiElement element, ConvertContext context) {
-    final AntDomElement invocationElement = ThermitSupport.getInvocationAntDomElement(context);
-    return new PsiReference[] {new AntDomReferenceBase(element, true) {
-      public PsiElement resolve() {
-        final AntDomElement value = genericDomValue.getValue();
-        if (value == null) {
-          return null;
-        }
-        final DomTarget target = DomTarget.getTarget(value, value.getId());
-        if (target == null) {
-          return null;
-        }
-        return PomService.convertToPsi(element.getProject(), target);
-      }
-      @NotNull 
-      public Object[] getVariants() {
-        if (invocationElement == null) {
-          return ArrayUtil.EMPTY_OBJECT_ARRAY;
-        }
-        final Set<String> variants = new LinkedHashSet<String>();
-        invocationElement.getContextAntProject().accept(new AntDomRecursiveVisitor() {
-          public void visitAntDomElement(AntDomElement element) {
-            final String variant = element.getId().getRawText();
-            if (variant != null) {
-              variants.add(variant);
-            }
-            super.visitAntDomElement(element);
-          }
-        });
-        return variants.size() > 0 ? ArrayUtil.toObjectArray(variants) : ArrayUtil.EMPTY_OBJECT_ARRAY;
-      }
+	@NotNull
+	public PsiReference[] createReferences(final GenericDomValue<AntDomElement> genericDomValue, final PsiElement element, ConvertContext context)
+	{
+		final AntDomElement invocationElement = ThermitSupport.getInvocationAntDomElement(context);
+		return new PsiReference[]{
+				new AntDomReferenceBase(element, true)
+				{
+					public PsiElement resolve()
+					{
+						final AntDomElement value = genericDomValue.getValue();
+						if(value == null)
+						{
+							return null;
+						}
+						final DomTarget target = DomTarget.getTarget(value, value.getId());
+						if(target == null)
+						{
+							return null;
+						}
+						return PomService.convertToPsi(element.getProject(), target);
+					}
 
-      public String getUnresolvedMessagePattern() {
-        return AntBundle.message("cannot.resolve.refid", getCanonicalText());
-      }
-    }};
-  }
+					@NotNull
+					public Object[] getVariants()
+					{
+						if(invocationElement == null)
+						{
+							return ArrayUtil.EMPTY_OBJECT_ARRAY;
+						}
+						final Set<String> variants = new LinkedHashSet<String>();
+						invocationElement.getContextAntProject().accept(new AntDomRecursiveVisitor()
+						{
+							public void visitAntDomElement(AntDomElement element)
+							{
+								final String variant = element.getId().getRawText();
+								if(variant != null)
+								{
+									variants.add(variant);
+								}
+								super.visitAntDomElement(element);
+							}
+						});
+						return variants.size() > 0 ? ArrayUtil.toObjectArray(variants) : ArrayUtil.EMPTY_OBJECT_ARRAY;
+					}
 
-  @Nullable
-  private static AntDomElement findElementById(AntDomElement from, final String id, final boolean skipCustomTags) {
-    if (id.equals(from.getId().getRawText())) {
-      return from;
-    }
-    final Ref<AntDomElement> result = new Ref<AntDomElement>(null);
-    from.accept(new AntDomRecursiveVisitor() {
-      public void visitAntDomCustomElement(AntDomCustomElement custom) {
-        if (!skipCustomTags) {
-          super.visitAntDomCustomElement(custom);
-        }
-      }
+					public String getUnresolvedMessagePattern()
+					{
+						return AntBundle.message("cannot.resolve.refid", getCanonicalText());
+					}
+				}
+		};
+	}
 
-      public void visitAntDomElement(AntDomElement element) {
-        if (result.get() != null || element instanceof AntDomCustomElement) {
-          return;
-        }
-        if (id.equals(element.getId().getRawText())) {
-          result.set(element);
-          return;
-        }
-        super.visitAntDomElement(element);
-      }
-    });
-    
-    return result.get();
-  }
+	@Nullable
+	private static AntDomElement findElementById(AntDomElement from, final String id, final boolean skipCustomTags)
+	{
+		if(id.equals(from.getId().getRawText()))
+		{
+			return from;
+		}
+		final Ref<AntDomElement> result = new Ref<AntDomElement>(null);
+		from.accept(new AntDomRecursiveVisitor()
+		{
+			public void visitAntDomCustomElement(AntDomCustomElement custom)
+			{
+				if(!skipCustomTags)
+				{
+					super.visitAntDomCustomElement(custom);
+				}
+			}
+
+			public void visitAntDomElement(AntDomElement element)
+			{
+				if(result.get() != null || element instanceof AntDomCustomElement)
+				{
+					return;
+				}
+				if(id.equals(element.getId().getRawText()))
+				{
+					result.set(element);
+					return;
+				}
+				super.visitAntDomElement(element);
+			}
+		});
+
+		return result.get();
+	}
 }

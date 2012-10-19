@@ -15,37 +15,41 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.psi.PsiElement;
+import java.util.Iterator;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Iterator;
+import com.intellij.psi.PsiElement;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 21, 2010
  */
-public interface PropertiesProvider {
+public interface PropertiesProvider
+{
 
-  // if provider implements this interface, returned property values will be treated
-  // as not requiring further resolution of any property occurrences
-  interface SkipPropertyExpansionInValues {}
+	// if provider implements this interface, returned property values will be treated
+	// as not requiring further resolution of any property occurrences
+	interface SkipPropertyExpansionInValues
+	{
+	}
 
-  @NotNull
-  Iterator<String> getNamesIterator();
+	@NotNull
+	Iterator<String> getNamesIterator();
 
-  /**
-   * @param propertyName
-   * @return property value string as defined in xml or null if this provider does not define a property with such name
-   */
-  @Nullable
-  String getPropertyValue(String propertyName);
+	/**
+	 * @param propertyName
+	 * @return property value string as defined in xml or null if this provider does not define a property with such name
+	 */
+	@Nullable
+	String getPropertyValue(String propertyName);
 
-  /**
-   * Needed for referencing purposes.
-   * Returned element will be used as a target element for the property reference.
-   * @param propertyName
-   */
-  @Nullable
-  PsiElement getNavigationElement(String propertyName);
+	/**
+	 * Needed for referencing purposes.
+	 * Returned element will be used as a target element for the property reference.
+	 *
+	 * @param propertyName
+	 */
+	@Nullable
+	PsiElement getNavigationElement(String propertyName);
 }

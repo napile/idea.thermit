@@ -15,21 +15,24 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import com.intellij.icons.AllIcons;
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
-public final class ChangeViewAction extends AnAction {
-  private final AntBuildMessageView myAntBuildMessageView;
+public final class ChangeViewAction extends AnAction
+{
+	private final AntBuildMessageView myAntBuildMessageView;
 
-  public ChangeViewAction(AntBuildMessageView antBuildMessageView) {
-    super(AntBundle.message("ant.view.toggle.tree.text.action.name"),null, AllIcons.Ant.ChangeView);
-    myAntBuildMessageView = antBuildMessageView;
-  }
+	public ChangeViewAction(AntBuildMessageView antBuildMessageView)
+	{
+		super(AntBundle.message("ant.view.toggle.tree.text.action.name"), null, AllIcons.Ant.ChangeView);
+		myAntBuildMessageView = antBuildMessageView;
+	}
 
-  public void actionPerformed(AnActionEvent e) {
-    myAntBuildMessageView.changeView();
-  }
+	public void actionPerformed(AnActionEvent e)
+	{
+		myAntBuildMessageView.changeView();
+	}
 }

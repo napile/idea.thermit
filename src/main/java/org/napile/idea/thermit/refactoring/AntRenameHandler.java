@@ -15,8 +15,12 @@
  */
 package org.napile.idea.thermit.refactoring;
 
-import com.intellij.codeInsight.TargetElementUtilBase;
+import java.util.Collection;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.dom.AntDomFileDescription;
+import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Editor;
@@ -28,59 +32,67 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.refactoring.rename.PsiElementRenameHandler;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Mar 19, 2007
  */
-public final class AntRenameHandler extends PsiElementRenameHandler {
-  
-  public boolean isAvailableOnDataContext(final DataContext dataContext) {
-    final PsiElement[] elements = getElements(dataContext);
-    return elements != null && elements.length > 1;
-  }
+public final class AntRenameHandler extends PsiElementRenameHandler
+{
 
-  public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file, final DataContext dataContext) {
-    final PsiElement[] elements = getElements(dataContext);
-    if (elements != null && elements.length > 0) {
-      invoke(project, new PsiElement[]{elements[0]}, dataContext);
-    }
-  }
+	public boolean isAvailableOnDataContext(final DataContext dataContext)
+	{
+		final PsiElement[] elements = getElements(dataContext);
+		return elements != null && elements.length > 1;
+	}
 
-  public void invoke(@NotNull final Project project, @NotNull final PsiElement[] elements, final DataContext dataContext) {
-    super.invoke(project, elements, dataContext);
-  }
+	public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file, final DataContext dataContext)
+	{
+		final PsiElement[] elements = getElements(dataContext);
+		if(elements != null && elements.length > 0)
+		{
+			invoke(project, new PsiElement[]{elements[0]}, dataContext);
+		}
+	}
 
-  @Nullable 
-  private static PsiElement[] getElements(DataContext dataContext) {
-    final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(dataContext);
-    if (!(psiFile instanceof XmlFile && AntDomFileDescription.isAntFile((XmlFile)psiFile))) {
-      return null;
-    }
-    final Editor editor = LangDataKeys.EDITOR.getData(dataContext);
-    if (editor == null) {
-      return null;
-    }
-    return getPsiElementsIn(editor, psiFile);
-  }
-  
-  @Nullable
-  private static PsiElement[] getPsiElementsIn(final Editor editor, final PsiFile psiFile) {
-    try {
-      final PsiReference reference = TargetElementUtilBase.findReference(editor, editor.getCaretModel().getOffset());
-      if (reference == null) {
-        return null;
-      }
-      final Collection<PsiElement> candidates = TargetElementUtilBase.getInstance().getTargetCandidates(reference);
-      return ContainerUtil.toArray(candidates, new PsiElement[candidates.size()]);
-    }
-    catch (IndexNotReadyException e) {
-      return null;
-    }
-  }
-  
+	public void invoke(@NotNull final Project project, @NotNull final PsiElement[] elements, final DataContext dataContext)
+	{
+		super.invoke(project, elements, dataContext);
+	}
+
+	@Nullable
+	private static PsiElement[] getElements(DataContext dataContext)
+	{
+		final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(dataContext);
+		if(!(psiFile instanceof XmlFile && AntDomFileDescription.isAntFile((XmlFile) psiFile)))
+		{
+			return null;
+		}
+		final Editor editor = LangDataKeys.EDITOR.getData(dataContext);
+		if(editor == null)
+		{
+			return null;
+		}
+		return getPsiElementsIn(editor, psiFile);
+	}
+
+	@Nullable
+	private static PsiElement[] getPsiElementsIn(final Editor editor, final PsiFile psiFile)
+	{
+		try
+		{
+			final PsiReference reference = TargetElementUtilBase.findReference(editor, editor.getCaretModel().getOffset());
+			if(reference == null)
+			{
+				return null;
+			}
+			final Collection<PsiElement> candidates = TargetElementUtilBase.getInstance().getTargetCandidates(reference);
+			return ContainerUtil.toArray(candidates, new PsiElement[candidates.size()]);
+		}
+		catch(IndexNotReadyException e)
+		{
+			return null;
+		}
+	}
+
 }

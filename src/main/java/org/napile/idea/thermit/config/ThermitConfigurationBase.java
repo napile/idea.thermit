@@ -15,74 +15,81 @@
  */
 package org.napile.idea.thermit.config;
 
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.config.impl.AntInstallation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.config.ExternalizablePropertyContainer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public abstract class ThermitConfigurationBase extends ThermitConfiguration
 {
 
-  private final ExternalizablePropertyContainer myProperties = new ExternalizablePropertyContainer();
+	private final ExternalizablePropertyContainer myProperties = new ExternalizablePropertyContainer();
 
-  protected ThermitConfigurationBase(final Project project) {
-    super(project);
-  }
+	protected ThermitConfigurationBase(final Project project)
+	{
+		super(project);
+	}
 
-  public static ThermitConfigurationBase getInstance(final Project project) {
-    return (ThermitConfigurationBase) ThermitConfiguration.getInstance(project);
-  }
+	public static ThermitConfigurationBase getInstance(final Project project)
+	{
+		return (ThermitConfigurationBase) ThermitConfiguration.getInstance(project);
+	}
 
-  public abstract boolean isFilterTargets();
+	public abstract boolean isFilterTargets();
 
-  public abstract void setFilterTargets(final boolean value);
+	public abstract void setFilterTargets(final boolean value);
 
-  public abstract List<ExecutionEvent> getEventsForTarget(final AntBuildTarget target);
+	public abstract List<ExecutionEvent> getEventsForTarget(final AntBuildTarget target);
 
-  @Nullable
-  public abstract AntBuildTarget getTargetForEvent(final ExecutionEvent event);
+	@Nullable
+	public abstract AntBuildTarget getTargetForEvent(final ExecutionEvent event);
 
-  public abstract void setTargetForEvent(final AntBuildFile buildFile, final String targetName, final ExecutionEvent event);
+	public abstract void setTargetForEvent(final AntBuildFile buildFile, final String targetName, final ExecutionEvent event);
 
-  public abstract void clearTargetForEvent(final ExecutionEvent event);
+	public abstract void clearTargetForEvent(final ExecutionEvent event);
 
-  public abstract boolean isAutoScrollToSource();
+	public abstract boolean isAutoScrollToSource();
 
-  public abstract void setAutoScrollToSource(final boolean value);
+	public abstract void setAutoScrollToSource(final boolean value);
 
-  public abstract AntInstallation getProjectDefaultAnt();
+	public abstract AntInstallation getProjectDefaultAnt();
 
-  public ExternalizablePropertyContainer getProperties() {
-    return myProperties;
-  }
+	public ExternalizablePropertyContainer getProperties()
+	{
+		return myProperties;
+	}
 
-  public final void ensureInitialized() {
-    int attemptCount = 0; // need this in order to make sure we will not block swing thread forever
-    while (!isInitialized() && attemptCount < 6000) {
-      try {
-        Thread.sleep(10);
-      }
-      catch (InterruptedException ignored) {
-      }
-      attemptCount++;
-    }
-  }
+	public final void ensureInitialized()
+	{
+		int attemptCount = 0; // need this in order to make sure we will not block swing thread forever
+		while(!isInitialized() && attemptCount < 6000)
+		{
+			try
+			{
+				Thread.sleep(10);
+			}
+			catch(InterruptedException ignored)
+			{
+			}
+			attemptCount++;
+		}
+	}
 
-  public abstract void setContextFile(@NotNull XmlFile file, @Nullable XmlFile context);
+	public abstract void setContextFile(@NotNull XmlFile file, @Nullable XmlFile context);
 
-  @Nullable
-  public abstract XmlFile getContextFile(@Nullable XmlFile file);
-  
-  @Nullable
-  public abstract XmlFile getEffectiveContextFile(@Nullable XmlFile file);
+	@Nullable
+	public abstract XmlFile getContextFile(@Nullable XmlFile file);
 
-  @Nullable
-  public abstract AntBuildFileBase getAntBuildFile(@NotNull PsiFile file);
-  
-  public abstract AntBuildFileBase[] getBuildFiles();
+	@Nullable
+	public abstract XmlFile getEffectiveContextFile(@Nullable XmlFile file);
+
+	@Nullable
+	public abstract AntBuildFileBase getAntBuildFile(@NotNull PsiFile file);
+
+	public abstract AntBuildFileBase[] getBuildFiles();
 }

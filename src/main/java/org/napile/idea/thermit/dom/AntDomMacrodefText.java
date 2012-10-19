@@ -23,14 +23,15 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Aug 4, 2010
  */
-public abstract class AntDomMacrodefText extends AntDomNamedElement {
-  
-  @Attribute("optional")
-  @Convert(value = AntBooleanConverterDefaultFalse.class)
-  public abstract GenericAttributeValue<Boolean> isOptional();
+public abstract class AntDomMacrodefText extends AntDomNamedElement
+{
 
-  @Attribute("trim")
-  @Convert(value = AntBooleanConverterDefaultFalse.class)
-  public abstract GenericAttributeValue<Boolean> isTrim();
+	@Attribute("optional")
+	@Convert(value = AntBooleanConverterDefaultFalse.class)
+	public abstract GenericAttributeValue<Boolean> isOptional();
+
+	@Attribute("trim")
+	@Convert(value = AntBooleanConverterDefaultFalse.class)
+	public abstract GenericAttributeValue<Boolean> isTrim();
 
 }

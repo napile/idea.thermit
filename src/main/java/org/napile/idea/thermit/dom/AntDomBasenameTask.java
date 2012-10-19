@@ -24,21 +24,24 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Aug 10, 2010
  */
-public abstract class AntDomBasenameTask extends AntDomPropertyDefiningTask {
-  @Attribute("file")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
+public abstract class AntDomBasenameTask extends AntDomPropertyDefiningTask
+{
+	@Attribute("file")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
 
-  @Attribute("suffix")
-  public abstract GenericAttributeValue<String> getSuffix();
+	@Attribute("suffix")
+	public abstract GenericAttributeValue<String> getSuffix();
 
-  protected String calcPropertyValue(String propertyName) {
-    final PsiFileSystemItem item = getFile().getValue();
-    if (item != null) {
-      final String name = item.getName();
-      final String suffix = getSuffix().getStringValue();
-      return suffix != null && name.endsWith(suffix)? name.substring(0, name.length() - suffix.length()) : name;
-    }
-    return super.calcPropertyValue(propertyName);
-  }
+	protected String calcPropertyValue(String propertyName)
+	{
+		final PsiFileSystemItem item = getFile().getValue();
+		if(item != null)
+		{
+			final String name = item.getName();
+			final String suffix = getSuffix().getStringValue();
+			return suffix != null && name.endsWith(suffix) ? name.substring(0, name.length() - suffix.length()) : name;
+		}
+		return super.calcPropertyValue(propertyName);
+	}
 }

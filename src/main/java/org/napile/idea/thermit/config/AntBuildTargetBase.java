@@ -15,26 +15,27 @@
  */
 package org.napile.idea.thermit.config;
 
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.config.impl.BuildTask;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
 
-public interface AntBuildTargetBase extends AntBuildTarget {
-  AntBuildTarget[] EMPTY_ARRAY = new AntBuildTarget[0];
+public interface AntBuildTargetBase extends AntBuildTarget
+{
+	AntBuildTarget[] EMPTY_ARRAY = new AntBuildTarget[0];
 
-  @Nullable
-  VirtualFile getContainingFile();
-  
-  Project getProject();
+	@Nullable
+	VirtualFile getContainingFile();
 
-  @Nullable
-  String getActionId();
+	Project getProject();
 
-  @Nullable
-  OpenFileDescriptor getOpenFileDescriptor();
+	@Nullable
+	String getActionId();
 
-  @Nullable
-  BuildTask findTask(final String taskName);
+	@Nullable
+	OpenFileDescriptor getOpenFileDescriptor();
+
+	@Nullable
+	BuildTask findTask(final String taskName);
 }

@@ -18,8 +18,10 @@ package org.napile.idea.thermit.config.impl;
 import org.napile.idea.thermit.AntBundle;
 
 
-public final class WrongNameFormatException extends Exception {
-  public WrongNameFormatException(final String name) {
-    super(AntBundle.message("execute.target.wrong.name.format.error.message", name));
-  }
+public final class WrongNameFormatException extends Exception
+{
+	public WrongNameFormatException(final String name)
+	{
+		super(AntBundle.message("execute.target.wrong.name.format.error.message", name));
+	}
 }

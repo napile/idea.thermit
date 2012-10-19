@@ -15,62 +15,76 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.xml.DomElement;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 22, 2010
  */
-public class PropertyResolver extends PropertyProviderFinder {
-  private final String myPropertyName;
-  private PropertiesProvider myResult;
-  private Set<String> myVariants = new HashSet<String>();
+public class PropertyResolver extends PropertyProviderFinder
+{
+	private final String myPropertyName;
+	private PropertiesProvider myResult;
+	private Set<String> myVariants = new HashSet<String>();
 
-  private PropertyResolver(@NotNull String propertyName, DomElement contextElement) {
-    super(contextElement);
-    myPropertyName = propertyName;
-  }
+	private PropertyResolver(@NotNull String propertyName, DomElement contextElement)
+	{
+		super(contextElement);
+		myPropertyName = propertyName;
+	}
 
-  public void visitAntDomAntCallParam(AntDomAntCallParam antCallParam) {
-    // deliberately skip ancall params, they will be processed as a special case
-  }
+	public void visitAntDomAntCallParam(AntDomAntCallParam antCallParam)
+	{
+		// deliberately skip ancall params, they will be processed as a special case
+	}
 
-  @NotNull
-  public static Trinity<PsiElement, Collection<String>, PropertiesProvider> resolve(@NotNull AntDomProject project, @NotNull String propertyName, DomElement contextElement) {
-    final PropertyResolver resolver = new PropertyResolver(propertyName, contextElement);
-    resolver.execute(project, project.getDefaultTarget().getRawText());
-    if (resolver.getContextElement() instanceof PropertiesProvider) {
-      // special case - when context element is a property provider itself
-      resolver.propertyProviderFound((PropertiesProvider)resolver.getContextElement());
-    }
-    return resolver.getResult();
+	@NotNull
+	public static Trinity<PsiElement, Collection<String>, PropertiesProvider> resolve(@NotNull AntDomProject project, @NotNull String propertyName, DomElement contextElement)
+	{
+		final PropertyResolver resolver = new PropertyResolver(propertyName, contextElement);
+		resolver.execute(project, project.getDefaultTarget().getRawText());
+		if(resolver.getContextElement() instanceof PropertiesProvider)
+		{
+			// special case - when context element is a property provider itself
+			resolver.propertyProviderFound((PropertiesProvider) resolver.getContextElement());
+		}
+		return resolver.getResult();
 
-  }
+	}
 
-  @NotNull
-  public Trinity<PsiElement, Collection<String>, PropertiesProvider> getResult() {
-    final PsiElement element = myResult != null ? myResult.getNavigationElement(myPropertyName) : null;
-    return new Trinity<PsiElement, Collection<String>, PropertiesProvider>(element, Collections.unmodifiableSet(myVariants), myResult);
-  }
+	@NotNull
+	public Trinity<PsiElement, Collection<String>, PropertiesProvider> getResult()
+	{
+		final PsiElement element = myResult != null ? myResult.getNavigationElement(myPropertyName) : null;
+		return new Trinity<PsiElement, Collection<String>, PropertiesProvider>(element, Collections.unmodifiableSet(myVariants), myResult);
+	}
 
-  @Override
-  protected void propertyProviderFound(PropertiesProvider propertiesProvider) {
-    boolean found = false;
-    for (Iterator<String> it = propertiesProvider.getNamesIterator(); it.hasNext();) {
-      final String providerProperty = it.next();
-      myVariants.add(providerProperty);
-      if (myPropertyName.equals(providerProperty)) {
-        found = true;
-      }
-    }
-    if (found) {
-      myResult = propertiesProvider;
-      stop();
-    }
-  }
+	@Override
+	protected void propertyProviderFound(PropertiesProvider propertiesProvider)
+	{
+		boolean found = false;
+		for(Iterator<String> it = propertiesProvider.getNamesIterator(); it.hasNext(); )
+		{
+			final String providerProperty = it.next();
+			myVariants.add(providerProperty);
+			if(myPropertyName.equals(providerProperty))
+			{
+				found = true;
+			}
+		}
+		if(found)
+		{
+			myResult = propertiesProvider;
+			stop();
+		}
+	}
 }

@@ -15,6 +15,9 @@
  */
 package org.napile.idea.thermit.dom;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.ThermitSupport;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -24,48 +27,53 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.CustomReferenceConverter;
 import com.intellij.util.xml.GenericDomValue;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 16, 2010
  */
-public class AntDomDefaultTargetConverter extends Converter<TargetResolver.Result> implements CustomReferenceConverter<TargetResolver.Result>{
+public class AntDomDefaultTargetConverter extends Converter<TargetResolver.Result> implements CustomReferenceConverter<TargetResolver.Result>
+{
 
-  @NotNull 
-  public PsiReference[] createReferences(final GenericDomValue<TargetResolver.Result> value, PsiElement element, ConvertContext context) {
-    return new PsiReference[] {new AntDomTargetReference(element)};
-  }
+	@NotNull
+	public PsiReference[] createReferences(final GenericDomValue<TargetResolver.Result> value, PsiElement element, ConvertContext context)
+	{
+		return new PsiReference[]{new AntDomTargetReference(element)};
+	}
 
-  @Nullable
-  public TargetResolver.Result fromString(@Nullable @NonNls String s, ConvertContext context) {
-    final AntDomElement element = ThermitSupport.getInvocationAntDomElement(context);
-    if (element != null && s != null) {
-      final AntDomProject project = element.getAntProject();
-      AntDomProject projectToSearchFrom;
-      final AntDomAnt antDomAnt = element.getParentOfType(AntDomAnt.class, false);
-      if (antDomAnt != null) {
-        final PsiFileSystemItem antFile = antDomAnt.getAntFilePath().getValue();
-        projectToSearchFrom = antFile instanceof PsiFile? ThermitSupport.getAntDomProjectForceAntFile((PsiFile) antFile) : null;
-      }
-      else {
-        projectToSearchFrom = project.getContextAntProject();
-      }
-      if (projectToSearchFrom == null) {
-        return null;
-      }
-      final TargetResolver.Result result = TargetResolver.resolve(projectToSearchFrom, null, s);
-      result.setRefsString(s);
-      return result;
-    }
-    return null;
-  }
+	@Nullable
+	public TargetResolver.Result fromString(@Nullable @NonNls String s, ConvertContext context)
+	{
+		final AntDomElement element = ThermitSupport.getInvocationAntDomElement(context);
+		if(element != null && s != null)
+		{
+			final AntDomProject project = element.getAntProject();
+			AntDomProject projectToSearchFrom;
+			final AntDomAnt antDomAnt = element.getParentOfType(AntDomAnt.class, false);
+			if(antDomAnt != null)
+			{
+				final PsiFileSystemItem antFile = antDomAnt.getAntFilePath().getValue();
+				projectToSearchFrom = antFile instanceof PsiFile ? ThermitSupport.getAntDomProjectForceAntFile((PsiFile) antFile) : null;
+			}
+			else
+			{
+				projectToSearchFrom = project.getContextAntProject();
+			}
+			if(projectToSearchFrom == null)
+			{
+				return null;
+			}
+			final TargetResolver.Result result = TargetResolver.resolve(projectToSearchFrom, null, s);
+			result.setRefsString(s);
+			return result;
+		}
+		return null;
+	}
 
-  @Nullable
-  public String toString(@Nullable TargetResolver.Result result, ConvertContext context) {
-    return result != null? result.getRefsString() : null;
-  }
+	@Nullable
+	public String toString(@Nullable TargetResolver.Result result, ConvertContext context)
+	{
+		return result != null ? result.getRefsString() : null;
+	}
 
 }

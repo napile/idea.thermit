@@ -15,9 +15,12 @@
  */
 package org.napile.idea.thermit.config.impl;
 
-import com.intellij.icons.AllIcons;
+import java.util.Arrays;
+import java.util.Map;
+
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.ThermitConfiguration;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.application.ApplicationManager;
@@ -30,50 +33,56 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.HashMap;
 
-import java.util.Arrays;
-import java.util.Map;
-
 /**
  * @author Vladislav.Kaznacheev
-*/
-class AntKeymapExtension implements KeymapExtension {
-  private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.config.impl.AntProjectKeymap");
+ */
+class AntKeymapExtension implements KeymapExtension
+{
+	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.config.impl.AntProjectKeymap");
 
-  public KeymapGroup createGroup(final Condition<AnAction> filtered, Project project) {
-    final Map<AntBuildFile, KeymapGroup> buildFileToGroup = new HashMap<AntBuildFile, KeymapGroup>();
-    final KeymapGroup result = KeymapGroupFactory.getInstance().createGroup(KeyMapBundle.message("ant.targets.group.title"),
-                                                                            AllIcons.Nodes.KeymapAnt);
+	public KeymapGroup createGroup(final Condition<AnAction> filtered, Project project)
+	{
+		final Map<AntBuildFile, KeymapGroup> buildFileToGroup = new HashMap<AntBuildFile, KeymapGroup>();
+		final KeymapGroup result = KeymapGroupFactory.getInstance().createGroup(KeyMapBundle.message("ant.targets.group.title"), AllIcons.Nodes.KeymapAnt);
 
-    final ActionManagerEx actionManager = ActionManagerEx.getInstanceEx();
-    final String[] ids = actionManager.getActionIds(project != null? ThermitConfiguration.getActionIdPrefix(project) : ThermitConfiguration.ACTION_ID_PREFIX);
-    Arrays.sort(ids);
+		final ActionManagerEx actionManager = ActionManagerEx.getInstanceEx();
+		final String[] ids = actionManager.getActionIds(project != null ? ThermitConfiguration.getActionIdPrefix(project) : ThermitConfiguration.ACTION_ID_PREFIX);
+		Arrays.sort(ids);
 
-    if (project != null) {
-      final ThermitConfiguration thermitConfiguration = ThermitConfiguration.getInstance(project);
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        public void run() {
-          for (final String id : ids) {
-            if (filtered != null && !filtered.value(actionManager.getActionOrStub(id))) {
-              continue;
-            }
-            final AntBuildFile buildFile = thermitConfiguration.findBuildFileByActionId(id);
-            if (buildFile != null) {
-              KeymapGroup subGroup = buildFileToGroup.get(buildFile);
-              if (subGroup == null) {
-                subGroup = KeymapGroupFactory.getInstance().createGroup(buildFile.getPresentableName());
-                buildFileToGroup.put(buildFile, subGroup);
-                result.addGroup(subGroup);
-              }
-              subGroup.addActionId(id);
-            }
-            else {
-              LOG.info("no buildfile found for actionId=" + id);
-            }
-          }
-        }
-      });
-    }
+		if(project != null)
+		{
+			final ThermitConfiguration thermitConfiguration = ThermitConfiguration.getInstance(project);
+			ApplicationManager.getApplication().runReadAction(new Runnable()
+			{
+				public void run()
+				{
+					for(final String id : ids)
+					{
+						if(filtered != null && !filtered.value(actionManager.getActionOrStub(id)))
+						{
+							continue;
+						}
+						final AntBuildFile buildFile = thermitConfiguration.findBuildFileByActionId(id);
+						if(buildFile != null)
+						{
+							KeymapGroup subGroup = buildFileToGroup.get(buildFile);
+							if(subGroup == null)
+							{
+								subGroup = KeymapGroupFactory.getInstance().createGroup(buildFile.getPresentableName());
+								buildFileToGroup.put(buildFile, subGroup);
+								result.addGroup(subGroup);
+							}
+							subGroup.addActionId(id);
+						}
+						else
+						{
+							LOG.info("no buildfile found for actionId=" + id);
+						}
+					}
+				}
+			});
+		}
 
-    return result;
-  }
+		return result;
+	}
 }

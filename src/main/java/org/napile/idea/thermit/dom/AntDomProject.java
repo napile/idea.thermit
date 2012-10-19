@@ -15,12 +15,24 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.ReflectedProject;
 import org.napile.idea.thermit.config.ThermitConfigurationBase;
 import org.napile.idea.thermit.config.impl.AntBuildFileImpl;
-import org.napile.idea.thermit.config.impl.ThermitConfigurationImpl;
 import org.napile.idea.thermit.config.impl.AntInstallation;
 import org.napile.idea.thermit.config.impl.GlobalThermitConfiguration;
+import org.napile.idea.thermit.config.impl.ThermitConfigurationImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -35,14 +47,12 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.HashMap;
-import com.intellij.util.xml.*;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.Convert;
+import com.intellij.util.xml.DefinesXml;
+import com.intellij.util.xml.DomTarget;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.SubTagList;
 
 /**
  * @author Eugene Zhuravlev
@@ -50,258 +60,312 @@ import java.util.*;
  */
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 @DefinesXml
-public abstract class AntDomProject extends AntDomNamedElement implements PropertiesProvider {
-  private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.dom.AntDomProject");
+public abstract class AntDomProject extends AntDomNamedElement implements PropertiesProvider
+{
+	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.dom.AntDomProject");
 
-  @NonNls public static final String DEFAULT_ENVIRONMENT_PREFIX = "env.";
+	@NonNls
+	public static final String DEFAULT_ENVIRONMENT_PREFIX = "env.";
 
-  private volatile ClassLoader myClassLoader;
-  private volatile Map<String, String> myProperties;
+	private volatile ClassLoader myClassLoader;
+	private volatile Map<String, String> myProperties;
 
 
-  @Attribute("default")
-  @Convert(value = AntDomDefaultTargetConverter.class)
-  public abstract GenericAttributeValue<TargetResolver.Result> getDefaultTarget();
+	@Attribute("default")
+	@Convert(value = AntDomDefaultTargetConverter.class)
+	public abstract GenericAttributeValue<TargetResolver.Result> getDefaultTarget();
 
-  @Attribute("basedir")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getBasedir();
+	@Attribute("basedir")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getBasedir();
 
-  @Nullable
-  public final PsiFileSystemItem getProjectBasedir() {
-    final PsiFileSystemItem basedir = getBasedir().getValue();
-    if (basedir != null) {
-      return basedir;
-    }
-    final XmlTag tag = getXmlTag();
-    final VirtualFile containingFile = tag.getContainingFile().getOriginalFile().getVirtualFile();
-    if (containingFile == null) {
-      return null;
-    }
-    final VirtualFile parent = containingFile.getParent();
-    if (parent == null) {
-      return null;
-    }
-    return tag.getManager().findDirectory(parent);
-  }
+	@Nullable
+	public final PsiFileSystemItem getProjectBasedir()
+	{
+		final PsiFileSystemItem basedir = getBasedir().getValue();
+		if(basedir != null)
+		{
+			return basedir;
+		}
+		final XmlTag tag = getXmlTag();
+		final VirtualFile containingFile = tag.getContainingFile().getOriginalFile().getVirtualFile();
+		if(containingFile == null)
+		{
+			return null;
+		}
+		final VirtualFile parent = containingFile.getParent();
+		if(parent == null)
+		{
+			return null;
+		}
+		return tag.getManager().findDirectory(parent);
+	}
 
-  @Nullable
-  public final String getProjectBasedirPath() {
-    final String basedir = getBasedir().getStringValue();
-    if (basedir != null) {
-      final File file = new File(basedir);
-      if (file.isAbsolute()) {
-        try {
-          return FileUtil.toSystemIndependentName(file.getCanonicalPath());
-        }
-        catch (IOException e) {
-          LOG.info(e);
-          return null;
-        }
-      }
-    }
-    final String selfDir = getContainingFileDir();
-    if (basedir == null) {
-      return selfDir;
-    }
-    // basedir is specified and is relative
-    try {
-      return FileUtil.toSystemIndependentName(new File(selfDir, basedir).getCanonicalPath());
-    }
-    catch (IOException e) {
-      LOG.info(e);
-      return null;
-    }
-  }
+	@Nullable
+	public final String getProjectBasedirPath()
+	{
+		final String basedir = getBasedir().getStringValue();
+		if(basedir != null)
+		{
+			final File file = new File(basedir);
+			if(file.isAbsolute())
+			{
+				try
+				{
+					return FileUtil.toSystemIndependentName(file.getCanonicalPath());
+				}
+				catch(IOException e)
+				{
+					LOG.info(e);
+					return null;
+				}
+			}
+		}
+		final String selfDir = getContainingFileDir();
+		if(basedir == null)
+		{
+			return selfDir;
+		}
+		// basedir is specified and is relative
+		try
+		{
+			return FileUtil.toSystemIndependentName(new File(selfDir, basedir).getCanonicalPath());
+		}
+		catch(IOException e)
+		{
+			LOG.info(e);
+			return null;
+		}
+	}
 
-  @Nullable
-  public final String getContainingFileDir() {
-    final VirtualFile containingFile = getXmlTag().getContainingFile().getOriginalFile().getVirtualFile();
-    if (containingFile == null) {
-      return null;
-    }
-    final VirtualFile parent = containingFile.getParent();
-    return parent != null? parent.getPath() : null;
-  }
+	@Nullable
+	public final String getContainingFileDir()
+	{
+		final VirtualFile containingFile = getXmlTag().getContainingFile().getOriginalFile().getVirtualFile();
+		if(containingFile == null)
+		{
+			return null;
+		}
+		final VirtualFile parent = containingFile.getParent();
+		return parent != null ? parent.getPath() : null;
+	}
 
-  @SubTagList("target")
-  public abstract List<AntDomTarget> getDeclaredTargets();
+	@SubTagList("target")
+	public abstract List<AntDomTarget> getDeclaredTargets();
 
-  @SubTagList("import")
-  public abstract List<AntDomImport> getDeclaredImports();
+	@SubTagList("import")
+	public abstract List<AntDomImport> getDeclaredImports();
 
-  @SubTagList("include")
-  public abstract List<AntDomInclude> getDeclaredIncludes();
+	@SubTagList("include")
+	public abstract List<AntDomInclude> getDeclaredIncludes();
 
-  @Nullable
-  public final AntDomTarget findDeclaredTarget(String declaredName) {
-    for (AntDomTarget target : getDeclaredTargets()) {
-      if (declaredName.equals(target.getName().getRawText())) {
-        return target;
-      }
-    }
-    return null;
-  }
+	@Nullable
+	public final AntDomTarget findDeclaredTarget(String declaredName)
+	{
+		for(AntDomTarget target : getDeclaredTargets())
+		{
+			if(declaredName.equals(target.getName().getRawText()))
+			{
+				return target;
+			}
+		}
+		return null;
+	}
 
-  @NotNull
-  public final ClassLoader getClassLoader() {
-    if (myClassLoader == null) {
-      final XmlTag tag = getXmlTag();
-      final PsiFile containingFile = tag.getContainingFile();
-      final AntBuildFileImpl buildFile = (AntBuildFileImpl) ThermitConfigurationBase.getInstance(containingFile.getProject()).getAntBuildFile(containingFile);
-      if (buildFile != null) {
-        myClassLoader = buildFile.getClassLoader();
-      }
-      else {
-        AntInstallation antInstallation = getAntInstallation();
-        myClassLoader = antInstallation.getClassLoader();
-      }
-    }
-    return myClassLoader;
-  }
+	@NotNull
+	public final ClassLoader getClassLoader()
+	{
+		if(myClassLoader == null)
+		{
+			final XmlTag tag = getXmlTag();
+			final PsiFile containingFile = tag.getContainingFile();
+			final AntBuildFileImpl buildFile = (AntBuildFileImpl) ThermitConfigurationBase.getInstance(containingFile.getProject()).getAntBuildFile(containingFile);
+			if(buildFile != null)
+			{
+				myClassLoader = buildFile.getClassLoader();
+			}
+			else
+			{
+				AntInstallation antInstallation = getAntInstallation();
+				myClassLoader = antInstallation.getClassLoader();
+			}
+		}
+		return myClassLoader;
+	}
 
-  public AntInstallation getAntInstallation() {
-    final ThermitConfigurationBase configuration = ThermitConfigurationBase.getInstance(getXmlTag().getProject());
-    AntInstallation antInstallation = null;
-    if (configuration != null) {
-      antInstallation = configuration.getProjectDefaultAnt();
-    }
-    if (antInstallation == null) {
-      antInstallation = GlobalThermitConfiguration.getInstance().getBundledAnt();
-    }
-    assert antInstallation != null;
-    return antInstallation;
-  }
+	public AntInstallation getAntInstallation()
+	{
+		final ThermitConfigurationBase configuration = ThermitConfigurationBase.getInstance(getXmlTag().getProject());
+		AntInstallation antInstallation = null;
+		if(configuration != null)
+		{
+			antInstallation = configuration.getProjectDefaultAnt();
+		}
+		if(antInstallation == null)
+		{
+			antInstallation = GlobalThermitConfiguration.getInstance().getBundledAnt();
+		}
+		assert antInstallation != null;
+		return antInstallation;
+	}
 
-  @Nullable
-  public final Sdk getTargetJdk() {
-    final XmlTag tag = getXmlTag();
-    final PsiFile containingFile = tag.getContainingFile();
-    final AntBuildFileImpl buildFile = (AntBuildFileImpl) ThermitConfigurationBase.getInstance(containingFile.getProject()).getAntBuildFile(containingFile);
-    if (buildFile != null) {
-      String jdkName = AntBuildFileImpl.CUSTOM_JDK_NAME.get(buildFile.getAllOptions());
-      if (jdkName == null || jdkName.length() == 0) {
-        jdkName = ThermitConfigurationImpl.DEFAULT_JDK_NAME.get(buildFile.getAllOptions());
-      }
-      if (jdkName != null && jdkName.length() > 0) {
-        return ProjectJdkTable.getInstance().findJdk(jdkName);
-      }
-    }
-    return ProjectRootManager.getInstance(tag.getProject()).getProjectSdk();
-  }
+	@Nullable
+	public final Sdk getTargetJdk()
+	{
+		final XmlTag tag = getXmlTag();
+		final PsiFile containingFile = tag.getContainingFile();
+		final AntBuildFileImpl buildFile = (AntBuildFileImpl) ThermitConfigurationBase.getInstance(containingFile.getProject()).getAntBuildFile(containingFile);
+		if(buildFile != null)
+		{
+			String jdkName = AntBuildFileImpl.CUSTOM_JDK_NAME.get(buildFile.getAllOptions());
+			if(jdkName == null || jdkName.length() == 0)
+			{
+				jdkName = ThermitConfigurationImpl.DEFAULT_JDK_NAME.get(buildFile.getAllOptions());
+			}
+			if(jdkName != null && jdkName.length() > 0)
+			{
+				return ProjectJdkTable.getInstance().findJdk(jdkName);
+			}
+		}
+		return ProjectRootManager.getInstance(tag.getProject()).getProjectSdk();
+	}
 
-  @NotNull
-  public Iterator<String> getNamesIterator() {
-    return getProperties().keySet().iterator();
-  }
+	@NotNull
+	public Iterator<String> getNamesIterator()
+	{
+		return getProperties().keySet().iterator();
+	}
 
-  @Nullable
-  public String getPropertyValue(String propertyName) {
-    return getProperties().get(propertyName);
-  }
+	@Nullable
+	public String getPropertyValue(String propertyName)
+	{
+		return getProperties().get(propertyName);
+	}
 
-  @Nullable
-  public PsiElement getNavigationElement(String propertyName) {
-    final DomTarget target = DomTarget.getTarget(this);
-    final PsiElement nameElementPsi = target != null ? PomService.convertToPsi(target) : null;
-    if (nameElementPsi != null) {
-      return nameElementPsi;
-    }
-    final XmlElement xmlElement = getXmlElement();
-    return xmlElement != null? xmlElement.getNavigationElement() : null;
-  }
+	@Nullable
+	public PsiElement getNavigationElement(String propertyName)
+	{
+		final DomTarget target = DomTarget.getTarget(this);
+		final PsiElement nameElementPsi = target != null ? PomService.convertToPsi(target) : null;
+		if(nameElementPsi != null)
+		{
+			return nameElementPsi;
+		}
+		final XmlElement xmlElement = getXmlElement();
+		return xmlElement != null ? xmlElement.getNavigationElement() : null;
+	}
 
-  private Map<String, String> getProperties() {
-    Map<String, String> properties = myProperties;
-    if (properties == null) {
-      final ReflectedProject reflected = ReflectedProject.getProject(getClassLoader());
-      Map<String, String> externals = Collections.emptyMap();
-      final PsiFile containingFile = getXmlTag().getContainingFile();
-      if (containingFile != null) {
-        final AntBuildFileImpl buildFile = (AntBuildFileImpl) ThermitConfigurationBase.getInstance(containingFile.getProject()).getAntBuildFile(containingFile);
-        if (buildFile != null) {
-          externals = buildFile.getExternalProperties();
-        }
-      }
-      myProperties = (properties = loadPredefinedProperties(reflected.getProperties(), externals));
-    }
-    return properties;
-  }
+	private Map<String, String> getProperties()
+	{
+		Map<String, String> properties = myProperties;
+		if(properties == null)
+		{
+			final ReflectedProject reflected = ReflectedProject.getProject(getClassLoader());
+			Map<String, String> externals = Collections.emptyMap();
+			final PsiFile containingFile = getXmlTag().getContainingFile();
+			if(containingFile != null)
+			{
+				final AntBuildFileImpl buildFile = (AntBuildFileImpl) ThermitConfigurationBase.getInstance(containingFile.getProject()).getAntBuildFile(containingFile);
+				if(buildFile != null)
+				{
+					externals = buildFile.getExternalProperties();
+				}
+			}
+			myProperties = (properties = loadPredefinedProperties(reflected.getProperties(), externals));
+		}
+		return properties;
+	}
 
-  @SuppressWarnings({"UseOfObsoleteCollectionType"})
-  private Map<String, String> loadPredefinedProperties(final Hashtable properties, final Map<String, String> externalProps) {
-    final Map<String, String> destination = new HashMap<String, String>();
-    if (properties != null) {
-      final Enumeration props = properties.keys();
-      while (props.hasMoreElements()) {
-        final String name = (String)props.nextElement();
-        final String value = (String)properties.get(name);
-        appendProperty(destination, name, value);
-      }
-    }
-    //final Map<String, String> envMap = System.getenv();
-    //for (final String name : envMap.keySet()) {
-    //  if (name.length() > 0) {
-    //    final String value = envMap.get(name);
-    //    appendProperty(destination, DEFAULT_ENVIRONMENT_PREFIX + name, value);
-    //  }
-    //}
-    if (externalProps != null) {
-      for (final String name : externalProps.keySet()) {
-        final String value = externalProps.get(name);
-        appendProperty(destination, name, value);
-      }
-    }
+	@SuppressWarnings({"UseOfObsoleteCollectionType"})
+	private Map<String, String> loadPredefinedProperties(final Hashtable properties, final Map<String, String> externalProps)
+	{
+		final Map<String, String> destination = new HashMap<String, String>();
+		if(properties != null)
+		{
+			final Enumeration props = properties.keys();
+			while(props.hasMoreElements())
+			{
+				final String name = (String) props.nextElement();
+				final String value = (String) properties.get(name);
+				appendProperty(destination, name, value);
+			}
+		}
+		//final Map<String, String> envMap = System.getenv();
+		//for (final String name : envMap.keySet()) {
+		//  if (name.length() > 0) {
+		//    final String value = envMap.get(name);
+		//    appendProperty(destination, DEFAULT_ENVIRONMENT_PREFIX + name, value);
+		//  }
+		//}
+		if(externalProps != null)
+		{
+			for(final String name : externalProps.keySet())
+			{
+				final String value = externalProps.get(name);
+				appendProperty(destination, name, value);
+			}
+		}
 
-    String basedir = getProjectBasedirPath();
-    if (basedir == null) {
-      basedir = ".";
-    }
-    if (!FileUtil.isAbsolute(basedir)) {
-      final String containigFileDir = getContainingFileDir();
-      if (containigFileDir != null) {
-        try {
-          basedir = new File(containigFileDir, basedir).getCanonicalPath();
-        }
-        catch (IOException e) {
-          // ignore
-        }
-      }
-    }
-    if (basedir != null) {
-      appendProperty(destination, "basedir", FileUtil.toSystemIndependentName(basedir));
-    }
+		String basedir = getProjectBasedirPath();
+		if(basedir == null)
+		{
+			basedir = ".";
+		}
+		if(!FileUtil.isAbsolute(basedir))
+		{
+			final String containigFileDir = getContainingFileDir();
+			if(containigFileDir != null)
+			{
+				try
+				{
+					basedir = new File(containigFileDir, basedir).getCanonicalPath();
+				}
+				catch(IOException e)
+				{
+					// ignore
+				}
+			}
+		}
+		if(basedir != null)
+		{
+			appendProperty(destination, "basedir", FileUtil.toSystemIndependentName(basedir));
+		}
 
-    final AntInstallation installation = getAntInstallation();
-    final String homeDir = installation.getHomeDir();
-    if (homeDir != null) {
-      appendProperty(destination, "thermit.home", FileUtil.toSystemIndependentName(homeDir));
-    }
-    appendProperty(destination, "thermit.version", installation.getVersion());
+		final AntInstallation installation = getAntInstallation();
+		final String homeDir = installation.getHomeDir();
+		if(homeDir != null)
+		{
+			appendProperty(destination, "thermit.home", FileUtil.toSystemIndependentName(homeDir));
+		}
+		appendProperty(destination, "thermit.version", installation.getVersion());
 
-    final String projectName = getName().getRawText();
-    appendProperty(destination, "thermit.project.name", (projectName == null) ? "" : projectName);
+		final String projectName = getName().getRawText();
+		appendProperty(destination, "thermit.project.name", (projectName == null) ? "" : projectName);
 
-    final Sdk jdkToRunWith = getTargetJdk();
-    final String version = jdkToRunWith != null? jdkToRunWith.getVersionString() : null;
-    appendProperty(destination, "thermit.java.version", version != null? version : SystemInfo.JAVA_VERSION);
-    
-    final VirtualFile containingFile = getXmlTag().getContainingFile().getOriginalFile().getVirtualFile();
-    if (containingFile != null) {
-      final String antFilePath = containingFile.getPath();
-      appendProperty(destination, "thermit.file", antFilePath);
-      if (projectName != null) {
-        appendProperty(destination, "thermit.file." + projectName, antFilePath);
-        appendProperty(destination, "thermit.file.type." + projectName, "file");
-      }
-    }
-    return destination;
-  }
+		final Sdk jdkToRunWith = getTargetJdk();
+		final String version = jdkToRunWith != null ? jdkToRunWith.getVersionString() : null;
+		appendProperty(destination, "thermit.java.version", version != null ? version : SystemInfo.JAVA_VERSION);
 
-  private static void appendProperty(final Map<String, String> map, String name, String value) {
-    final String previous = map.put(name, value);
-    if (previous != null) {
-      map.put(name, previous);
-    }
-  }
+		final VirtualFile containingFile = getXmlTag().getContainingFile().getOriginalFile().getVirtualFile();
+		if(containingFile != null)
+		{
+			final String antFilePath = containingFile.getPath();
+			appendProperty(destination, "thermit.file", antFilePath);
+			if(projectName != null)
+			{
+				appendProperty(destination, "thermit.file." + projectName, antFilePath);
+				appendProperty(destination, "thermit.file.type." + projectName, "file");
+			}
+		}
+		return destination;
+	}
+
+	private static void appendProperty(final Map<String, String> map, String name, String value)
+	{
+		final String previous = map.put(name, value);
+		if(previous != null)
+		{
+			map.put(name, previous);
+		}
+	}
 }

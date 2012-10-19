@@ -25,8 +25,9 @@ import org.jetbrains.annotations.NotNull;
  * @author Eugene Zhuravlev
  *         Date: May 4, 2007
  */
-public interface AntFilesProvider {
-  
-  @NotNull
-  List<File> getFiles(final Set<AntFilesProvider> processed);
+public interface AntFilesProvider
+{
+
+	@NotNull
+	List<File> getFiles(final Set<AntFilesProvider> processed);
 }

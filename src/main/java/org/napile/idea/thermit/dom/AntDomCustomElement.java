@@ -15,36 +15,42 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.util.xml.XmlName;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.util.xml.XmlName;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Jun 30, 2010
  */
-public abstract class AntDomCustomElement extends AntDomElement{
+public abstract class AntDomCustomElement extends AntDomElement
+{
 
-  private XmlName myXmlName;
+	private XmlName myXmlName;
 
-  @Nullable
-  public final Class getDefinitionClass() {
-    return CustomAntElementsRegistry.getInstance(getAntProject()).lookupClass(getXmlName());
-  }
+	@Nullable
+	public final Class getDefinitionClass()
+	{
+		return CustomAntElementsRegistry.getInstance(getAntProject()).lookupClass(getXmlName());
+	}
 
-  @Nullable
-  public final AntDomNamedElement getDeclaringElement() {
-    return CustomAntElementsRegistry.getInstance(getAntProject()).getDeclaringElement(getXmlName());
-  }
+	@Nullable
+	public final AntDomNamedElement getDeclaringElement()
+	{
+		return CustomAntElementsRegistry.getInstance(getAntProject()).getDeclaringElement(getXmlName());
+	}
 
-  @Nullable
-  public final String getLoadError() {
-    return CustomAntElementsRegistry.getInstance(getAntProject()).lookupError(getXmlName());
-  }
+	@Nullable
+	public final String getLoadError()
+	{
+		return CustomAntElementsRegistry.getInstance(getAntProject()).lookupError(getXmlName());
+	}
 
-  public final  XmlName getXmlName() {
-    if (myXmlName == null) {
-      myXmlName = new XmlName(getXmlElementName(), getXmlElementNamespace());
-    }
-    return myXmlName;
-  }
+	public final XmlName getXmlName()
+	{
+		if(myXmlName == null)
+		{
+			myXmlName = new XmlName(getXmlElementName(), getXmlElementNamespace());
+		}
+		return myXmlName;
+	}
 }

@@ -22,7 +22,8 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Jul 8, 2010
  */
-public abstract class AntDomPresetDef extends AntDomNamedElement{
-  @Attribute("uri")
-  public abstract GenericAttributeValue<String> getUri();
+public abstract class AntDomPresetDef extends AntDomNamedElement
+{
+	@Attribute("uri")
+	public abstract GenericAttributeValue<String> getUri();
 }

@@ -24,15 +24,16 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Aug 10, 2010
  */
-public abstract class AntDomTempFile extends AntDomPropertyDefiningTask {
-  @Attribute("destdir")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getDestdir();
+public abstract class AntDomTempFile extends AntDomPropertyDefiningTask
+{
+	@Attribute("destdir")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getDestdir();
 
-  @Attribute("prefix")
-  public abstract GenericAttributeValue<String> getPrefix();
+	@Attribute("prefix")
+	public abstract GenericAttributeValue<String> getPrefix();
 
-  @Attribute("suffix")
-  public abstract GenericAttributeValue<String> getSuffix();
+	@Attribute("suffix")
+	public abstract GenericAttributeValue<String> getSuffix();
 
 }

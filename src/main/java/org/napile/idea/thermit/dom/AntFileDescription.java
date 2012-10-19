@@ -21,13 +21,16 @@ import com.intellij.util.xml.DomFileDescription;
  * @author Eugene Zhuravlev
  *         Date: Apr 6, 2010
  */
-public class AntFileDescription<T extends AntDomElement> extends DomFileDescription<T> {
+public class AntFileDescription<T extends AntDomElement> extends DomFileDescription<T>
+{
 
-  public AntFileDescription(final Class<T> rootElementClass, final String rootTagName) {
-    super(rootElementClass, rootTagName);
-  }
+	public AntFileDescription(final Class<T> rootElementClass, final String rootTagName)
+	{
+		super(rootElementClass, rootTagName);
+	}
 
-  protected void initializeFileDescription() {
-    registerReferenceInjector(new AntReferenceInjector());
-  }
+	protected void initializeFileDescription()
+	{
+		registerReferenceInjector(new AntReferenceInjector());
+	}
 }

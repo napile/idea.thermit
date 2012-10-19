@@ -15,32 +15,37 @@
  */
 package org.napile.idea.thermit.config.impl;
 
-import com.intellij.util.config.AbstractProperty;
 import org.jetbrains.annotations.NotNull;
+import com.intellij.util.config.AbstractProperty;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Mar 26, 2007
  */
-public abstract class ClassLoaderHolder {
-  protected final AbstractProperty.AbstractPropertyContainer myOptions;
-  private ClassLoader myLoader;
+public abstract class ClassLoaderHolder
+{
+	protected final AbstractProperty.AbstractPropertyContainer myOptions;
+	private ClassLoader myLoader;
 
-  public ClassLoaderHolder(AbstractProperty.AbstractPropertyContainer options) {
-    myOptions = options;
-  }
+	public ClassLoaderHolder(AbstractProperty.AbstractPropertyContainer options)
+	{
+		myOptions = options;
+	}
 
-  @NotNull
-  public ClassLoader getClassloader() {
-    if (myLoader == null) {
-      myLoader = buildClasspath();
-    }
-    return myLoader;
-  }
+	@NotNull
+	public ClassLoader getClassloader()
+	{
+		if(myLoader == null)
+		{
+			myLoader = buildClasspath();
+		}
+		return myLoader;
+	}
 
-  public void updateClasspath() {
-    myLoader = null;
-  }
-    
-  protected abstract ClassLoader buildClasspath();
+	public void updateClasspath()
+	{
+		myLoader = null;
+	}
+
+	protected abstract ClassLoader buildClasspath();
 }

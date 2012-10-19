@@ -35,92 +35,112 @@ import com.intellij.util.xml.NanoXmlUtil;
  * @author Eugene Zhuravlev
  *         Date: Apr 28, 2008
  */
-public class AntImportsIndex extends ScalarIndexExtension<Integer>{
-  public static final ID<Integer, Void> INDEX_NAME = ID.create("thermit-imports");
-  private static final int VERSION = 5;
-  public static final Integer ANT_FILES_WITH_IMPORTS_KEY = new Integer(0);
-  
-  private static final DataIndexer<Integer,Void,FileContent> DATA_INDEXER = new DataIndexer<Integer, Void, FileContent>() {
-    @Override
-    @NotNull
-    public Map<Integer, Void> map(final FileContent inputData) {
-      final Map<Integer, Void> map = new HashMap<Integer, Void>();
+public class AntImportsIndex extends ScalarIndexExtension<Integer>
+{
+	public static final ID<Integer, Void> INDEX_NAME = ID.create("thermit-imports");
+	private static final int VERSION = 5;
+	public static final Integer ANT_FILES_WITH_IMPORTS_KEY = new Integer(0);
 
-      NanoXmlUtil.parse(CharArrayUtil.readerFromCharSequence(inputData.getContentAsText()), new NanoXmlUtil.IXMLBuilderAdapter() {
-        private boolean isFirstElement = true;
-        @Override
-        public void startElement(final String elemName, final String nsPrefix, final String nsURI, final String systemID, final int lineNr) throws Exception {
-          if (isFirstElement) {
-            if (!"project".equalsIgnoreCase(elemName)) {
-              stop();
-            }
-            isFirstElement = false;
-          }
-          else {
-            if ("import".equalsIgnoreCase(elemName) || "include".equalsIgnoreCase(elemName)) {
-              map.put(ANT_FILES_WITH_IMPORTS_KEY, null);
-              stop();
-            }
-          }
-        }
+	private static final DataIndexer<Integer, Void, FileContent> DATA_INDEXER = new DataIndexer<Integer, Void, FileContent>()
+	{
+		@Override
+		@NotNull
+		public Map<Integer, Void> map(final FileContent inputData)
+		{
+			final Map<Integer, Void> map = new HashMap<Integer, Void>();
 
-        @Override
-        public void addAttribute(final String key, final String nsPrefix, final String nsURI, final String value, final String type) throws Exception {
-          //if (myAttributes != null) {
-          //  myAttributes.add(key);
-          //}
-        }
+			NanoXmlUtil.parse(CharArrayUtil.readerFromCharSequence(inputData.getContentAsText()), new NanoXmlUtil.IXMLBuilderAdapter()
+			{
+				private boolean isFirstElement = true;
 
-        @Override
-        public void elementAttributesProcessed(final String name, final String nsPrefix, final String nsURI) throws Exception {
-          //if (myAttributes != null) {
-          //  if (!(myAttributes.contains("name") && myAttributes.contains("default"))) {
-          //    stop();
-          //  }
-          //  myAttributes = null;
-          //}
-        }
+				@Override
+				public void startElement(final String elemName, final String nsPrefix, final String nsURI, final String systemID, final int lineNr) throws Exception
+				{
+					if(isFirstElement)
+					{
+						if(!"project".equalsIgnoreCase(elemName))
+						{
+							stop();
+						}
+						isFirstElement = false;
+					}
+					else
+					{
+						if("import".equalsIgnoreCase(elemName) || "include".equalsIgnoreCase(elemName))
+						{
+							map.put(ANT_FILES_WITH_IMPORTS_KEY, null);
+							stop();
+						}
+					}
+				}
 
-      });
-      return map;
-    }
-  };
-  private static final FileBasedIndex.InputFilter INPUT_FILTER = new FileBasedIndex.InputFilter() {
-    @Override
-    public boolean acceptInput(final VirtualFile file) {
-      return file.getFileType() instanceof XmlFileType;
-    }
-  };
+				@Override
+				public void addAttribute(final String key, final String nsPrefix, final String nsURI, final String value, final String type) throws Exception
+				{
+					//if (myAttributes != null) {
+					//  myAttributes.add(key);
+					//}
+				}
 
-  @Override
-  public int getVersion() {
-    return VERSION;
-  }
+				@Override
+				public void elementAttributesProcessed(final String name, final String nsPrefix, final String nsURI) throws Exception
+				{
+					//if (myAttributes != null) {
+					//  if (!(myAttributes.contains("name") && myAttributes.contains("default"))) {
+					//    stop();
+					//  }
+					//  myAttributes = null;
+					//}
+				}
 
-  @Override
-  @NotNull
-  public ID<Integer, Void> getName() {
-    return INDEX_NAME;
-  }
+			});
+			return map;
+		}
+	};
+	private static final FileBasedIndex.InputFilter INPUT_FILTER = new FileBasedIndex.InputFilter()
+	{
+		@Override
+		public boolean acceptInput(final VirtualFile file)
+		{
+			return file.getFileType() instanceof XmlFileType;
+		}
+	};
 
-  @Override
-  @NotNull
-  public DataIndexer<Integer, Void, FileContent> getIndexer() {
-    return DATA_INDEXER;
-  }
+	@Override
+	public int getVersion()
+	{
+		return VERSION;
+	}
 
-  @Override
-  public KeyDescriptor<Integer> getKeyDescriptor() {
-    return EnumeratorIntegerDescriptor.INSTANCE;
-  }
+	@Override
+	@NotNull
+	public ID<Integer, Void> getName()
+	{
+		return INDEX_NAME;
+	}
 
-  @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
-    return INPUT_FILTER;
-  }
+	@Override
+	@NotNull
+	public DataIndexer<Integer, Void, FileContent> getIndexer()
+	{
+		return DATA_INDEXER;
+	}
 
-  @Override
-  public boolean dependsOnFileContent() {
-    return true;
-  }
+	@Override
+	public KeyDescriptor<Integer> getKeyDescriptor()
+	{
+		return EnumeratorIntegerDescriptor.INSTANCE;
+	}
+
+	@Override
+	public FileBasedIndex.InputFilter getInputFilter()
+	{
+		return INPUT_FILTER;
+	}
+
+	@Override
+	public boolean dependsOnFileContent()
+	{
+		return true;
+	}
 }

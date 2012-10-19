@@ -50,250 +50,305 @@ import com.intellij.util.config.AbstractProperty;
 import com.intellij.util.config.StorageAccessors;
 import com.intellij.util.containers.HashMap;
 
-public class AntSetPanel {
-  private final Form myForm;
-  private final GlobalThermitConfiguration myAntConfiguration;
+public class AntSetPanel
+{
+	private final Form myForm;
+	private final GlobalThermitConfiguration myAntConfiguration;
 
-  public AntSetPanel() {
-    this(GlobalThermitConfiguration.getInstance());
-  }
+	public AntSetPanel()
+	{
+		this(GlobalThermitConfiguration.getInstance());
+	}
 
-  AntSetPanel(GlobalThermitConfiguration antConfiguration) {
-    myAntConfiguration = antConfiguration;
-    myForm = new Form(antConfiguration);
-  }
+	AntSetPanel(GlobalThermitConfiguration antConfiguration)
+	{
+		myAntConfiguration = antConfiguration;
+		myForm = new Form(antConfiguration);
+	}
 
-  @Nullable
-  public AntInstallation showDialog(JComponent parent) {
-    final DialogWrapper dialog = new MyDialog(parent);
-    dialog.show();
-    if (!dialog.isOK()) {
-      return null;
-    }
-    
-    apply();
-    return myForm.getSelectedAnt();
-  }
+	@Nullable
+	public AntInstallation showDialog(JComponent parent)
+	{
+		final DialogWrapper dialog = new MyDialog(parent);
+		dialog.show();
+		if(!dialog.isOK())
+		{
+			return null;
+		}
 
-  void reset() {
-    myForm.setAnts(myAntConfiguration.getConfiguredAnts().values());
-  }
+		apply();
+		return myForm.getSelectedAnt();
+	}
 
-  void apply() {
-    for (AntInstallation ant : myForm.getRemovedAnts()) {
-      myAntConfiguration.removeConfiguration(ant);
-    }
-    
-    final Map<AntReference, AntInstallation> currentAnts = myAntConfiguration.getConfiguredAnts();
-    for (AntInstallation installation : currentAnts.values()) {
-      installation.updateClasspath();
-    }
-    
-    for (AntInstallation ant : myForm.getAddedAnts()) {
-      myAntConfiguration.addConfiguration(ant);
-    }
-    myForm.applyModifications();
-  }
+	void reset()
+	{
+		myForm.setAnts(myAntConfiguration.getConfiguredAnts().values());
+	}
 
-  public void setSelection(AntInstallation antInstallation) {
-    myForm.selectAnt(antInstallation);
-  }
+	void apply()
+	{
+		for(AntInstallation ant : myForm.getRemovedAnts())
+		{
+			myAntConfiguration.removeConfiguration(ant);
+		}
 
-  public JComponent getComponent() {
-    return myForm.getComponent();
-  }
+		final Map<AntReference, AntInstallation> currentAnts = myAntConfiguration.getConfiguredAnts();
+		for(AntInstallation installation : currentAnts.values())
+		{
+			installation.updateClasspath();
+		}
 
-  private static class Form implements AntUIUtil.PropertiesEditor<AntInstallation> {
-    private final Splitter mySplitter = new Splitter(false);
-    private final StorageAccessors myAccessors = StorageAccessors.createGlobal("antConfigurations");
-    private final RightPanel myRightPanel;
-    private final AnActionListEditor<AntInstallation> myAnts = new AnActionListEditor<AntInstallation>();
-    private final UIPropertyBinding.Composite myBinding = new UIPropertyBinding.Composite();
-    private final EditPropertyContainer myGlobalWorkingProperties;
-    private final Map<AntInstallation, EditPropertyContainer> myWorkingProperties = new HashMap<AntInstallation, EditPropertyContainer>();
+		for(AntInstallation ant : myForm.getAddedAnts())
+		{
+			myAntConfiguration.addConfiguration(ant);
+		}
+		myForm.applyModifications();
+	}
 
-    private AntInstallation myCurrent;
-    private final PropertyChangeListener myImmediateUpdater = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent evt) {
-        myBinding.apply(getProperties(myCurrent));
-        myAnts.updateItem(myCurrent);
-      }
-    };
+	public void setSelection(AntInstallation antInstallation)
+	{
+		myForm.selectAnt(antInstallation);
+	}
 
-    public Form(final GlobalThermitConfiguration antInstallation) {
-      mySplitter.setProportion(myAccessors.getFloat("splitter", 0.3f));
-      mySplitter.setShowDividerControls(true);
-      mySplitter.setFirstComponent(myAnts);
-      myGlobalWorkingProperties = new EditPropertyContainer(antInstallation.getProperties());
-      myRightPanel = new RightPanel(myBinding, myImmediateUpdater);
-      mySplitter.setSecondComponent(myRightPanel.myWholePanel);
-      myAnts.addAddAction(new NewAntFactory(myAnts));
-      myAnts.addRemoveButtonForAnt(antInstallation.IS_USER_ANT, AntBundle.message("remove.action.name"));
-      myAnts.actionsBuilt();
-      JList list = myAnts.getList();
-      list.setCellRenderer(new AntUIUtil.AntInstallationRenderer(this));
-      list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-          if (myCurrent != null) myBinding.apply(getProperties(myCurrent));
-          myCurrent = myAnts.getSelectedItem();
-          if (myCurrent == null) {
-            myBinding.loadValues(AbstractProperty.AbstractPropertyContainer.EMPTY);
-            myBinding.beDisabled();
-          }
-          else {
-            if (antInstallation.IS_USER_ANT.value(myCurrent)) {
-              myBinding.beEnabled();
-            }
-            else {
-              myBinding.beDisabled();
-            }
-            myBinding.loadValues(getProperties(myCurrent));
-          }
-        }
-      });
-    }
+	public JComponent getComponent()
+	{
+		return myForm.getComponent();
+	}
 
-    public JList getAntsList() {
-      return myAnts.getList();
-    }
+	private static class Form implements AntUIUtil.PropertiesEditor<AntInstallation>
+	{
+		private final Splitter mySplitter = new Splitter(false);
+		private final StorageAccessors myAccessors = StorageAccessors.createGlobal("antConfigurations");
+		private final RightPanel myRightPanel;
+		private final AnActionListEditor<AntInstallation> myAnts = new AnActionListEditor<AntInstallation>();
+		private final UIPropertyBinding.Composite myBinding = new UIPropertyBinding.Composite();
+		private final EditPropertyContainer myGlobalWorkingProperties;
+		private final Map<AntInstallation, EditPropertyContainer> myWorkingProperties = new HashMap<AntInstallation, EditPropertyContainer>();
 
-    public JComponent getComponent() {
-      return mySplitter;
-    }
+		private AntInstallation myCurrent;
+		private final PropertyChangeListener myImmediateUpdater = new PropertyChangeListener()
+		{
+			public void propertyChange(PropertyChangeEvent evt)
+			{
+				myBinding.apply(getProperties(myCurrent));
+				myAnts.updateItem(myCurrent);
+			}
+		};
 
-    public AntInstallation getSelectedAnt() {
-      return myAnts.getSelectedItem();
-    }
+		public Form(final GlobalThermitConfiguration antInstallation)
+		{
+			mySplitter.setProportion(myAccessors.getFloat("splitter", 0.3f));
+			mySplitter.setShowDividerControls(true);
+			mySplitter.setFirstComponent(myAnts);
+			myGlobalWorkingProperties = new EditPropertyContainer(antInstallation.getProperties());
+			myRightPanel = new RightPanel(myBinding, myImmediateUpdater);
+			mySplitter.setSecondComponent(myRightPanel.myWholePanel);
+			myAnts.addAddAction(new NewAntFactory(myAnts));
+			myAnts.addRemoveButtonForAnt(antInstallation.IS_USER_ANT, AntBundle.message("remove.action.name"));
+			myAnts.actionsBuilt();
+			JList list = myAnts.getList();
+			list.setCellRenderer(new AntUIUtil.AntInstallationRenderer(this));
+			list.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+			{
+				public void valueChanged(ListSelectionEvent e)
+				{
+					if(myCurrent != null)
+						myBinding.apply(getProperties(myCurrent));
+					myCurrent = myAnts.getSelectedItem();
+					if(myCurrent == null)
+					{
+						myBinding.loadValues(AbstractProperty.AbstractPropertyContainer.EMPTY);
+						myBinding.beDisabled();
+					}
+					else
+					{
+						if(antInstallation.IS_USER_ANT.value(myCurrent))
+						{
+							myBinding.beEnabled();
+						}
+						else
+						{
+							myBinding.beDisabled();
+						}
+						myBinding.loadValues(getProperties(myCurrent));
+					}
+				}
+			});
+		}
 
-    public void setAnts(Collection<AntInstallation> antInstallations) {
-      myAnts.setItems(antInstallations);
-    }
+		public JList getAntsList()
+		{
+			return myAnts.getList();
+		}
 
-    public void applyModifications() {
-      if (myCurrent != null) myBinding.apply(getProperties(myCurrent));
-      ArrayList<AbstractProperty> properties = new ArrayList<AbstractProperty>();
-      myBinding.addAllPropertiesTo(properties);
-      for (AntInstallation ant : myWorkingProperties.keySet()) {
-        EditPropertyContainer container = myWorkingProperties.get(ant);
-        container.apply();
-      }
-      myGlobalWorkingProperties.apply();
-    }
+		public JComponent getComponent()
+		{
+			return mySplitter;
+		}
 
-    public void selectAnt(AntInstallation antInstallation) {
-      myAnts.setSelection(antInstallation);
-    }
+		public AntInstallation getSelectedAnt()
+		{
+			return myAnts.getSelectedItem();
+		}
 
-    public ArrayList<AntInstallation> getAddedAnts() {
-      return myAnts.getAdded();
-    }
+		public void setAnts(Collection<AntInstallation> antInstallations)
+		{
+			myAnts.setItems(antInstallations);
+		}
 
-    public ArrayList<AntInstallation> getRemovedAnts() {
-      return myAnts.getRemoved();
-    }
+		public void applyModifications()
+		{
+			if(myCurrent != null)
+				myBinding.apply(getProperties(myCurrent));
+			ArrayList<AbstractProperty> properties = new ArrayList<AbstractProperty>();
+			myBinding.addAllPropertiesTo(properties);
+			for(AntInstallation ant : myWorkingProperties.keySet())
+			{
+				EditPropertyContainer container = myWorkingProperties.get(ant);
+				container.apply();
+			}
+			myGlobalWorkingProperties.apply();
+		}
 
-    public EditPropertyContainer getProperties(AntInstallation ant) {
-      EditPropertyContainer properties = myWorkingProperties.get(ant);
-      if (properties != null) return properties;
-      properties = new EditPropertyContainer(myGlobalWorkingProperties, ant.getProperties());
+		public void selectAnt(AntInstallation antInstallation)
+		{
+			myAnts.setSelection(antInstallation);
+		}
 
-      myWorkingProperties.put(ant, properties);
-      return properties;
-    }
+		public ArrayList<AntInstallation> getAddedAnts()
+		{
+			return myAnts.getAdded();
+		}
 
-    private static class RightPanel {
-      private JLabel myNameLabel;
-      private JLabel myHome;
-      private JTextField myName;
-      private AntClasspathEditorPanel myClasspath;
-      private JPanel myWholePanel;
+		public ArrayList<AntInstallation> getRemovedAnts()
+		{
+			return myAnts.getRemoved();
+		}
 
-      public RightPanel(UIPropertyBinding.Composite binding, PropertyChangeListener immediateUpdater) {
-        myNameLabel.setLabelFor(myName);
-        binding.addBinding(myClasspath.setClasspathProperty(AntInstallation.CLASS_PATH));
-        binding.bindString(myHome, AntInstallation.HOME_DIR);
-        binding.bindString(myName, AntInstallation.NAME).addChangeListener(immediateUpdater);
-      }
-    }
-  }
+		public EditPropertyContainer getProperties(AntInstallation ant)
+		{
+			EditPropertyContainer properties = myWorkingProperties.get(ant);
+			if(properties != null)
+				return properties;
+			properties = new EditPropertyContainer(myGlobalWorkingProperties, ant.getProperties());
 
-  private static class NewAntFactory implements Factory<AntInstallation> {
-    private final AnActionListEditor<AntInstallation> myParent;
+			myWorkingProperties.put(ant, properties);
+			return properties;
+		}
 
-    public NewAntFactory(AnActionListEditor<AntInstallation> parent) {
-      myParent = parent;
-    }
+		private static class RightPanel
+		{
+			private JLabel myNameLabel;
+			private JLabel myHome;
+			private JTextField myName;
+			private AntClasspathEditorPanel myClasspath;
+			private JPanel myWholePanel;
 
-    public AntInstallation create() {
-      FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-      VirtualFile file = FileChooser.chooseFile(descriptor, myParent, null, null);
-      if (file == null) return null;
-      try {
-        final AntInstallation inst = AntInstallation.fromHome(file.getPresentableUrl());
-        adjustName(inst);
-        return inst;
-      }
-      catch (AntInstallation.ConfigurationException e) {
-        Messages.showErrorDialog(myParent, e.getMessage(), AntBundle.message("ant.setup.dialog.title"));
-        return null;
-      }
-    }
+			public RightPanel(UIPropertyBinding.Composite binding, PropertyChangeListener immediateUpdater)
+			{
+				myNameLabel.setLabelFor(myName);
+				binding.addBinding(myClasspath.setClasspathProperty(AntInstallation.CLASS_PATH));
+				binding.bindString(myHome, AntInstallation.HOME_DIR);
+				binding.bindString(myName, AntInstallation.NAME).addChangeListener(immediateUpdater);
+			}
+		}
+	}
 
-    private void adjustName(final AntInstallation justCreated) {
-      int nameIndex = 0;
-      String adjustedName = justCreated.getName();
-      final ListModel model = myParent.getList().getModel();
-      
-      int idx = 0;
-      while (idx < model.getSize()) {
-        final AntInstallation inst = (AntInstallation)model.getElementAt(idx++);
-        if (adjustedName.equals(inst.getName())) {
-          adjustedName = justCreated.getName() + " (" + (++nameIndex) + ")";
-          idx = 0; // search from beginning
-        }
-      }
-      
-      if (!adjustedName.equals(justCreated.getName())) {
-        justCreated.setName(adjustedName);
-      }
-    }
-  }
+	private static class NewAntFactory implements Factory<AntInstallation>
+	{
+		private final AnActionListEditor<AntInstallation> myParent;
 
-  private class MyDialog extends DialogWrapper {
-    public MyDialog(final JComponent parent) {
-      super(parent, true);
-      setTitle(AntBundle.message("configure.ant.dialog.title"));
-      init();
-    }
+		public NewAntFactory(AnActionListEditor<AntInstallation> parent)
+		{
+			myParent = parent;
+		}
 
-    @Nullable
-      protected JComponent createCenterPanel() {
-      return myForm.getComponent();
-    }
+		public AntInstallation create()
+		{
+			FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+			VirtualFile file = FileChooser.chooseFile(descriptor, myParent, null, null);
+			if(file == null)
+				return null;
+			try
+			{
+				final AntInstallation inst = AntInstallation.fromHome(file.getPresentableUrl());
+				adjustName(inst);
+				return inst;
+			}
+			catch(AntInstallation.ConfigurationException e)
+			{
+				Messages.showErrorDialog(myParent, e.getMessage(), AntBundle.message("ant.setup.dialog.title"));
+				return null;
+			}
+		}
 
-    @NonNls
-      protected String getDimensionServiceKey() {
-      return "antSetDialogDimensionKey";
-    }
+		private void adjustName(final AntInstallation justCreated)
+		{
+			int nameIndex = 0;
+			String adjustedName = justCreated.getName();
+			final ListModel model = myParent.getList().getModel();
 
-    public JComponent getPreferredFocusedComponent() {
-      return myForm.getAntsList();
-    }
+			int idx = 0;
+			while(idx < model.getSize())
+			{
+				final AntInstallation inst = (AntInstallation) model.getElementAt(idx++);
+				if(adjustedName.equals(inst.getName()))
+				{
+					adjustedName = justCreated.getName() + " (" + (++nameIndex) + ")";
+					idx = 0; // search from beginning
+				}
+			}
 
-    protected void doOKAction() {
-      final Set<String> names = new HashSet<String>();
-      final ListModel model = myForm.getAntsList().getModel();
-      for (int idx = 0; idx  < model.getSize(); idx++) {
-        final AntInstallation inst = (AntInstallation)model.getElementAt(idx);
-        final String name = AntInstallation.NAME.get(myForm.getProperties(inst));
-        if (names.contains(name)) {
-          Messages.showErrorDialog("Duplicate thermit installation name: \"" + name+ "\"", getTitle());
-          return;
-        }
-        names.add(name);
-      }
-      
-      super.doOKAction();
-    }
-  }
+			if(!adjustedName.equals(justCreated.getName()))
+			{
+				justCreated.setName(adjustedName);
+			}
+		}
+	}
+
+	private class MyDialog extends DialogWrapper
+	{
+		public MyDialog(final JComponent parent)
+		{
+			super(parent, true);
+			setTitle(AntBundle.message("configure.ant.dialog.title"));
+			init();
+		}
+
+		@Nullable
+		protected JComponent createCenterPanel()
+		{
+			return myForm.getComponent();
+		}
+
+		@NonNls
+		protected String getDimensionServiceKey()
+		{
+			return "antSetDialogDimensionKey";
+		}
+
+		public JComponent getPreferredFocusedComponent()
+		{
+			return myForm.getAntsList();
+		}
+
+		protected void doOKAction()
+		{
+			final Set<String> names = new HashSet<String>();
+			final ListModel model = myForm.getAntsList().getModel();
+			for(int idx = 0; idx < model.getSize(); idx++)
+			{
+				final AntInstallation inst = (AntInstallation) model.getElementAt(idx);
+				final String name = AntInstallation.NAME.get(myForm.getProperties(inst));
+				if(names.contains(name))
+				{
+					Messages.showErrorDialog("Duplicate thermit installation name: \"" + name + "\"", getTitle());
+					return;
+				}
+				names.add(name);
+			}
+
+			super.doOKAction();
+		}
+	}
 }

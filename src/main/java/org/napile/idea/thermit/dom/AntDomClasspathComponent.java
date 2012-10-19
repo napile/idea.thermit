@@ -15,24 +15,25 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.io.File;
+import java.util.List;
+
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: 6/24/12
  */
-public abstract class AntDomClasspathComponent extends AntDomNamedElement implements AntDomClasspathElement {
+public abstract class AntDomClasspathComponent extends AntDomNamedElement implements AntDomClasspathElement
+{
 
-  @Attribute("classpath")
-  @Convert(value = AntMultiPathStringConverter.class)
-  public abstract GenericAttributeValue<List<File>> getClasspath();
+	@Attribute("classpath")
+	@Convert(value = AntMultiPathStringConverter.class)
+	public abstract GenericAttributeValue<List<File>> getClasspath();
 
-  @Attribute("classpathref")
-  @Convert(value = AntDomRefIdConverter.class)
-  public abstract GenericAttributeValue<AntDomElement> getClasspathRef();
+	@Attribute("classpathref")
+	@Convert(value = AntDomRefIdConverter.class)
+	public abstract GenericAttributeValue<AntDomElement> getClasspathRef();
 }

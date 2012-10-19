@@ -22,11 +22,12 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Aug 4, 2010
  */
-public abstract class AntDomScriptdefElement extends AntDomNamedElement {
-  
-  @Attribute("classname")
-  public abstract GenericAttributeValue<String> getClassname();
+public abstract class AntDomScriptdefElement extends AntDomNamedElement
+{
 
-  @Attribute("type")
-  public abstract GenericAttributeValue<String> getElementType();
+	@Attribute("classname")
+	public abstract GenericAttributeValue<String> getClassname();
+
+	@Attribute("type")
+	public abstract GenericAttributeValue<String> getElementType();
 }

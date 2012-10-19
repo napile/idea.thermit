@@ -15,41 +15,47 @@
  */
 package org.napile.idea.thermit.dom;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 21, 2010
  */
-public abstract class AntDomDirname extends AntDomPropertyDefiningTask {
-  @Attribute("file")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
+public abstract class AntDomDirname extends AntDomPropertyDefiningTask
+{
+	@Attribute("file")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
 
-  @Nullable
-  protected final String calcPropertyValue(String propertyName) {
-    final PsiFileSystemItem fsItem = getFile().getValue();
-    if (fsItem != null) {
-      final PsiFileSystemItem parent = fsItem.getParent();
-      if (parent != null) {
-        final VirtualFile vFile = parent.getVirtualFile();
-        if (vFile != null) {
-          return FileUtil.toSystemDependentName(vFile.getPath());
-        }
-      }
-    }
-    // according to the doc, defaulting to project's current dir
-    final String projectBasedirPath = getContextAntProject().getProjectBasedirPath();
-    if (projectBasedirPath == null) {
-      return null;
-    }
-    return FileUtil.toSystemDependentName(projectBasedirPath);
-  }
+	@Nullable
+	protected final String calcPropertyValue(String propertyName)
+	{
+		final PsiFileSystemItem fsItem = getFile().getValue();
+		if(fsItem != null)
+		{
+			final PsiFileSystemItem parent = fsItem.getParent();
+			if(parent != null)
+			{
+				final VirtualFile vFile = parent.getVirtualFile();
+				if(vFile != null)
+				{
+					return FileUtil.toSystemDependentName(vFile.getPath());
+				}
+			}
+		}
+		// according to the doc, defaulting to project's current dir
+		final String projectBasedirPath = getContextAntProject().getProjectBasedirPath();
+		if(projectBasedirPath == null)
+		{
+			return null;
+		}
+		return FileUtil.toSystemDependentName(projectBasedirPath);
+	}
 
 }

@@ -22,10 +22,11 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Aug 5, 2010
  */
-public abstract class AntDomCustomClasspathComponent extends AntDomClasspathComponent {
-  @Attribute("uri")
-  public abstract GenericAttributeValue<String> getUri();
+public abstract class AntDomCustomClasspathComponent extends AntDomClasspathComponent
+{
+	@Attribute("uri")
+	public abstract GenericAttributeValue<String> getUri();
 
-  @Attribute("loaderref")
-  public abstract GenericAttributeValue<String> getLoaderRef();
+	@Attribute("loaderref")
+	public abstract GenericAttributeValue<String> getLoaderRef();
 }

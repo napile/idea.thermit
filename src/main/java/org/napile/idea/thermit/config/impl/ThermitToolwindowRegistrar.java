@@ -36,54 +36,67 @@ import com.intellij.openapi.project.Project;
  * @author Eugene Zhuravlev
  *         Date: Apr 24, 2007
  */
-public class ThermitToolwindowRegistrar extends AbstractProjectComponent {
-  public ThermitToolwindowRegistrar(Project project) {
-    super(project);
-  }
+public class ThermitToolwindowRegistrar extends AbstractProjectComponent
+{
+	public ThermitToolwindowRegistrar(Project project)
+	{
+		super(project);
+	}
 
-  public void projectOpened() {
-    
-    final KeymapManagerEx keymapManager = KeymapManagerEx.getInstanceEx();
-    final String prefix = ThermitConfiguration.getActionIdPrefix(myProject);
-    final ActionManager actionManager = ActionManager.getInstance();
+	public void projectOpened()
+	{
 
-    for (Keymap keymap : keymapManager.getAllKeymaps()) {
-      for (String id : keymap.getActionIds()) {
-        if (id.startsWith(prefix) && actionManager.getAction(id) == null) {
-          actionManager.registerAction(id, new TargetActionStub(id, myProject));
-        }
-      }      
-    }
-    
-    final CompilerManager compilerManager = CompilerManager.getInstance(myProject);
-    final DataContext dataContext = SimpleDataContext.getProjectContext(myProject);
-    compilerManager.addBeforeTask(new CompileTask() {
-      public boolean execute(CompileContext context) {
-        final ThermitConfiguration config = ThermitConfiguration.getInstance(myProject);
-        ((ThermitConfigurationBase)config).ensureInitialized();
-        return config.executeTargetBeforeCompile(dataContext);
-      }
-    });
-    compilerManager.addAfterTask(new CompileTask() {
-      public boolean execute(CompileContext context) {
-        final ThermitConfiguration config = ThermitConfiguration.getInstance(myProject);
-        ((ThermitConfigurationBase)config).ensureInitialized();
-        return config.executeTargetAfterCompile(dataContext);
-      }
-    });
-  }
+		final KeymapManagerEx keymapManager = KeymapManagerEx.getInstanceEx();
+		final String prefix = ThermitConfiguration.getActionIdPrefix(myProject);
+		final ActionManager actionManager = ActionManager.getInstance();
 
-  public void projectClosed() {
-    final ActionManagerEx actionManager = ActionManagerEx.getInstanceEx();
-    final String[] oldIds = actionManager.getActionIds(ThermitConfiguration.getActionIdPrefix(myProject));
-    for (String oldId : oldIds) {
-      actionManager.unregisterAction(oldId);
-    }
-  }
+		for(Keymap keymap : keymapManager.getAllKeymaps())
+		{
+			for(String id : keymap.getActionIds())
+			{
+				if(id.startsWith(prefix) && actionManager.getAction(id) == null)
+				{
+					actionManager.registerAction(id, new TargetActionStub(id, myProject));
+				}
+			}
+		}
 
-  @NonNls
-  @NotNull
-  public String getComponentName() {
-    return "ThermitToolwindowRegistrar";
-  }
+		final CompilerManager compilerManager = CompilerManager.getInstance(myProject);
+		final DataContext dataContext = SimpleDataContext.getProjectContext(myProject);
+		compilerManager.addBeforeTask(new CompileTask()
+		{
+			public boolean execute(CompileContext context)
+			{
+				final ThermitConfiguration config = ThermitConfiguration.getInstance(myProject);
+				((ThermitConfigurationBase) config).ensureInitialized();
+				return config.executeTargetBeforeCompile(dataContext);
+			}
+		});
+		compilerManager.addAfterTask(new CompileTask()
+		{
+			public boolean execute(CompileContext context)
+			{
+				final ThermitConfiguration config = ThermitConfiguration.getInstance(myProject);
+				((ThermitConfigurationBase) config).ensureInitialized();
+				return config.executeTargetAfterCompile(dataContext);
+			}
+		});
+	}
+
+	public void projectClosed()
+	{
+		final ActionManagerEx actionManager = ActionManagerEx.getInstanceEx();
+		final String[] oldIds = actionManager.getActionIds(ThermitConfiguration.getActionIdPrefix(myProject));
+		for(String oldId : oldIds)
+		{
+			actionManager.unregisterAction(oldId);
+		}
+	}
+
+	@NonNls
+	@NotNull
+	public String getComponentName()
+	{
+		return "ThermitToolwindowRegistrar";
+	}
 }

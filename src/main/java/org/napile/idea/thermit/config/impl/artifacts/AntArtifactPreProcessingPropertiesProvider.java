@@ -15,26 +15,30 @@
  */
 package org.napile.idea.thermit.config.impl.artifacts;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.packaging.artifacts.ArtifactProperties;
 import com.intellij.packaging.artifacts.ArtifactPropertiesProvider;
 import com.intellij.packaging.artifacts.ArtifactType;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author nik
  */
-public class AntArtifactPreProcessingPropertiesProvider extends ArtifactPropertiesProvider {
-  public static AntArtifactPreProcessingPropertiesProvider getInstance() {
-    return EP_NAME.findExtension(AntArtifactPreProcessingPropertiesProvider.class);
-  }
+public class AntArtifactPreProcessingPropertiesProvider extends ArtifactPropertiesProvider
+{
+	public static AntArtifactPreProcessingPropertiesProvider getInstance()
+	{
+		return EP_NAME.findExtension(AntArtifactPreProcessingPropertiesProvider.class);
+	}
 
-  public AntArtifactPreProcessingPropertiesProvider() {
-    super("thermit-preprocessing");
-  }
+	public AntArtifactPreProcessingPropertiesProvider()
+	{
+		super("thermit-preprocessing");
+	}
 
-  @NotNull
-  @Override
-  public ArtifactProperties<?> createProperties(@NotNull ArtifactType artifactType) {
-    return new AntArtifactProperties(false);
-  }
+	@NotNull
+	@Override
+	public ArtifactProperties<?> createProperties(@NotNull ArtifactType artifactType)
+	{
+		return new AntArtifactProperties(false);
+	}
 }

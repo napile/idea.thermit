@@ -24,29 +24,33 @@ import com.intellij.util.PlatformIcons;
 /**
  * @author dyoma
  */
-public enum AntElementRole implements PlatformIcons {
-  TARGET_ROLE(AntBundle.message("ant.role.ant.target"), AllIcons.Ant.Target),
-  PROPERTY_ROLE(AntBundle.message("ant.role.ant.property"), PROPERTY_ICON),
-  TASK_ROLE(AntBundle.message("ant.role.ant.task"), TASK_ICON),
-  USER_TASK_ROLE(AntBundle.message("ant.element.role.user.task"), TASK_ICON),
-  PROJECT_ROLE(AntBundle.message("ant.element.role.ant.project.name"), PROPERTY_ICON),
-  MACRODEF_ROLE(AntBundle.message("ant.element.role.macrodef.element"), TASK_ICON),
-  SCRIPTDEF_ROLE(AntBundle.message("ant.element.role.scriptdef.element"), TASK_ICON),
-  @NonNls NULL_ROLE("Ant element", null);
+public enum AntElementRole implements PlatformIcons
+{
+	TARGET_ROLE(AntBundle.message("ant.role.ant.target"), AllIcons.Ant.Target),
+	PROPERTY_ROLE(AntBundle.message("ant.role.ant.property"), PROPERTY_ICON),
+	TASK_ROLE(AntBundle.message("ant.role.ant.task"), TASK_ICON),
+	USER_TASK_ROLE(AntBundle.message("ant.element.role.user.task"), TASK_ICON),
+	PROJECT_ROLE(AntBundle.message("ant.element.role.ant.project.name"), PROPERTY_ICON),
+	MACRODEF_ROLE(AntBundle.message("ant.element.role.macrodef.element"), TASK_ICON),
+	SCRIPTDEF_ROLE(AntBundle.message("ant.element.role.scriptdef.element"), TASK_ICON),
+	@NonNls NULL_ROLE("Ant element", null);
 
-  AntElementRole(String name, Icon icon) {
-    myName = name;
-    myIcon = icon;
-  }
+	AntElementRole(String name, Icon icon)
+	{
+		myName = name;
+		myIcon = icon;
+	}
 
-  private final String myName;
-  private final Icon myIcon;
+	private final String myName;
+	private final Icon myIcon;
 
-  public String getName() {
-    return myName;
-  }
+	public String getName()
+	{
+		return myName;
+	}
 
-  public Icon getIcon() {
-    return myIcon;
-  }
+	public Icon getIcon()
+	{
+		return myIcon;
+	}
 }

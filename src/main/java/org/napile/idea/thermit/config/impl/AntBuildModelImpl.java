@@ -15,9 +15,26 @@
  */
 package org.napile.idea.thermit.config.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.ThermitSupport;
-import org.napile.idea.thermit.config.*;
-import org.napile.idea.thermit.dom.*;
+import org.napile.idea.thermit.config.AntBuildFile;
+import org.napile.idea.thermit.config.AntBuildFileBase;
+import org.napile.idea.thermit.config.AntBuildModelBase;
+import org.napile.idea.thermit.config.AntBuildTarget;
+import org.napile.idea.thermit.config.AntBuildTargetBase;
+import org.napile.idea.thermit.config.ThermitConfiguration;
+import org.napile.idea.thermit.dom.AntDomImport;
+import org.napile.idea.thermit.dom.AntDomInclude;
+import org.napile.idea.thermit.dom.AntDomIncludingDirective;
+import org.napile.idea.thermit.dom.AntDomProject;
+import org.napile.idea.thermit.dom.AntDomTarget;
+import org.napile.idea.thermit.dom.TargetResolver;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -33,176 +50,214 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+public class AntBuildModelImpl implements AntBuildModelBase
+{
 
-public class AntBuildModelImpl implements AntBuildModelBase {
+	private final AntBuildFile myFile;
+	private final CachedValue<List<AntBuildTargetBase>> myTargets;
 
-  private final AntBuildFile myFile;
-  private final CachedValue<List<AntBuildTargetBase>> myTargets;
+	public AntBuildModelImpl(final AntBuildFile buildFile)
+	{
+		myFile = buildFile;
+		final Project project = myFile.getProject();
 
-  public AntBuildModelImpl(final AntBuildFile buildFile) {
-    myFile = buildFile;
-    final Project project = myFile.getProject();
-    
-    myTargets = new PsiCachedValueImpl<List<AntBuildTargetBase>>(PsiManager.getInstance(project), new CachedValueProvider<List<AntBuildTargetBase>>() {
-      public Result<List<AntBuildTargetBase>> compute() {
-        final Pair<List<AntBuildTargetBase>, Collection<PsiFile>> result = getTargetListImpl(AntBuildModelImpl.this);
-        final Collection<PsiFile> deps = result.getSecond();
-        return Result.create(result.getFirst(), PsiUtilCore.toPsiFileArray(deps));
-      }
-    });    
-  }
+		myTargets = new PsiCachedValueImpl<List<AntBuildTargetBase>>(PsiManager.getInstance(project), new CachedValueProvider<List<AntBuildTargetBase>>()
+		{
+			public Result<List<AntBuildTargetBase>> compute()
+			{
+				final Pair<List<AntBuildTargetBase>, Collection<PsiFile>> result = getTargetListImpl(AntBuildModelImpl.this);
+				final Collection<PsiFile> deps = result.getSecond();
+				return Result.create(result.getFirst(), PsiUtilCore.toPsiFileArray(deps));
+			}
+		});
+	}
 
-  @Nullable
-  public String getDefaultTargetName() {
-    final AntDomProject antDomProject = getAntProject();
-    if (antDomProject != null) {
-      return antDomProject.getDefaultTarget().getRawText();
-    }
-    return "";
-  }
+	@Nullable
+	public String getDefaultTargetName()
+	{
+		final AntDomProject antDomProject = getAntProject();
+		if(antDomProject != null)
+		{
+			return antDomProject.getDefaultTarget().getRawText();
+		}
+		return "";
+	}
 
-  @Nullable
-  public String getName() {
-    final AntDomProject project = getAntProject();
-    return project != null? project.getName().getRawText() : null;
-  }
+	@Nullable
+	public String getName()
+	{
+		final AntDomProject project = getAntProject();
+		return project != null ? project.getName().getRawText() : null;
+	}
 
-  public AntBuildTarget[] getTargets() {
-    final List<AntBuildTargetBase> list = getTargetsList();
-    return list.toArray(new AntBuildTargetBase[list.size()]);
-  }
+	public AntBuildTarget[] getTargets()
+	{
+		final List<AntBuildTargetBase> list = getTargetsList();
+		return list.toArray(new AntBuildTargetBase[list.size()]);
+	}
 
-  public AntBuildTarget[] getFilteredTargets() {
-    final List<AntBuildTargetBase> filtered = new ArrayList<AntBuildTargetBase>();
-    for (final AntBuildTargetBase buildTarget : getTargetsList()) {
-      if (myFile.isTargetVisible(buildTarget)) {
-        filtered.add(buildTarget);
-      }
-    }
-    return (filtered.size() == 0) ? AntBuildTargetBase.EMPTY_ARRAY : filtered.toArray(new AntBuildTargetBase[filtered.size()]);
-  }
+	public AntBuildTarget[] getFilteredTargets()
+	{
+		final List<AntBuildTargetBase> filtered = new ArrayList<AntBuildTargetBase>();
+		for(final AntBuildTargetBase buildTarget : getTargetsList())
+		{
+			if(myFile.isTargetVisible(buildTarget))
+			{
+				filtered.add(buildTarget);
+			}
+		}
+		return (filtered.size() == 0) ? AntBuildTargetBase.EMPTY_ARRAY : filtered.toArray(new AntBuildTargetBase[filtered.size()]);
+	}
 
-  @Nullable
-  public String getDefaultTargetActionId() {
-    if (getDefaultTargetName() == null) {
-      return null;
-    }
-    final String modelName = getName();
-    if (modelName == null || modelName.trim().length() == 0) {
-      return null;
-    }
-    return ThermitConfiguration.getActionIdPrefix(getBuildFile().getProject()) + modelName;
+	@Nullable
+	public String getDefaultTargetActionId()
+	{
+		if(getDefaultTargetName() == null)
+		{
+			return null;
+		}
+		final String modelName = getName();
+		if(modelName == null || modelName.trim().length() == 0)
+		{
+			return null;
+		}
+		return ThermitConfiguration.getActionIdPrefix(getBuildFile().getProject()) + modelName;
 
-  }
+	}
 
-  public AntBuildFileBase getBuildFile() {
-    return (AntBuildFileBase)myFile;
-  }
+	public AntBuildFileBase getBuildFile()
+	{
+		return (AntBuildFileBase) myFile;
+	}
 
-  @Nullable
-  public AntBuildTargetBase findTarget(final String name) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<AntBuildTargetBase>() {
-      @Nullable
-      public AntBuildTargetBase compute() {
-        return findTargetImpl(name, AntBuildModelImpl.this);
-      }
-    });
-  }
+	@Nullable
+	public AntBuildTargetBase findTarget(final String name)
+	{
+		return ApplicationManager.getApplication().runReadAction(new Computable<AntBuildTargetBase>()
+		{
+			@Nullable
+			public AntBuildTargetBase compute()
+			{
+				return findTargetImpl(name, AntBuildModelImpl.this);
+			}
+		});
+	}
 
-  @Nullable
-  public BuildTask findTask(final String targetName, final String taskName) {
-    final AntBuildTargetBase buildTarget = findTarget(targetName);
-    return (buildTarget == null) ? null : buildTarget.findTask(taskName);
-  }
+	@Nullable
+	public BuildTask findTask(final String targetName, final String taskName)
+	{
+		final AntBuildTargetBase buildTarget = findTarget(targetName);
+		return (buildTarget == null) ? null : buildTarget.findTask(taskName);
+	}
 
-  public AntDomProject getAntProject() {
-    return ThermitSupport.getAntDomProject(getBuildFile().getAntFile());
-  }
+	public AntDomProject getAntProject()
+	{
+		return ThermitSupport.getAntDomProject(getBuildFile().getAntFile());
+	}
 
-  public boolean hasTargetWithActionId(final String id) {
-    final List<AntBuildTargetBase> targetsList = getTargetsList();
-    for (AntBuildTargetBase buildTarget : targetsList) {
-      if (id.equals(buildTarget.getActionId())) return true;
-    }
-    return false;
-  }
+	public boolean hasTargetWithActionId(final String id)
+	{
+		final List<AntBuildTargetBase> targetsList = getTargetsList();
+		for(AntBuildTargetBase buildTarget : targetsList)
+		{
+			if(id.equals(buildTarget.getActionId()))
+				return true;
+		}
+		return false;
+	}
 
-  private List<AntBuildTargetBase> getTargetsList() {
-    return ApplicationManager.getApplication().runReadAction(new Computable<List<AntBuildTargetBase>>() {
-      public List<AntBuildTargetBase> compute() {
-        return myTargets.getValue();
-      }
-    });
-  }
+	private List<AntBuildTargetBase> getTargetsList()
+	{
+		return ApplicationManager.getApplication().runReadAction(new Computable<List<AntBuildTargetBase>>()
+		{
+			public List<AntBuildTargetBase> compute()
+			{
+				return myTargets.getValue();
+			}
+		});
+	}
 
-  @Nullable
-  private static AntBuildTargetBase findTargetImpl(final String name, final AntBuildModelImpl model) {
-    final List<AntBuildTargetBase> buildTargetBases = model.myTargets.getValue();
-    for (AntBuildTargetBase targetBase : buildTargetBases) {
-      if (Comparing.strEqual(targetBase.getName(), name)) {
-        return targetBase;
-      }
-    }
-    return null;
-  }
+	@Nullable
+	private static AntBuildTargetBase findTargetImpl(final String name, final AntBuildModelImpl model)
+	{
+		final List<AntBuildTargetBase> buildTargetBases = model.myTargets.getValue();
+		for(AntBuildTargetBase targetBase : buildTargetBases)
+		{
+			if(Comparing.strEqual(targetBase.getName(), name))
+			{
+				return targetBase;
+			}
+		}
+		return null;
+	}
 
-  // todo: return list of dependent psi files as well
-  private static Pair<List<AntBuildTargetBase>, Collection<PsiFile>> getTargetListImpl(final AntBuildModelBase model) {
-    final List<AntBuildTargetBase> list = new ArrayList<AntBuildTargetBase>();
-    final Set<PsiFile> dependencies = new HashSet<PsiFile>();
-    
-    final AntDomProject project = model.getAntProject();
-    if (project != null) {
-      final AntBuildFile buildFile = model.getBuildFile();
-      final XmlFile xmlFile = buildFile.getAntFile();
-      if (xmlFile != null) {
-        dependencies.add(xmlFile);
-      }
-      final VirtualFile sourceFile = buildFile.getVirtualFile();
-      new Object() {
-        private boolean myIsImported = false;
-        private final Set<VirtualFile> myProcessed = new HashSet<VirtualFile>();
-        private AntDomTarget myDefaultTarget = null;
-                
-        private void fillTargets(List<AntBuildTargetBase> list, AntBuildModelBase model, AntDomProject project, VirtualFile sourceFile) {
-          if (myProcessed.contains(sourceFile)) {
-            return;
-          }
-          myProcessed.add(sourceFile);
-          if (!myIsImported) {
-            final TargetResolver.Result result = project.getDefaultTarget().getValue();
-            if (result != null) {
-              final Pair<AntDomTarget,String> targetWithName = result.getResolvedTarget(project.getDefaultTarget().getRawText());
-              myDefaultTarget = targetWithName != null? targetWithName.getFirst() : null;
-            }
-          }
-          for (final AntDomTarget target : project.getDeclaredTargets()) {
-            list.add(new AntBuildTargetImpl(target, model, sourceFile, myIsImported, target.equals(myDefaultTarget)));
-          }
-          
-          myIsImported = true;
-          
-          final Iterable<AntDomIncludingDirective> allIncludes = ContainerUtil.concat((Iterable<AntDomImport>)project.getDeclaredImports(), (Iterable<? extends AntDomInclude>)project.getDeclaredIncludes());
-          for (AntDomIncludingDirective incl : allIncludes) {
-            final PsiFileSystemItem includedFile = incl.getFile().getValue();
-            if (includedFile instanceof PsiFile) {
-              final AntDomProject includedProject = ThermitSupport.getAntDomProject((PsiFile) includedFile);
-              if (includedProject != null) {
-                final PsiFile included = includedFile.getContainingFile().getOriginalFile();
-                dependencies.add(included);
-                fillTargets(list, model, includedProject, included.getVirtualFile());
-              }
-            }
+	// todo: return list of dependent psi files as well
+	private static Pair<List<AntBuildTargetBase>, Collection<PsiFile>> getTargetListImpl(final AntBuildModelBase model)
+	{
+		final List<AntBuildTargetBase> list = new ArrayList<AntBuildTargetBase>();
+		final Set<PsiFile> dependencies = new HashSet<PsiFile>();
 
-          }
-    
-        }
-      }.fillTargets(list, model, project, sourceFile);
-    }
-    return new Pair<List<AntBuildTargetBase>, Collection<PsiFile>>(list, dependencies);
-  }
+		final AntDomProject project = model.getAntProject();
+		if(project != null)
+		{
+			final AntBuildFile buildFile = model.getBuildFile();
+			final XmlFile xmlFile = buildFile.getAntFile();
+			if(xmlFile != null)
+			{
+				dependencies.add(xmlFile);
+			}
+			final VirtualFile sourceFile = buildFile.getVirtualFile();
+			new Object()
+			{
+				private boolean myIsImported = false;
+				private final Set<VirtualFile> myProcessed = new HashSet<VirtualFile>();
+				private AntDomTarget myDefaultTarget = null;
+
+				private void fillTargets(List<AntBuildTargetBase> list, AntBuildModelBase model, AntDomProject project, VirtualFile sourceFile)
+				{
+					if(myProcessed.contains(sourceFile))
+					{
+						return;
+					}
+					myProcessed.add(sourceFile);
+					if(!myIsImported)
+					{
+						final TargetResolver.Result result = project.getDefaultTarget().getValue();
+						if(result != null)
+						{
+							final Pair<AntDomTarget, String> targetWithName = result.getResolvedTarget(project.getDefaultTarget().getRawText());
+							myDefaultTarget = targetWithName != null ? targetWithName.getFirst() : null;
+						}
+					}
+					for(final AntDomTarget target : project.getDeclaredTargets())
+					{
+						list.add(new AntBuildTargetImpl(target, model, sourceFile, myIsImported, target.equals(myDefaultTarget)));
+					}
+
+					myIsImported = true;
+
+					final Iterable<AntDomIncludingDirective> allIncludes = ContainerUtil.concat((Iterable<AntDomImport>) project.getDeclaredImports(), (Iterable<? extends AntDomInclude>) project.getDeclaredIncludes());
+					for(AntDomIncludingDirective incl : allIncludes)
+					{
+						final PsiFileSystemItem includedFile = incl.getFile().getValue();
+						if(includedFile instanceof PsiFile)
+						{
+							final AntDomProject includedProject = ThermitSupport.getAntDomProject((PsiFile) includedFile);
+							if(includedProject != null)
+							{
+								final PsiFile included = includedFile.getContainingFile().getOriginalFile();
+								dependencies.add(included);
+								fillTargets(list, model, includedProject, included.getVirtualFile());
+							}
+						}
+
+					}
+
+				}
+			}.fillTargets(list, model, project, sourceFile);
+		}
+		return new Pair<List<AntBuildTargetBase>, Collection<PsiFile>>(list, dependencies);
+	}
 
 }

@@ -19,9 +19,11 @@ package org.napile.idea.thermit.dom;
  * @author Eugene Zhuravlev
  *         Date: Aug 3, 2010
  */
-public class AntBooleanConverterDefaultTrue extends AntBooleanConverter {
+public class AntBooleanConverterDefaultTrue extends AntBooleanConverter
+{
 
-  public AntBooleanConverterDefaultTrue() {
-    super(true);
-  }
+	public AntBooleanConverterDefaultTrue()
+	{
+		super(true);
+	}
 }

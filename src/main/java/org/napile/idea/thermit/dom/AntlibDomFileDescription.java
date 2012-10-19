@@ -15,35 +15,40 @@
  */
 package org.napile.idea.thermit.dom;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 6, 2010
  */
-public class AntlibDomFileDescription extends AntFileDescription<AntDomAntlib> {
-  private static final String ROOT_TAG_NAME = "antlib";
+public class AntlibDomFileDescription extends AntFileDescription<AntDomAntlib>
+{
+	private static final String ROOT_TAG_NAME = "antlib";
 
-  public AntlibDomFileDescription() {
-    super(AntDomAntlib.class, ROOT_TAG_NAME);
-  }
+	public AntlibDomFileDescription()
+	{
+		super(AntDomAntlib.class, ROOT_TAG_NAME);
+	}
 
-  public boolean isMyFile(@NotNull XmlFile file, @Nullable Module module) {
-    return super.isMyFile(file, module) && isAntLibFile(file);
-  }
+	public boolean isMyFile(@NotNull XmlFile file, @Nullable Module module)
+	{
+		return super.isMyFile(file, module) && isAntLibFile(file);
+	}
 
-  public static boolean isAntLibFile(final XmlFile xmlFile) {
-    final XmlDocument document = xmlFile.getDocument();
-    if (document != null) {
-      final XmlTag tag = document.getRootTag();
-      return tag != null && ROOT_TAG_NAME.equals(tag.getName()) && tag.getContext() instanceof XmlDocument;
-    }
-    return false;
-  }
+	public static boolean isAntLibFile(final XmlFile xmlFile)
+	{
+		final XmlDocument document = xmlFile.getDocument();
+		if(document != null)
+		{
+			final XmlTag tag = document.getRootTag();
+			return tag != null && ROOT_TAG_NAME.equals(tag.getName()) && tag.getContext() instanceof XmlDocument;
+		}
+		return false;
+	}
 
 }

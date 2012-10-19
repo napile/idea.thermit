@@ -22,9 +22,9 @@ import java.util.Map;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import com.intellij.ide.macro.MacroManager;
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.config.ThermitConfigurationBase;
+import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ApplicationComponent;
@@ -43,109 +43,136 @@ import com.intellij.util.config.StorageProperty;
 import com.intellij.util.config.ValueProperty;
 import com.intellij.util.containers.ContainerUtil;
 
-public class GlobalThermitConfiguration implements ApplicationComponent, JDOMExternalizable {
-  private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.config.impl.AntGlobalConfiguration");
-  public static final StorageProperty FILTERS_TABLE_LAYOUT = new StorageProperty("filtersTableLayout");
-  public static final StorageProperty PROPERTIES_TABLE_LAYOUT = new StorageProperty("propertiesTableLayout");
-  static final ListProperty<AntInstallation> ANTS = ListProperty.create("registeredAnts");
-  private final ExternalizablePropertyContainer myProperties = new ExternalizablePropertyContainer();
-  private final AntInstallation myBundledAnt;
-  public static final String BUNDLED_ANT_NAME = AntBundle.message("ant.reference.bundled.ant.name");
-  public final Condition<AntInstallation> IS_USER_ANT = new Condition<AntInstallation>() {
-    public boolean value(AntInstallation antInstallation) {
-      return antInstallation != myBundledAnt;
-    }
-  };
+public class GlobalThermitConfiguration implements ApplicationComponent, JDOMExternalizable
+{
+	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.config.impl.AntGlobalConfiguration");
+	public static final StorageProperty FILTERS_TABLE_LAYOUT = new StorageProperty("filtersTableLayout");
+	public static final StorageProperty PROPERTIES_TABLE_LAYOUT = new StorageProperty("propertiesTableLayout");
+	static final ListProperty<AntInstallation> ANTS = ListProperty.create("registeredAnts");
+	private final ExternalizablePropertyContainer myProperties = new ExternalizablePropertyContainer();
+	private final AntInstallation myBundledAnt;
+	public static final String BUNDLED_ANT_NAME = AntBundle.message("ant.reference.bundled.ant.name");
+	public final Condition<AntInstallation> IS_USER_ANT = new Condition<AntInstallation>()
+	{
+		public boolean value(AntInstallation antInstallation)
+		{
+			return antInstallation != myBundledAnt;
+		}
+	};
 
-  public static final AbstractProperty<GlobalThermitConfiguration> INSTANCE = new ValueProperty<GlobalThermitConfiguration>(
-    "$GlobalThermitConfiguration.INSTANCE", null);
-  @NonNls public static final String ANT_FILE = "thermit";
-  @NonNls public static final String LIB_DIR = "lib";
-  @NonNls public static final String ANT_JAR_FILE_NAME = "thermit.jar";
+	public static final AbstractProperty<GlobalThermitConfiguration> INSTANCE = new ValueProperty<GlobalThermitConfiguration>("$GlobalThermitConfiguration.INSTANCE", null);
+	@NonNls
+	public static final String ANT_FILE = "thermit";
+	@NonNls
+	public static final String LIB_DIR = "lib";
+	@NonNls
+	public static final String ANT_JAR_FILE_NAME = "thermit.jar";
 
-  public GlobalThermitConfiguration() {
-    myProperties.registerProperty(FILTERS_TABLE_LAYOUT);
-    myProperties.registerProperty(PROPERTIES_TABLE_LAYOUT);
-    myProperties.registerProperty(ANTS, ANT_FILE, AntInstallation.EXTERNALIZER);
-    INSTANCE.set(myProperties, this);
-    myProperties.rememberKey(INSTANCE);
+	public GlobalThermitConfiguration()
+	{
+		myProperties.registerProperty(FILTERS_TABLE_LAYOUT);
+		myProperties.registerProperty(PROPERTIES_TABLE_LAYOUT);
+		myProperties.registerProperty(ANTS, ANT_FILE, AntInstallation.EXTERNALIZER);
+		INSTANCE.set(myProperties, this);
+		myProperties.rememberKey(INSTANCE);
 
-    myBundledAnt = createBundledAnt();
-  }
+		myBundledAnt = createBundledAnt();
+	}
 
-  @NotNull
-  public String getComponentName() {
-    return "GlobalThermitConfiguration";
-  }
+	@NotNull
+	public String getComponentName()
+	{
+		return "GlobalThermitConfiguration";
+	}
 
-  public void initComponent() { }
+	public void initComponent()
+	{
+	}
 
-  public static AntInstallation createBundledAnt() {
-    AntInstallation bundledAnt = new AntInstallation() {
-      public AntReference getReference() {
-        return AntReference.BUNDLED_ANT;
-      }
-    };
-    AntInstallation.NAME.set(bundledAnt.getProperties(), BUNDLED_ANT_NAME);
-    final File antHome = PathManager.findFileInLibDirectory(ANT_FILE);
-    AntInstallation.HOME_DIR.set(bundledAnt.getProperties(), antHome.getAbsolutePath());
-    ArrayList<AntClasspathEntry> classpath = AntInstallation.CLASS_PATH.getModifiableList(bundledAnt.getProperties());
-    File antLibDir = new File(antHome, LIB_DIR);
-    classpath.add(new AllJarsUnderDirEntry(antLibDir));
-    bundledAnt.updateVersion(new File(antLibDir, ANT_JAR_FILE_NAME));
-    return bundledAnt;
-  }
+	public static AntInstallation createBundledAnt()
+	{
+		AntInstallation bundledAnt = new AntInstallation()
+		{
+			public AntReference getReference()
+			{
+				return AntReference.BUNDLED_ANT;
+			}
+		};
+		AntInstallation.NAME.set(bundledAnt.getProperties(), BUNDLED_ANT_NAME);
+		final File antHome = PathManager.findFileInLibDirectory(ANT_FILE);
+		AntInstallation.HOME_DIR.set(bundledAnt.getProperties(), antHome.getAbsolutePath());
+		ArrayList<AntClasspathEntry> classpath = AntInstallation.CLASS_PATH.getModifiableList(bundledAnt.getProperties());
+		File antLibDir = new File(antHome, LIB_DIR);
+		classpath.add(new AllJarsUnderDirEntry(antLibDir));
+		bundledAnt.updateVersion(new File(antLibDir, ANT_JAR_FILE_NAME));
+		return bundledAnt;
+	}
 
-  public void disposeComponent() {}
+	public void disposeComponent()
+	{
+	}
 
-  public void readExternal(Element element) throws InvalidDataException {
-    myProperties.readExternal(element);
-  }
+	public void readExternal(Element element) throws InvalidDataException
+	{
+		myProperties.readExternal(element);
+	}
 
-  public void writeExternal(Element element) throws WriteExternalException {
-    myProperties.writeExternal(element);
-  }
+	public void writeExternal(Element element) throws WriteExternalException
+	{
+		myProperties.writeExternal(element);
+	}
 
-  public static GlobalThermitConfiguration getInstance() {
-    return ApplicationManager.getApplication().getComponent(GlobalThermitConfiguration.class);
-  }
+	public static GlobalThermitConfiguration getInstance()
+	{
+		return ApplicationManager.getApplication().getComponent(GlobalThermitConfiguration.class);
+	}
 
-  public Map<AntReference, AntInstallation> getConfiguredAnts() {
-    Map<AntReference, AntInstallation> map = ContainerUtil.newMapFromValues(ANTS.getIterator(getProperties()),
-                                                                            AntInstallation.REFERENCE_TO_ANT);
-    map.put(AntReference.BUNDLED_ANT, myBundledAnt);
-    return map;
-  }
+	public Map<AntReference, AntInstallation> getConfiguredAnts()
+	{
+		Map<AntReference, AntInstallation> map = ContainerUtil.newMapFromValues(ANTS.getIterator(getProperties()), AntInstallation.REFERENCE_TO_ANT);
+		map.put(AntReference.BUNDLED_ANT, myBundledAnt);
+		return map;
+	}
 
-  public AntInstallation getBundledAnt() {
-    return myBundledAnt;
-  }
+	public AntInstallation getBundledAnt()
+	{
+		return myBundledAnt;
+	}
 
-  public AbstractProperty.AbstractPropertyContainer getProperties() {
-    return myProperties;
-  }
+	public AbstractProperty.AbstractPropertyContainer getProperties()
+	{
+		return myProperties;
+	}
 
-  public AbstractProperty.AbstractPropertyContainer getProperties(Project project) {
-    return new CompositePropertyContainer(new AbstractProperty.AbstractPropertyContainer[]{
-      myProperties, ThermitConfigurationBase.getInstance(project).getProperties()});
-  }
+	public AbstractProperty.AbstractPropertyContainer getProperties(Project project)
+	{
+		return new CompositePropertyContainer(new AbstractProperty.AbstractPropertyContainer[]{
+				myProperties,
+				ThermitConfigurationBase.getInstance(project).getProperties()
+		});
+	}
 
-  public void addConfiguration(final AntInstallation ant) {
-    if (getConfiguredAnts().containsKey(ant.getReference())) {
-      LOG.error("Duplicate name: " + ant.getName());
-    }
-    ANTS.getModifiableList(getProperties()).add(ant);
-  }
+	public void addConfiguration(final AntInstallation ant)
+	{
+		if(getConfiguredAnts().containsKey(ant.getReference()))
+		{
+			LOG.error("Duplicate name: " + ant.getName());
+		}
+		ANTS.getModifiableList(getProperties()).add(ant);
+	}
 
-  public void removeConfiguration(final AntInstallation ant) {
-    ANTS.getModifiableList(getProperties()).remove(ant);
-  }
+	public void removeConfiguration(final AntInstallation ant)
+	{
+		ANTS.getModifiableList(getProperties()).remove(ant);
+	}
 
-  public static Sdk findJdk(final String jdkName) {
-    return ProjectJdkTable.getInstance().findJdk(jdkName);
-  }
+	public static Sdk findJdk(final String jdkName)
+	{
+		return ProjectJdkTable.getInstance().findJdk(jdkName);
+	}
 
-  public static MacroManager getMacroManager() {
-    return MacroManager.getInstance();
-  }
+	public static MacroManager getMacroManager()
+	{
+		return MacroManager.getInstance();
+	}
 }

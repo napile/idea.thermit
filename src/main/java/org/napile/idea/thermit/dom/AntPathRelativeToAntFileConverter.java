@@ -15,21 +15,24 @@
  */
 package org.napile.idea.thermit.dom;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.GenericAttributeValue;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 26, 2010
  */
-public class AntPathRelativeToAntFileConverter extends AntPathConverter {
-  protected AntDomProject getEffectiveAntProject(GenericAttributeValue attribValue) {
-    return attribValue.getParentOfType(AntDomProject.class, false);
-  }
+public class AntPathRelativeToAntFileConverter extends AntPathConverter
+{
+	protected AntDomProject getEffectiveAntProject(GenericAttributeValue attribValue)
+	{
+		return attribValue.getParentOfType(AntDomProject.class, false);
+	}
 
-  @Nullable
-  protected String getPathResolveRoot(ConvertContext context, AntDomProject antProject) {
-    return antProject.getContainingFileDir();
-  }
+	@Nullable
+	protected String getPathResolveRoot(ConvertContext context, AntDomProject antProject)
+	{
+		return antProject.getContainingFileDir();
+	}
 }

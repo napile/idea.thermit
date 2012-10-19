@@ -15,25 +15,27 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.NameValue;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 10, 2010
  */
-public abstract class AntDomPropertyDefiningTask extends AntDomPropertyDefiningElement {
+public abstract class AntDomPropertyDefiningTask extends AntDomPropertyDefiningElement
+{
 
-  @Attribute("property")
-  @NameValue
-  public abstract GenericAttributeValue<String> getPropertyName();
+	@Attribute("property")
+	@NameValue
+	public abstract GenericAttributeValue<String> getPropertyName();
 
-  protected List<GenericAttributeValue<String>> getPropertyDefiningAttributes() {
-    return Collections.singletonList(getPropertyName());
-  }
+	protected List<GenericAttributeValue<String>> getPropertyDefiningAttributes()
+	{
+		return Collections.singletonList(getPropertyName());
+	}
 
 }

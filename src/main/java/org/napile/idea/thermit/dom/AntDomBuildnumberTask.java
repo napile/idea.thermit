@@ -15,37 +15,41 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.Collections;
+import java.util.Iterator;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 11, 2010
  */
-public abstract class AntDomBuildnumberTask extends AntDomElement implements PropertiesProvider{
-  public static final String PROPERTY_NAME = "build.number";
+public abstract class AntDomBuildnumberTask extends AntDomElement implements PropertiesProvider
+{
+	public static final String PROPERTY_NAME = "build.number";
 
-  @Attribute("file")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
-  
-  @NotNull 
-  public Iterator<String> getNamesIterator() {
-    return Collections.singletonList(PROPERTY_NAME).iterator();
-  }
+	@Attribute("file")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
 
-  public String getPropertyValue(String propertyName) {
-    return PROPERTY_NAME.equals(propertyName)? "" : null;
-  }
+	@NotNull
+	public Iterator<String> getNamesIterator()
+	{
+		return Collections.singletonList(PROPERTY_NAME).iterator();
+	}
 
-  public PsiElement getNavigationElement(String propertyName) {
-    return PROPERTY_NAME.equals(propertyName)? getXmlElement() : null;
-  }
+	public String getPropertyValue(String propertyName)
+	{
+		return PROPERTY_NAME.equals(propertyName) ? "" : null;
+	}
+
+	public PsiElement getNavigationElement(String propertyName)
+	{
+		return PROPERTY_NAME.equals(propertyName) ? getXmlElement() : null;
+	}
 }

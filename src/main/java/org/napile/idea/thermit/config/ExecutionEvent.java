@@ -15,19 +15,22 @@
  */
 package org.napile.idea.thermit.config;
 
+import org.jdom.Element;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import org.jdom.Element;
 
-public abstract class ExecutionEvent {
-  public abstract String getTypeId();
+public abstract class ExecutionEvent
+{
+	public abstract String getTypeId();
 
-  public abstract String getPresentableName();
+	public abstract String getPresentableName();
 
-  public void readExternal(Element element, Project project) throws InvalidDataException{
-  }
+	public void readExternal(Element element, Project project) throws InvalidDataException
+	{
+	}
 
-  public String writeExternal(Element element, Project project) {
-    return getTypeId();
-  }
+	public String writeExternal(Element element, Project project)
+	{
+		return getTypeId();
+	}
 }

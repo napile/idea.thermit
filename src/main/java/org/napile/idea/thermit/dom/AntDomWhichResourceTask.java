@@ -15,50 +15,59 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.net.URL;
+
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.GenericAttributeValue;
-
-import java.net.URL;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 10, 2010
  */
-public abstract class AntDomWhichResourceTask extends AntDomPropertyDefiningTask implements AntDomClasspathElement{
+public abstract class AntDomWhichResourceTask extends AntDomPropertyDefiningTask implements AntDomClasspathElement
+{
 
-  private volatile ClassLoader myCachedLoader;
+	private volatile ClassLoader myCachedLoader;
 
-  @Attribute("class")
-  public abstract GenericAttributeValue<String> getClassName();
+	@Attribute("class")
+	public abstract GenericAttributeValue<String> getClassName();
 
-  @Attribute("resource")
-  public abstract GenericAttributeValue<String> getResourceName();
+	@Attribute("resource")
+	public abstract GenericAttributeValue<String> getResourceName();
 
-  protected String calcPropertyValue(String propertyName) {
-    String resName = getClassName().getStringValue();
-    if (resName == null) {
-      resName = getResourceName().getStringValue();
-    }
-    else {
-      resName = resName.replace(".", "/") + ".class";
-    }
-    if (resName != null) {
-      final ClassLoader loader = getClassLoader();
-      if (loader != null) {
-        final URL resource = loader.getResource(resName);
-        if (resource != null) {
-          return resource.toExternalForm();
-        }
-      }
-    }
-    return "";
-  }
+	protected String calcPropertyValue(String propertyName)
+	{
+		String resName = getClassName().getStringValue();
+		if(resName == null)
+		{
+			resName = getResourceName().getStringValue();
+		}
+		else
+		{
+			resName = resName.replace(".", "/") + ".class";
+		}
+		if(resName != null)
+		{
+			final ClassLoader loader = getClassLoader();
+			if(loader != null)
+			{
+				final URL resource = loader.getResource(resName);
+				if(resource != null)
+				{
+					return resource.toExternalForm();
+				}
+			}
+		}
+		return "";
+	}
 
-  private ClassLoader getClassLoader() {
-    ClassLoader loader = myCachedLoader;
-    if (loader == null) {
-      myCachedLoader = loader = CustomAntElementsRegistry.createClassLoader(CustomAntElementsRegistry.collectUrls(this), getContextAntProject());
-    }
-    return loader;
-  }
+	private ClassLoader getClassLoader()
+	{
+		ClassLoader loader = myCachedLoader;
+		if(loader == null)
+		{
+			myCachedLoader = loader = CustomAntElementsRegistry.createClassLoader(CustomAntElementsRegistry.collectUrls(this), getContextAntProject());
+		}
+		return loader;
+	}
 }

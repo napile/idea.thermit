@@ -15,43 +15,51 @@
  */
 package org.napile.idea.thermit;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.IdeBundle;
-import com.intellij.openapi.fileTypes.LanguageFileType;
+import javax.swing.Icon;
+
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 
-import javax.swing.*;
+public class AntFileType extends LanguageFileType
+{
 
-public class AntFileType extends LanguageFileType {
+	@NonNls
+	public static final String DEFAULT_EXTENSION = "thermit";
+	@NonNls
+	public static final String DOT_DEFAULT_EXTENSION = ".thermit";
 
-  @NonNls public static final String DEFAULT_EXTENSION = "thermit";
-  @NonNls public static final String DOT_DEFAULT_EXTENSION = ".thermit";
+	public AntFileType()
+	{
+		super(new AntLanguage());
+	}
 
-  public AntFileType() {
-    super(new AntLanguage());
-  }
+	@NotNull
+	@NonNls
+	public String getName()
+	{
+		return "ANT";
+	}
 
-  @NotNull
-  @NonNls
-  public String getName() {
-    return "ANT";
-  }
+	@NotNull
+	public String getDescription()
+	{
+		return IdeBundle.message("filetype.description.ant");
+	}
 
-  @NotNull
-  public String getDescription() {
-    return IdeBundle.message("filetype.description.ant");
-  }
+	@NotNull
+	@NonNls
+	public String getDefaultExtension()
+	{
+		return DEFAULT_EXTENSION;
+	}
 
-  @NotNull
-  @NonNls
-  public String getDefaultExtension() {
-    return DEFAULT_EXTENSION;
-  }
-
-  @Nullable
-  public Icon getIcon() {
-    return AllIcons.FileTypes.Xml;
-  }
+	@Nullable
+	public Icon getIcon()
+	{
+		return AllIcons.FileTypes.Xml;
+	}
 }

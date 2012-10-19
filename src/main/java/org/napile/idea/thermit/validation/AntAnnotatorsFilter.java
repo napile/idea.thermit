@@ -15,9 +15,9 @@
  */
 package org.napile.idea.thermit.validation;
 
+import org.napile.idea.thermit.dom.AntDomFileDescription;
 import com.intellij.lang.ExternalAnnotatorsFilter;
 import com.intellij.lang.annotation.ExternalAnnotator;
-import org.napile.idea.thermit.dom.AntDomFileDescription;
 import com.intellij.lang.xml.XMLExternalAnnotator;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
@@ -25,11 +25,13 @@ import com.intellij.psi.xml.XmlFile;
 /**
  * @author Dmitry Avdeev
  */
-public class AntAnnotatorsFilter implements ExternalAnnotatorsFilter {
-  @Override
-  public boolean isProhibited(ExternalAnnotator annotator, PsiFile file) {
-    return annotator instanceof XMLExternalAnnotator &&
-           file instanceof XmlFile &&
-           AntDomFileDescription.isAntFile((XmlFile)file);
-  }
+public class AntAnnotatorsFilter implements ExternalAnnotatorsFilter
+{
+	@Override
+	public boolean isProhibited(ExternalAnnotator annotator, PsiFile file)
+	{
+		return annotator instanceof XMLExternalAnnotator &&
+				file instanceof XmlFile &&
+				AntDomFileDescription.isAntFile((XmlFile) file);
+	}
 }

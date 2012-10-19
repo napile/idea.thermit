@@ -15,181 +15,223 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.openapi.util.Pair;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.util.Pair;
+
 /**
-* @author Eugene Zhuravlev
-*         Date: Apr 23, 2010
-*/
-public class PropertyExpander {
-  private static final Pattern $$_PATTERN = Pattern.compile("\\$\\$");
-  final List<PropertiesProvider> myProviders = new ArrayList<PropertiesProvider>();
-  final Resolver myResolver;
-  final Set<String> myNamesToSkip = new HashSet<String>();
-  private PropertyExpansionListener myPropertyExpansionListener;
+ * @author Eugene Zhuravlev
+ *         Date: Apr 23, 2010
+ */
+public class PropertyExpander
+{
+	private static final Pattern $$_PATTERN = Pattern.compile("\\$\\$");
+	final List<PropertiesProvider> myProviders = new ArrayList<PropertiesProvider>();
+	final Resolver myResolver;
+	final Set<String> myNamesToSkip = new HashSet<String>();
+	private PropertyExpansionListener myPropertyExpansionListener;
 
-  public interface PropertyExpansionListener {
-    void onPropertyExpanded(String propName, String propValue);
-  }
-  
-  public PropertyExpander(final @NotNull String str) {
-    this(str, Collections.<String>emptySet());
-  }
+	public interface PropertyExpansionListener
+	{
+		void onPropertyExpanded(String propName, String propValue);
+	}
 
-  private PropertyExpander(final @NotNull String str, Set<String> namesToSkip) {
-    myResolver = new Resolver(str, namesToSkip);
-    myNamesToSkip.addAll(namesToSkip);
-  }
+	public PropertyExpander(final @NotNull String str)
+	{
+		this(str, Collections.<String>emptySet());
+	}
 
-  /**
-   * @param listener new listener implementation
-   * @return previous listener
-   */
-  public PropertyExpansionListener setPropertyExpansionListener(PropertyExpansionListener listener) {
-    final PropertyExpansionListener prevListener = myPropertyExpansionListener;
-    myPropertyExpansionListener = listener;
-    return prevListener;
-  }
+	private PropertyExpander(final @NotNull String str, Set<String> namesToSkip)
+	{
+		myResolver = new Resolver(str, namesToSkip);
+		myNamesToSkip.addAll(namesToSkip);
+	}
 
-  public boolean hasPropertiesToExpand() {
-    return myResolver.hasNext();
-  }
+	/**
+	 * @param listener new listener implementation
+	 * @return previous listener
+	 */
+	public PropertyExpansionListener setPropertyExpansionListener(PropertyExpansionListener listener)
+	{
+		final PropertyExpansionListener prevListener = myPropertyExpansionListener;
+		myPropertyExpansionListener = listener;
+		return prevListener;
+	}
 
-  // true if should continue, false to stop
-  public void acceptProvider(PropertiesProvider provider) {
-    while (myResolver.hasNext()) {
-      final String propName = myResolver.next();
-      final String value = provider.getPropertyValue(propName);
-      if (value != null) {
-        myNamesToSkip.add(propName); // prevent infinite recursion
-        final String propValue;
-        if (provider instanceof PropertiesProvider.SkipPropertyExpansionInValues) {
-          propValue = value;
-        }
-        else {
-          final PropertyExpander propertyValueExpander = new PropertyExpander(value, myNamesToSkip);
-          propertyValueExpander.setPropertyExpansionListener(myPropertyExpansionListener);
-          if (propertyValueExpander.hasPropertiesToExpand()) {
-            for (PropertiesProvider p : myProviders) {
-              propertyValueExpander.acceptProvider(p);
-              if (!propertyValueExpander.hasPropertiesToExpand()) {
-                break;
-              }
-            }
-            if (propertyValueExpander.hasPropertiesToExpand()) {
-              propertyValueExpander.acceptProvider(provider);
-            }
-          }
-          propValue = propertyValueExpander.getResult();
-        }
-        myResolver.replace(propValue);
-        notifyPropertyExpanded(propName, propValue);
-      }
-    }
-    myProviders.add(provider);
-    myResolver.restart();
-  }
+	public boolean hasPropertiesToExpand()
+	{
+		return myResolver.hasNext();
+	}
 
-  public void notifyPropertyExpanded(String propName, String propValue) {
-    final PropertyExpansionListener listener = myPropertyExpansionListener;
-    if (listener != null) {
-      listener.onPropertyExpanded(propName, propValue);
-    }
-  }
+	// true if should continue, false to stop
+	public void acceptProvider(PropertiesProvider provider)
+	{
+		while(myResolver.hasNext())
+		{
+			final String propName = myResolver.next();
+			final String value = provider.getPropertyValue(propName);
+			if(value != null)
+			{
+				myNamesToSkip.add(propName); // prevent infinite recursion
+				final String propValue;
+				if(provider instanceof PropertiesProvider.SkipPropertyExpansionInValues)
+				{
+					propValue = value;
+				}
+				else
+				{
+					final PropertyExpander propertyValueExpander = new PropertyExpander(value, myNamesToSkip);
+					propertyValueExpander.setPropertyExpansionListener(myPropertyExpansionListener);
+					if(propertyValueExpander.hasPropertiesToExpand())
+					{
+						for(PropertiesProvider p : myProviders)
+						{
+							propertyValueExpander.acceptProvider(p);
+							if(!propertyValueExpander.hasPropertiesToExpand())
+							{
+								break;
+							}
+						}
+						if(propertyValueExpander.hasPropertiesToExpand())
+						{
+							propertyValueExpander.acceptProvider(provider);
+						}
+					}
+					propValue = propertyValueExpander.getResult();
+				}
+				myResolver.replace(propValue);
+				notifyPropertyExpanded(propName, propValue);
+			}
+		}
+		myProviders.add(provider);
+		myResolver.restart();
+	}
 
-  @NotNull
-  public String getResult() {
-    return myResolver.getResult();
-  }
+	public void notifyPropertyExpanded(String propName, String propValue)
+	{
+		final PropertyExpansionListener listener = myPropertyExpansionListener;
+		if(listener != null)
+		{
+			listener.onPropertyExpanded(propName, propValue);
+		}
+	}
+
+	@NotNull
+	public String getResult()
+	{
+		return myResolver.getResult();
+	}
 
 
-  private static class Resolver implements Iterator<String> {
-    private int myCurrentIndex = -1;
-    private List<Pair<String /*property name without ${} characters*/, Integer /*offset of property occurrence including '$' char*/>> myPropertyNames; 
-    private StringBuilder myBuilder;
-    
-    private Resolver(final String str, Set<String> namesToSkip) {
-      myBuilder = new StringBuilder(str);
-      int startProp = 0;
-      while ((startProp = str.indexOf("${", startProp)) >= 0) {
-        if (startProp > 0 && str.charAt(startProp - 1) == '$') {
-          // the '$' is escaped
-          startProp += 2;
-          continue;
-        }
-        final int endProp = str.indexOf('}', startProp + 2);
-        if (endProp <= startProp + 2) {
-          startProp += 2;
-          continue;
-        }
-        final String prop = str.substring(startProp + 2, endProp);
-        if (!namesToSkip.contains(prop)) {
-          if (myPropertyNames == null) {
-            myPropertyNames = new ArrayList<Pair<String, Integer>>();
-          }
-          myPropertyNames.add(new Pair<String, Integer>(prop, startProp));
-        }
-        startProp += 2;
-      }
-      if (myPropertyNames == null) {
-        myPropertyNames = Collections.emptyList();
-      }
-    }
+	private static class Resolver implements Iterator<String>
+	{
+		private int myCurrentIndex = -1;
+		private List<Pair<String /*property name without ${} characters*/, Integer /*offset of property occurrence including '$' char*/>> myPropertyNames;
+		private StringBuilder myBuilder;
 
-    void restart() {
-      myCurrentIndex = -1;
-    }
+		private Resolver(final String str, Set<String> namesToSkip)
+		{
+			myBuilder = new StringBuilder(str);
+			int startProp = 0;
+			while((startProp = str.indexOf("${", startProp)) >= 0)
+			{
+				if(startProp > 0 && str.charAt(startProp - 1) == '$')
+				{
+					// the '$' is escaped
+					startProp += 2;
+					continue;
+				}
+				final int endProp = str.indexOf('}', startProp + 2);
+				if(endProp <= startProp + 2)
+				{
+					startProp += 2;
+					continue;
+				}
+				final String prop = str.substring(startProp + 2, endProp);
+				if(!namesToSkip.contains(prop))
+				{
+					if(myPropertyNames == null)
+					{
+						myPropertyNames = new ArrayList<Pair<String, Integer>>();
+					}
+					myPropertyNames.add(new Pair<String, Integer>(prop, startProp));
+				}
+				startProp += 2;
+			}
+			if(myPropertyNames == null)
+			{
+				myPropertyNames = Collections.emptyList();
+			}
+		}
 
-    void replace(String newValue) {
-      final String name = getPropertyName(myCurrentIndex);
-      final int shift = newValue.length() - name.length() - 3/*property beginning and ending symbols '${}'*/;
-      // correct property offsets
-      for (int idx = myCurrentIndex + 1; idx < myPropertyNames.size(); idx++) {
-        final int currentOffset = getPropertyOffset(idx);
-        setPropertyOffset(idx, currentOffset + shift);
-      }
-      final int offset = getPropertyOffset(myCurrentIndex);
-      myBuilder.replace(offset, offset + name.length() + 3/*ending brace*/, newValue);
-      myPropertyNames.remove(myCurrentIndex);
-      myCurrentIndex--;
-    }
+		void restart()
+		{
+			myCurrentIndex = -1;
+		}
 
-    private String getPropertyName(int index) {
-      return myPropertyNames.get(index).getFirst();
-    }
+		void replace(String newValue)
+		{
+			final String name = getPropertyName(myCurrentIndex);
+			final int shift = newValue.length() - name.length() - 3/*property beginning and ending symbols '${}'*/;
+			// correct property offsets
+			for(int idx = myCurrentIndex + 1; idx < myPropertyNames.size(); idx++)
+			{
+				final int currentOffset = getPropertyOffset(idx);
+				setPropertyOffset(idx, currentOffset + shift);
+			}
+			final int offset = getPropertyOffset(myCurrentIndex);
+			myBuilder.replace(offset, offset + name.length() + 3/*ending brace*/, newValue);
+			myPropertyNames.remove(myCurrentIndex);
+			myCurrentIndex--;
+		}
 
-    private int getPropertyOffset(int index) {
-      return myPropertyNames.get(index).getSecond();
-    }
+		private String getPropertyName(int index)
+		{
+			return myPropertyNames.get(index).getFirst();
+		}
 
-    private void setPropertyOffset(int index, int value) {
-      final Pair<String, Integer> pair = myPropertyNames.get(index);
-      myPropertyNames.set(index, new Pair<String, Integer>(pair.getFirst(), value));
-    }
+		private int getPropertyOffset(int index)
+		{
+			return myPropertyNames.get(index).getSecond();
+		}
 
-    String getResult() {
-      final String value = myBuilder.toString();
-      if (value.indexOf("$$") >= 0) {
-        return $$_PATTERN.matcher(value).replaceAll("\\$");
-      }
-      return value;
-    }
+		private void setPropertyOffset(int index, int value)
+		{
+			final Pair<String, Integer> pair = myPropertyNames.get(index);
+			myPropertyNames.set(index, new Pair<String, Integer>(pair.getFirst(), value));
+		}
 
-    public boolean hasNext() {
-      return (myCurrentIndex + 1) < myPropertyNames.size();
-    }
+		String getResult()
+		{
+			final String value = myBuilder.toString();
+			if(value.indexOf("$$") >= 0)
+			{
+				return $$_PATTERN.matcher(value).replaceAll("\\$");
+			}
+			return value;
+		}
 
-    public String next() {
-      return getPropertyName(++myCurrentIndex);
-    }
+		public boolean hasNext()
+		{
+			return (myCurrentIndex + 1) < myPropertyNames.size();
+		}
 
-    public void remove() {
-      replace("");
-    }
-  }
+		public String next()
+		{
+			return getPropertyName(++myCurrentIndex);
+		}
+
+		public void remove()
+		{
+			replace("");
+		}
+	}
 
 }

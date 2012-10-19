@@ -15,31 +15,36 @@
  */
 package org.napile.idea.thermit.validation;
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import org.napile.idea.thermit.AntBundle;
-import org.napile.idea.thermit.dom.AntDomProject;
-import com.intellij.util.xml.highlighting.BasicDomElementsInspection;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.dom.AntDomProject;
+import com.intellij.codeHighlighting.HighlightDisplayLevel;
+import com.intellij.util.xml.highlighting.BasicDomElementsInspection;
 
-public abstract class AntInspection extends BasicDomElementsInspection<AntDomProject> {
+public abstract class AntInspection extends BasicDomElementsInspection<AntDomProject>
+{
 
-  protected AntInspection() {
-    super(AntDomProject.class);
-  }
+	protected AntInspection()
+	{
+		super(AntDomProject.class);
+	}
 
-  @Nls
-  @NotNull
-  public String getGroupDisplayName() {
-    return AntBundle.message("ant.inspections.display.name");
-  }
+	@Nls
+	@NotNull
+	public String getGroupDisplayName()
+	{
+		return AntBundle.message("ant.inspections.display.name");
+	}
 
-  @NotNull
-  public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.ERROR;
-  }
+	@NotNull
+	public HighlightDisplayLevel getDefaultLevel()
+	{
+		return HighlightDisplayLevel.ERROR;
+	}
 
-  public boolean isEnabledByDefault() {
-    return true;
-  }
+	public boolean isEnabledByDefault()
+	{
+		return true;
+	}
 }

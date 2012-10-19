@@ -19,6 +19,7 @@ package org.napile.idea.thermit.dom;
  * @author Eugene Zhuravlev
  *         Date: Apr 23, 2010
  */
-public abstract class AntDomInclude extends AntDomIncludingDirective {
+public abstract class AntDomInclude extends AntDomIncludingDirective
+{
 
 }

@@ -15,6 +15,12 @@
  */
 package org.napile.idea.thermit.config.execution;
 
+import java.io.File;
+import java.io.OutputStream;
+
+import javax.swing.JComponent;
+
+import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.execution.filters.TextConsoleBuilder;
@@ -28,207 +34,246 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.StringBuilderSpinAllocator;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.io.File;
-import java.io.OutputStream;
+public final class PlainTextView implements AntOutputView
+{
 
-public final class PlainTextView implements AntOutputView {
+	private final ConsoleView myConsole;
+	private final Project myProject;
+	private String myCommandLine;
+	private final LightProcessHandler myProcessHandler = new LightProcessHandler();
 
-  private final ConsoleView myConsole;
-  private final Project myProject;
-  private String myCommandLine;
-  private final LightProcessHandler myProcessHandler = new LightProcessHandler();
+	public PlainTextView(Project project)
+	{
+		myProject = project;
+		TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
+		builder.addFilter(new AntMessageFilter());
+		builder.addFilter(new JUnitFilter());
+		myConsole = builder.getConsole();
+		myConsole.attachToProcess(myProcessHandler);
+	}
 
-  public PlainTextView(Project project) {
-    myProject = project;
-    TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
-    builder.addFilter(new AntMessageFilter());
-    builder.addFilter(new JUnitFilter());
-    myConsole = builder.getConsole();
-    myConsole.attachToProcess(myProcessHandler);
-  }
+	public void dispose()
+	{
+		myConsole.dispose();
+	}
 
-  public void dispose() {
-    myConsole.dispose();
-  }
+	public JComponent getComponent()
+	{
+		return myConsole.getComponent();
+	}
 
-  public JComponent getComponent() {
-    return myConsole.getComponent();
-  }
+	@Nullable
+	public Object addMessage(AntMessage message)
+	{
+		print(message.getText() + "\n", ProcessOutputTypes.STDOUT);
+		return null;
+	}
 
-  @Nullable
-  public Object addMessage(AntMessage message) {
-    print(message.getText() + "\n", ProcessOutputTypes.STDOUT);
-    return null;
-  }
+	private void print(String text, Key type)
+	{
+		myProcessHandler.notifyTextAvailable(text, type);
+	}
 
-  private void print(String text, Key type) {
-    myProcessHandler.notifyTextAvailable(text, type);
-  }
+	public void addMessages(AntMessage[] messages)
+	{
+		for(AntMessage message : messages)
+		{
+			addMessage(message);
+		}
+	}
 
-  public void addMessages(AntMessage[] messages) {
-    for (AntMessage message : messages) {
-      addMessage(message);
-    }
-  }
+	public void addJavacMessage(AntMessage message, String url)
+	{
+		final VirtualFile file = message.getFile();
+		if(message.getLine() > 0)
+		{
+			final StringBuilder builder = StringBuilderSpinAllocator.alloc();
+			try
+			{
 
-  public void addJavacMessage(AntMessage message, String url) {
-    final VirtualFile file = message.getFile();
-    if (message.getLine() > 0) {
-      final StringBuilder builder = StringBuilderSpinAllocator.alloc();
-      try {
+				if(file != null)
+				{
+					ApplicationManager.getApplication().runReadAction(new Runnable()
+					{
+						public void run()
+						{
+							String presentableUrl = file.getPresentableUrl();
+							builder.append(presentableUrl);
+							builder.append(' ');
+						}
+					});
+				}
+				else if(url != null)
+				{
+					builder.append(url);
+					builder.append(' ');
+				}
+				builder.append('(');
+				builder.append(message.getLine());
+				builder.append(':');
+				builder.append(message.getColumn());
+				builder.append(")");
+				print(builder.toString(), ProcessOutputTypes.STDOUT);
+			}
+			finally
+			{
+				StringBuilderSpinAllocator.dispose(builder);
+			}
+		}
+		print(message.getText(), ProcessOutputTypes.STDOUT);
+	}
 
-        if (file != null) {
-          ApplicationManager.getApplication().runReadAction(new Runnable() {
-            public void run() {
-              String presentableUrl = file.getPresentableUrl();
-              builder.append(presentableUrl);
-              builder.append(' ');
-            }
-          });
-        }
-        else if (url != null) {
-          builder.append(url);
-          builder.append(' ');
-        }
-        builder.append('(');
-        builder.append(message.getLine());
-        builder.append(':');
-        builder.append(message.getColumn());
-        builder.append(")");
-        print(builder.toString(), ProcessOutputTypes.STDOUT);
-      }
-      finally {
-        StringBuilderSpinAllocator.dispose(builder);
-      }
-    }
-    print(message.getText(), ProcessOutputTypes.STDOUT);
-  }
+	public void addException(AntMessage exception, boolean showFullTrace)
+	{
+		String text = exception.getText();
+		if(!showFullTrace)
+		{
+			int index = text.indexOf("\r\n");
+			if(index != -1)
+			{
+				text = text.substring(0, index) + "\n";
+			}
+		}
+		print(text, ProcessOutputTypes.STDOUT);
+	}
 
-  public void addException(AntMessage exception, boolean showFullTrace) {
-    String text = exception.getText();
-    if (!showFullTrace) {
-      int index = text.indexOf("\r\n");
-      if (index != -1) {
-        text = text.substring(0, index) + "\n";
-      }
-    }
-    print(text, ProcessOutputTypes.STDOUT);
-  }
+	public void clearAllMessages()
+	{
+		myConsole.clear();
+	}
 
-  public void clearAllMessages() {
-    myConsole.clear();
-  }
+	public void startBuild(AntMessage message)
+	{
+		print(myCommandLine + "\n", ProcessOutputTypes.SYSTEM);
+		addMessage(message);
+	}
 
-  public void startBuild(AntMessage message) {
-    print(myCommandLine + "\n", ProcessOutputTypes.SYSTEM);
-    addMessage(message);
-  }
+	public void buildFailed(AntMessage message)
+	{
+		print(myCommandLine + "\n", ProcessOutputTypes.SYSTEM);
+		addMessage(message);
+	}
 
-  public void buildFailed(AntMessage message) {
-    print(myCommandLine + "\n", ProcessOutputTypes.SYSTEM);
-    addMessage(message);
-  }
+	public void startTarget(AntMessage message)
+	{
+		addMessage(message);
+	}
 
-  public void startTarget(AntMessage message) {
-    addMessage(message);
-  }
+	public void startTask(AntMessage message)
+	{
+		addMessage(message);
+	}
 
-  public void startTask(AntMessage message) {
-    addMessage(message);
-  }
+	public void finishBuild(String messageText)
+	{
+		print("\n" + messageText + "\n", ProcessOutputTypes.SYSTEM);
+	}
 
-  public void finishBuild(String messageText) {
-    print("\n" + messageText + "\n", ProcessOutputTypes.SYSTEM);
-  }
+	public void finishTarget()
+	{
+	}
 
-  public void finishTarget() {
-  }
+	public void finishTask()
+	{
+	}
 
-  public void finishTask() {
-  }
+	@Nullable
+	public Object getData(String dataId)
+	{
+		return null;
+	}
 
-  @Nullable
-  public Object getData(String dataId) {
-    return null;
-  }
+	public void setBuildCommandLine(String commandLine)
+	{
+		myCommandLine = commandLine;
+	}
 
-  public void setBuildCommandLine(String commandLine) {
-    myCommandLine = commandLine;
-  }
+	private final class JUnitFilter implements Filter
+	{
+		@Nullable
+		public Result applyFilter(String line, int entireLength)
+		{
+			HyperlinkUtil.PlaceInfo placeInfo = HyperlinkUtil.parseJUnitMessage(myProject, line);
+			if(placeInfo == null)
+			{
+				return null;
+			}
 
-  private final class JUnitFilter implements Filter {
-    @Nullable
-    public Result applyFilter(String line, int entireLength) {
-      HyperlinkUtil.PlaceInfo placeInfo = HyperlinkUtil.parseJUnitMessage(myProject, line);
-      if (placeInfo == null) {
-        return null;
-      }
+			int textStartOffset = entireLength - line.length();
+			int highlightStartOffset = textStartOffset + placeInfo.getLinkStartIndex();
+			int highlightEndOffset = textStartOffset + placeInfo.getLinkEndIndex() + 1;
 
-      int textStartOffset = entireLength - line.length();
-      int highlightStartOffset = textStartOffset + placeInfo.getLinkStartIndex();
-      int highlightEndOffset = textStartOffset + placeInfo.getLinkEndIndex() + 1;
+			OpenFileHyperlinkInfo info = new OpenFileHyperlinkInfo(myProject, placeInfo.getFile(), placeInfo.getLine(), placeInfo.getColumn());
+			return new Result(highlightStartOffset, highlightEndOffset, info);
+		}
+	}
 
-      OpenFileHyperlinkInfo info = new OpenFileHyperlinkInfo(myProject, placeInfo.getFile(), placeInfo.getLine(), placeInfo.getColumn());
-      return new Result(highlightStartOffset, highlightEndOffset, info);
-    }
-  }
+	private final class AntMessageFilter implements Filter
+	{
+		public Result applyFilter(String line, int entireLength)
+		{
+			int afterLineNumberIndex = line.indexOf(": "); // end of file_name_and_line_number sequence
+			if(afterLineNumberIndex == -1)
+			{
+				return null;
+			}
 
-  private final class AntMessageFilter implements Filter {
-    public Result applyFilter(String line, int entireLength) {
-      int afterLineNumberIndex = line.indexOf(": "); // end of file_name_and_line_number sequence
-      if (afterLineNumberIndex == -1) {
-        return null;
-      }
+			String fileAndLineNumber = line.substring(0, afterLineNumberIndex);
+			int index = fileAndLineNumber.lastIndexOf(':');
 
-      String fileAndLineNumber = line.substring(0, afterLineNumberIndex);
-      int index = fileAndLineNumber.lastIndexOf(':');
+			if(index == -1)
+			{
+				return null;
+			}
 
-      if (index == -1) {
-        return null;
-      }
+			final String fileName = fileAndLineNumber.substring(0, index);
+			String lineNumberStr = fileAndLineNumber.substring(index + 1, fileAndLineNumber.length()).trim();
+			int lineNumber;
+			try
+			{
+				lineNumber = Integer.parseInt(lineNumberStr);
+			}
+			catch(NumberFormatException e)
+			{
+				return null;
+			}
 
-      final String fileName = fileAndLineNumber.substring(0, index);
-      String lineNumberStr = fileAndLineNumber.substring(index + 1, fileAndLineNumber.length()).trim();
-      int lineNumber;
-      try {
-        lineNumber = Integer.parseInt(lineNumberStr);
-      }
-      catch (NumberFormatException e) {
-        return null;
-      }
+			final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fileName.replace(File.separatorChar, '/'));
+			if(file == null)
+			{
+				return null;
+			}
 
-      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fileName.replace(File.separatorChar, '/'));
-      if (file == null) {
-        return null;
-      }
+			int textStartOffset = entireLength - line.length();
+			int highlightEndOffset = textStartOffset + afterLineNumberIndex;
 
-      int textStartOffset = entireLength - line.length();
-      int highlightEndOffset = textStartOffset + afterLineNumberIndex;
+			OpenFileHyperlinkInfo info = new OpenFileHyperlinkInfo(myProject, file, lineNumber - 1);
+			return new Result(textStartOffset, highlightEndOffset, info);
+		}
+	}
 
-      OpenFileHyperlinkInfo info = new OpenFileHyperlinkInfo(myProject, file, lineNumber - 1);
-      return new Result(textStartOffset, highlightEndOffset, info);
-    }
-  }
+	private static class LightProcessHandler extends ProcessHandler
+	{
+		protected void destroyProcessImpl()
+		{
+			throw new UnsupportedOperationException();
+		}
 
-  private static class LightProcessHandler extends ProcessHandler {
-    protected void destroyProcessImpl() {
-      throw new UnsupportedOperationException();
-    }
+		protected void detachProcessImpl()
+		{
+			throw new UnsupportedOperationException();
+		}
 
-    protected void detachProcessImpl() {
-      throw new UnsupportedOperationException();
-    }
+		public boolean detachIsDefault()
+		{
+			return false;
+		}
 
-    public boolean detachIsDefault() {
-      return false;
-    }
-
-    @Nullable
-    public OutputStream getProcessInput() {
-      return null;
-    }
-  }
+		@Nullable
+		public OutputStream getProcessInput()
+		{
+			return null;
+		}
+	}
 }

@@ -15,6 +15,11 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.io.File;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -22,97 +27,115 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
-import com.intellij.util.xml.*;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.Converter;
+import com.intellij.util.xml.CustomReferenceConverter;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.GenericDomValue;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 26, 2010
  */
-public class AntPathConverter extends Converter<PsiFileSystemItem> implements CustomReferenceConverter<PsiFileSystemItem>{
+public class AntPathConverter extends Converter<PsiFileSystemItem> implements CustomReferenceConverter<PsiFileSystemItem>
+{
 
-  private final boolean myShouldValidateRefs;
+	private final boolean myShouldValidateRefs;
 
-  public AntPathConverter() {
-    this(false);
-  }
+	public AntPathConverter()
+	{
+		this(false);
+	}
 
-  protected AntPathConverter(boolean validateRefs) {
-    myShouldValidateRefs = validateRefs;
-  }
+	protected AntPathConverter(boolean validateRefs)
+	{
+		myShouldValidateRefs = validateRefs;
+	}
 
-  @Override
-  public PsiFileSystemItem fromString(@Nullable @NonNls String s, ConvertContext context) {
-    final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
-    if (attribValue == null) {
-      return null;
-    }
-    String path = attribValue.getStringValue();
-    if (path == null) {
-      path = getAttributeDefaultValue(context, attribValue);
-    }
-    if (path == null) {
-      return null;
-    }
-    File file = new File(path);
-    if (!file.isAbsolute()) {
-      final AntDomProject antProject = getEffectiveAntProject(attribValue);
-      if (antProject == null) {
-        return null;
-      }
-      file = new File(getPathResolveRoot(context, antProject), path);
-    }
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(file.getAbsolutePath()));
-    if (vFile == null) {
-      return null;
-    }
-    final PsiManager psiManager = context.getPsiManager();
+	@Override
+	public PsiFileSystemItem fromString(@Nullable @NonNls String s, ConvertContext context)
+	{
+		final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
+		if(attribValue == null)
+		{
+			return null;
+		}
+		String path = attribValue.getStringValue();
+		if(path == null)
+		{
+			path = getAttributeDefaultValue(context, attribValue);
+		}
+		if(path == null)
+		{
+			return null;
+		}
+		File file = new File(path);
+		if(!file.isAbsolute())
+		{
+			final AntDomProject antProject = getEffectiveAntProject(attribValue);
+			if(antProject == null)
+			{
+				return null;
+			}
+			file = new File(getPathResolveRoot(context, antProject), path);
+		}
+		VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(file.getAbsolutePath()));
+		if(vFile == null)
+		{
+			return null;
+		}
+		final PsiManager psiManager = context.getPsiManager();
 
-    return vFile.isDirectory()? psiManager.findDirectory(vFile) : psiManager.findFile(vFile);
-  }
+		return vFile.isDirectory() ? psiManager.findDirectory(vFile) : psiManager.findFile(vFile);
+	}
 
-  protected AntDomProject getEffectiveAntProject(GenericAttributeValue attribValue) {
-    AntDomProject project = attribValue.getParentOfType(AntDomProject.class, false);
-    if (project != null) {
-      project = project.getContextAntProject();
-    }
-    return project;
-  }
+	protected AntDomProject getEffectiveAntProject(GenericAttributeValue attribValue)
+	{
+		AntDomProject project = attribValue.getParentOfType(AntDomProject.class, false);
+		if(project != null)
+		{
+			project = project.getContextAntProject();
+		}
+		return project;
+	}
 
-  @Nullable
-  protected String getPathResolveRoot(ConvertContext context, AntDomProject antProject) {
-    return antProject.getProjectBasedirPath();
-  }
+	@Nullable
+	protected String getPathResolveRoot(ConvertContext context, AntDomProject antProject)
+	{
+		return antProject.getProjectBasedirPath();
+	}
 
-  @Nullable
-  protected String getAttributeDefaultValue(ConvertContext context, GenericAttributeValue attribValue) {
-    return null;
-  }
+	@Nullable
+	protected String getAttributeDefaultValue(ConvertContext context, GenericAttributeValue attribValue)
+	{
+		return null;
+	}
 
-  @Override
-  public String toString(@Nullable PsiFileSystemItem file, ConvertContext context) {
-    final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
-    if (attribValue == null) {
-      return null;
-    }
-    return attribValue.getRawText();
-  }
+	@Override
+	public String toString(@Nullable PsiFileSystemItem file, ConvertContext context)
+	{
+		final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
+		if(attribValue == null)
+		{
+			return null;
+		}
+		return attribValue.getRawText();
+	}
 
 
-  @NotNull
-  public PsiReference[] createReferences(GenericDomValue<PsiFileSystemItem> genericDomValue, PsiElement element, ConvertContext context) {
-    if (genericDomValue instanceof GenericAttributeValue) {
-      final GenericAttributeValue attrib = (GenericAttributeValue)genericDomValue;
-      if (attrib.getRawText() != null) {
-        final AntDomFileReferenceSet refSet = new AntDomFileReferenceSet(attrib, myShouldValidateRefs);
-        return refSet.getAllReferences();
-      }
-    }
-    return PsiReference.EMPTY_ARRAY;
-  }
+	@NotNull
+	public PsiReference[] createReferences(GenericDomValue<PsiFileSystemItem> genericDomValue, PsiElement element, ConvertContext context)
+	{
+		if(genericDomValue instanceof GenericAttributeValue)
+		{
+			final GenericAttributeValue attrib = (GenericAttributeValue) genericDomValue;
+			if(attrib.getRawText() != null)
+			{
+				final AntDomFileReferenceSet refSet = new AntDomFileReferenceSet(attrib, myShouldValidateRefs);
+				return refSet.getAllReferences();
+			}
+		}
+		return PsiReference.EMPTY_ARRAY;
+	}
 
 }

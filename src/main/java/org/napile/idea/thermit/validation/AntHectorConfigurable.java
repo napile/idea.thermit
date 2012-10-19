@@ -15,6 +15,23 @@
  */
 package org.napile.idea.thermit.validation;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.jetbrains.annotations.NonNls;
 import org.napile.idea.thermit.AntImportsIndex;
 import org.napile.idea.thermit.config.ThermitConfigurationBase;
 import org.napile.idea.thermit.dom.AntDomFileDescription;
@@ -31,125 +48,132 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.PathUtil;
 import com.intellij.util.indexing.FileBasedIndex;
-import org.jetbrains.annotations.NonNls;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: May 12, 2008
  */
-public class AntHectorConfigurable extends HectorComponentPanel {
-  @NonNls
-  private static final String NONE = "<None>";
-  @NonNls 
-  public static final String CONTEXTS_COMBO_KEY = "AntContextsComboBox";
+public class AntHectorConfigurable extends HectorComponentPanel
+{
+	@NonNls
+	private static final String NONE = "<None>";
+	@NonNls
+	public static final String CONTEXTS_COMBO_KEY = "AntContextsComboBox";
 
-  private final XmlFile myFile;
-  private final String myLocalPath;
-  private final Map<String, XmlFile> myPathToFileMap = new HashMap<String, XmlFile>();
-  private String myOriginalContext = NONE;
-  
-  private JComboBox myCombo;
-  private final GlobalSearchScope myFileFilter;
-  private final Project myProject;
+	private final XmlFile myFile;
+	private final String myLocalPath;
+	private final Map<String, XmlFile> myPathToFileMap = new HashMap<String, XmlFile>();
+	private String myOriginalContext = NONE;
 
-  public AntHectorConfigurable(XmlFile file) {
-    myFile = file;
-    myProject = file.getProject();
-    final VirtualFile selfVFile = myFile.getVirtualFile();
-    myLocalPath = PathUtil.getLocalPath(selfVFile);
-    myFileFilter = GlobalSearchScope.projectScope(myProject);
-  }
+	private JComboBox myCombo;
+	private final GlobalSearchScope myFileFilter;
+	private final Project myProject;
 
-  public boolean canClose() {
-    return !myCombo.isPopupVisible();
-  }
+	public AntHectorConfigurable(XmlFile file)
+	{
+		myFile = file;
+		myProject = file.getProject();
+		final VirtualFile selfVFile = myFile.getVirtualFile();
+		myLocalPath = PathUtil.getLocalPath(selfVFile);
+		myFileFilter = GlobalSearchScope.projectScope(myProject);
+	}
 
-  public JComponent createComponent() {
-    final JPanel panel = new JPanel(new GridBagLayout());
-    panel.setBorder(IdeBorderFactory.createTitledBorder("File Context", false));
-    myCombo = new ComboBox();
-    myCombo.putClientProperty(CONTEXTS_COMBO_KEY, Boolean.TRUE);
-    panel.add(
-        new JLabel("Included into:"), 
-        new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0)
-    );
-    panel.add(
-      myCombo,
-      new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 0), 0, 0));
+	public boolean canClose()
+	{
+		return !myCombo.isPopupVisible();
+	}
 
-    final PsiManager psiManager = PsiManager.getInstance(myProject);
-    final FileBasedIndex fbi = FileBasedIndex.getInstance();
-    final Collection<VirtualFile> antFiles = fbi.getContainingFiles(AntImportsIndex.INDEX_NAME, AntImportsIndex.ANT_FILES_WITH_IMPORTS_KEY, myFileFilter);
-    
-    for (VirtualFile file : antFiles) {
-      final PsiFile psiFile = psiManager.findFile(file);
-      if (!(psiFile instanceof XmlFile)) {
-        continue;
-      }
-      final XmlFile xmlFile = (XmlFile)psiFile;
-      if (!xmlFile.equals(myFile) && AntDomFileDescription.isAntFile(xmlFile)) {
-        final String path = PathUtil.getLocalPath(file);
-        final XmlFile previous = myPathToFileMap.put(path, xmlFile);
-        assert previous == null;
-      }
-    }
+	public JComponent createComponent()
+	{
+		final JPanel panel = new JPanel(new GridBagLayout());
+		panel.setBorder(IdeBorderFactory.createTitledBorder("File Context", false));
+		myCombo = new ComboBox();
+		myCombo.putClientProperty(CONTEXTS_COMBO_KEY, Boolean.TRUE);
+		panel.add(new JLabel("Included into:"), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 5, 0), 0, 0));
+		panel.add(myCombo, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 0), 0, 0));
 
-    final List<String> paths = new ArrayList<String>(myPathToFileMap.keySet());
-    Collections.sort(paths, new Comparator<String>() {
-      public int compare(final String o1, final String o2) {
-        return o1.compareTo(o2);
-      }
-    });
+		final PsiManager psiManager = PsiManager.getInstance(myProject);
+		final FileBasedIndex fbi = FileBasedIndex.getInstance();
+		final Collection<VirtualFile> antFiles = fbi.getContainingFiles(AntImportsIndex.INDEX_NAME, AntImportsIndex.ANT_FILES_WITH_IMPORTS_KEY, myFileFilter);
 
-    myCombo.addItem(NONE);
-    for (String path : paths) {
-      myCombo.addItem(path);
-    }
+		for(VirtualFile file : antFiles)
+		{
+			final PsiFile psiFile = psiManager.findFile(file);
+			if(!(psiFile instanceof XmlFile))
+			{
+				continue;
+			}
+			final XmlFile xmlFile = (XmlFile) psiFile;
+			if(!xmlFile.equals(myFile) && AntDomFileDescription.isAntFile(xmlFile))
+			{
+				final String path = PathUtil.getLocalPath(file);
+				final XmlFile previous = myPathToFileMap.put(path, xmlFile);
+				assert previous == null;
+			}
+		}
 
-    final ThermitConfigurationBase antConfig = ThermitConfigurationBase.getInstance(myProject);
-    final XmlFile currentContext = antConfig.getContextFile(myFile);
-    if (currentContext != null) {
-      final VirtualFile vFile = currentContext.getVirtualFile();
-      
-      assert vFile != null;
+		final List<String> paths = new ArrayList<String>(myPathToFileMap.keySet());
+		Collections.sort(paths, new Comparator<String>()
+		{
+			public int compare(final String o1, final String o2)
+			{
+				return o1.compareTo(o2);
+			}
+		});
 
-      final String path = PathUtil.getLocalPath(vFile);
-      if (!FileUtil.pathsEqual(path, myLocalPath)) {
-        myOriginalContext = path;
-      }
-    }
-    myCombo.setSelectedItem(myOriginalContext);
+		myCombo.addItem(NONE);
+		for(String path : paths)
+		{
+			myCombo.addItem(path);
+		}
 
-    return panel;
-  }
+		final ThermitConfigurationBase antConfig = ThermitConfigurationBase.getInstance(myProject);
+		final XmlFile currentContext = antConfig.getContextFile(myFile);
+		if(currentContext != null)
+		{
+			final VirtualFile vFile = currentContext.getVirtualFile();
 
-  public boolean isModified() {
-    return !FileUtil.pathsEqual(myOriginalContext, (String)myCombo.getSelectedItem());
-  }
+			assert vFile != null;
 
-  public void apply() throws ConfigurationException {
-    applyItem((String)myCombo.getSelectedItem());
-  }
+			final String path = PathUtil.getLocalPath(vFile);
+			if(!FileUtil.pathsEqual(path, myLocalPath))
+			{
+				myOriginalContext = path;
+			}
+		}
+		myCombo.setSelectedItem(myOriginalContext);
 
-  public void reset() {
-    applyItem(myOriginalContext);
-  }
+		return panel;
+	}
 
-  private void applyItem(final String contextStr) {
-    XmlFile context = null;
-    if (!NONE.equals(contextStr)) {
-      context = myPathToFileMap.get(contextStr);
-      assert context != null;
-    }
-    ThermitConfigurationBase.getInstance(myProject).setContextFile(myFile, context);
-  }
+	public boolean isModified()
+	{
+		return !FileUtil.pathsEqual(myOriginalContext, (String) myCombo.getSelectedItem());
+	}
 
-  public void disposeUIResources() {
-    myPathToFileMap.clear();
-  }
+	public void apply() throws ConfigurationException
+	{
+		applyItem((String) myCombo.getSelectedItem());
+	}
+
+	public void reset()
+	{
+		applyItem(myOriginalContext);
+	}
+
+	private void applyItem(final String contextStr)
+	{
+		XmlFile context = null;
+		if(!NONE.equals(contextStr))
+		{
+			context = myPathToFileMap.get(contextStr);
+			assert context != null;
+		}
+		ThermitConfigurationBase.getInstance(myProject).setContextFile(myFile, context);
+	}
+
+	public void disposeUIResources()
+	{
+		myPathToFileMap.clear();
+	}
 }

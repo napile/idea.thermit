@@ -15,39 +15,46 @@
  */
 package org.napile.idea.thermit.dom;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.GenericAttributeValue;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 3, 2010
  */
-public class AntBooleanConverter extends Converter<Boolean> {
-  public final Boolean DEFAULT_VALUE;
+public class AntBooleanConverter extends Converter<Boolean>
+{
+	public final Boolean DEFAULT_VALUE;
 
-  public AntBooleanConverter() {
-    DEFAULT_VALUE = null;
-  }
+	public AntBooleanConverter()
+	{
+		DEFAULT_VALUE = null;
+	}
 
-  public AntBooleanConverter(boolean defaultValue) {
-    DEFAULT_VALUE = Boolean.valueOf(defaultValue);
-  }
+	public AntBooleanConverter(boolean defaultValue)
+	{
+		DEFAULT_VALUE = Boolean.valueOf(defaultValue);
+	}
 
-  public Boolean fromString(@Nullable @NonNls String s, ConvertContext context) {
-    if (s == null || s.length() == 0) {
-      return DEFAULT_VALUE;
-    }
-    return "true".equalsIgnoreCase(s) || "true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s);
-  }
+	public Boolean fromString(@Nullable @NonNls String s, ConvertContext context)
+	{
+		if(s == null || s.length() == 0)
+		{
+			return DEFAULT_VALUE;
+		}
+		return "true".equalsIgnoreCase(s) || "true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s);
+	}
 
-  public String toString(@Nullable Boolean aBoolean, ConvertContext context) {
-    final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
-    if (attribValue == null) {
-      return null;
-    }
-    return attribValue.getRawText();
-  }
+	public String toString(@Nullable Boolean aBoolean, ConvertContext context)
+	{
+		final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
+		if(attribValue == null)
+		{
+			return null;
+		}
+		return attribValue.getRawText();
+	}
 }

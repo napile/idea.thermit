@@ -15,103 +15,126 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xml.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.tools.ant.PathTokenizer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import com.intellij.openapi.util.Computable;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.Converter;
+import com.intellij.util.xml.CustomReferenceConverter;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.GenericDomValue;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: May 25, 2010
  */
-public class AntMultiPathStringConverter extends Converter<List<File>> implements CustomReferenceConverter<List<File>> {
+public class AntMultiPathStringConverter extends Converter<List<File>> implements CustomReferenceConverter<List<File>>
+{
 
-  public List<File> fromString(@Nullable @NonNls String s, ConvertContext context) {
-    final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
-    if (attribValue == null) {
-      return null;
-    }
-    final String path = attribValue.getStringValue();
-    if (path == null) {
-      return null;
-    }
-    final List<File> result = new ArrayList<File>();
-    Computable<String> basedirComputable = null;
-    final PathTokenizer pathTokenizer = new PathTokenizer(path);
-    while (pathTokenizer.hasMoreTokens()) {
-      File file = new File(pathTokenizer.nextToken());
-      if (!file.isAbsolute()) {
-        if (basedirComputable == null) {
-          basedirComputable = new Computable<String>() {
-            final String myBaseDir;
-            {
-              final AntDomProject antProject = getEffectiveAntProject(attribValue);
-              myBaseDir = antProject != null? antProject.getProjectBasedirPath() : null;
-            }
+	public List<File> fromString(@Nullable @NonNls String s, ConvertContext context)
+	{
+		final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
+		if(attribValue == null)
+		{
+			return null;
+		}
+		final String path = attribValue.getStringValue();
+		if(path == null)
+		{
+			return null;
+		}
+		final List<File> result = new ArrayList<File>();
+		Computable<String> basedirComputable = null;
+		final PathTokenizer pathTokenizer = new PathTokenizer(path);
+		while(pathTokenizer.hasMoreTokens())
+		{
+			File file = new File(pathTokenizer.nextToken());
+			if(!file.isAbsolute())
+			{
+				if(basedirComputable == null)
+				{
+					basedirComputable = new Computable<String>()
+					{
+						final String myBaseDir;
 
-            public String compute() {
-              return myBaseDir;
-            }
-          };
-        }
-        final String baseDir = basedirComputable.compute();
-        if (baseDir == null) {
-          continue;
-        }
-        file = new File(baseDir, path);
-      }
-      result.add(file);
-    }
-    return result;
-  }
+						{
+							final AntDomProject antProject = getEffectiveAntProject(attribValue);
+							myBaseDir = antProject != null ? antProject.getProjectBasedirPath() : null;
+						}
 
-  private static AntDomProject getEffectiveAntProject(GenericAttributeValue attribValue) {
-    AntDomProject project = attribValue.getParentOfType(AntDomProject.class, false);
-    if (project != null) {
-      project = project.getContextAntProject();
-    }
-    return project;
-  }
+						public String compute()
+						{
+							return myBaseDir;
+						}
+					};
+				}
+				final String baseDir = basedirComputable.compute();
+				if(baseDir == null)
+				{
+					continue;
+				}
+				file = new File(baseDir, path);
+			}
+			result.add(file);
+		}
+		return result;
+	}
 
-  public String toString(@Nullable List<File> files, ConvertContext context) {
-    final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
-    if (attribValue == null) {
-      return null;
-    }
-    return attribValue.getRawText();
-  }
+	private static AntDomProject getEffectiveAntProject(GenericAttributeValue attribValue)
+	{
+		AntDomProject project = attribValue.getParentOfType(AntDomProject.class, false);
+		if(project != null)
+		{
+			project = project.getContextAntProject();
+		}
+		return project;
+	}
 
-  @NotNull
-  public PsiReference[] createReferences(GenericDomValue<List<File>> genericDomValue, PsiElement element, ConvertContext context) {
-    final GenericAttributeValue attributeValue = (GenericAttributeValue)genericDomValue;
+	public String toString(@Nullable List<File> files, ConvertContext context)
+	{
+		final GenericAttributeValue attribValue = context.getInvocationElement().getParentOfType(GenericAttributeValue.class, false);
+		if(attribValue == null)
+		{
+			return null;
+		}
+		return attribValue.getRawText();
+	}
 
-    final String cpString = genericDomValue.getRawText();
-    if (cpString == null || cpString.length() == 0) {
-      return PsiReference.EMPTY_ARRAY;
-    }
+	@NotNull
+	public PsiReference[] createReferences(GenericDomValue<List<File>> genericDomValue, PsiElement element, ConvertContext context)
+	{
+		final GenericAttributeValue attributeValue = (GenericAttributeValue) genericDomValue;
 
-    final List<PsiReference> result = new ArrayList<PsiReference>();
-    final PathTokenizer pathTokenizer = new PathTokenizer(cpString);
-    int searchFromIndex = 0;
-    while (pathTokenizer.hasMoreTokens()) {
-      final String path = pathTokenizer.nextToken();
-      if (path.length() > 0) {
-        final int pathBeginIndex = cpString.indexOf(path, searchFromIndex);
-        final AntDomFileReferenceSet refSet = new AntDomFileReferenceSet(attributeValue, path, pathBeginIndex, false);
-        ContainerUtil.addAll(result, refSet.getAllReferences());
-        searchFromIndex = pathBeginIndex;
-      }
-    }
+		final String cpString = genericDomValue.getRawText();
+		if(cpString == null || cpString.length() == 0)
+		{
+			return PsiReference.EMPTY_ARRAY;
+		}
 
-    return result.toArray(new PsiReference[result.size()]);
-  }
+		final List<PsiReference> result = new ArrayList<PsiReference>();
+		final PathTokenizer pathTokenizer = new PathTokenizer(cpString);
+		int searchFromIndex = 0;
+		while(pathTokenizer.hasMoreTokens())
+		{
+			final String path = pathTokenizer.nextToken();
+			if(path.length() > 0)
+			{
+				final int pathBeginIndex = cpString.indexOf(path, searchFromIndex);
+				final AntDomFileReferenceSet refSet = new AntDomFileReferenceSet(attributeValue, path, pathBeginIndex, false);
+				ContainerUtil.addAll(result, refSet.getAllReferences());
+				searchFromIndex = pathBeginIndex;
+			}
+		}
+
+		return result.toArray(new PsiReference[result.size()]);
+	}
 }

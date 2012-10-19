@@ -19,5 +19,6 @@ package org.napile.idea.thermit.dom;
  * @author Eugene Zhuravlev
  *         Date: Sep 2, 2010
  */
-public abstract class AntDomSequentialTask extends AntDomElement{
+public abstract class AntDomSequentialTask extends AntDomElement
+{
 }

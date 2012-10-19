@@ -15,53 +15,63 @@
  */
 package org.napile.idea.thermit.dom;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.AntBundle;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class AntDomFileReference extends FileReference implements AntDomReference{
+public class AntDomFileReference extends FileReference implements AntDomReference
+{
 
-  private boolean mySkipByAnnotator;
+	private boolean mySkipByAnnotator;
 
-  public AntDomFileReference(final AntDomFileReferenceSet set, final TextRange range, final int index, final String text) {
-    super(set, range, index, text);
-  }
+	public AntDomFileReference(final AntDomFileReferenceSet set, final TextRange range, final int index, final String text)
+	{
+		super(set, range, index, text);
+	}
 
-  @Nullable
-  public String getText() {
-    final AntDomFileReferenceSet refSet = getFileReferenceSet();
-    final String _path = AntStringResolver.computeString(refSet.getAttributeValue(), super.getText());
-    final String text = FileUtil.toSystemIndependentName(_path);
-    return text.endsWith("/")? text.substring(0, text.length() - "/".length()) : text;
-  }
+	@Nullable
+	public String getText()
+	{
+		final AntDomFileReferenceSet refSet = getFileReferenceSet();
+		final String _path = AntStringResolver.computeString(refSet.getAttributeValue(), super.getText());
+		final String text = FileUtil.toSystemIndependentName(_path);
+		return text.endsWith("/") ? text.substring(0, text.length() - "/".length()) : text;
+	}
 
-  @NotNull public Object[] getVariants() {
-    return super.getVariants();
-  }
+	@NotNull
+	public Object[] getVariants()
+	{
+		return super.getVariants();
+	}
 
-  @NotNull
-  public AntDomFileReferenceSet getFileReferenceSet() {
-    return (AntDomFileReferenceSet)super.getFileReferenceSet();
-  }
+	@NotNull
+	public AntDomFileReferenceSet getFileReferenceSet()
+	{
+		return (AntDomFileReferenceSet) super.getFileReferenceSet();
+	}
 
-  public String getUnresolvedMessagePattern() {
-    return AntBundle.message("file.doesnt.exist", getCanonicalRepresentationText());
-  }
+	public String getUnresolvedMessagePattern()
+	{
+		return AntBundle.message("file.doesnt.exist", getCanonicalRepresentationText());
+	}
 
-  @Nullable
-  public String getCanonicalRepresentationText() {
-    final String value = getCanonicalText();
-    return AntStringResolver.computeString(getFileReferenceSet().getAttributeValue(), value);
-  }
+	@Nullable
+	public String getCanonicalRepresentationText()
+	{
+		final String value = getCanonicalText();
+		return AntStringResolver.computeString(getFileReferenceSet().getAttributeValue(), value);
+	}
 
-  public boolean shouldBeSkippedByAnnotator() {
-    return mySkipByAnnotator;
-  }
+	public boolean shouldBeSkippedByAnnotator()
+	{
+		return mySkipByAnnotator;
+	}
 
-  public void setShouldBeSkippedByAnnotator(boolean value) {
-    mySkipByAnnotator = value;
-  }
+	public void setShouldBeSkippedByAnnotator(boolean value)
+	{
+		mySkipByAnnotator = value;
+	}
 }

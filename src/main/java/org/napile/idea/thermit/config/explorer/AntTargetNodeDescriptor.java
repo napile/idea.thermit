@@ -15,14 +15,23 @@
  */
 package org.napile.idea.thermit.config.explorer;
 
-import com.intellij.execution.RunManagerEx;
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.util.treeView.NodeDescriptor;
-import org.napile.idea.thermit.config.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.util.ArrayList;
+
+import org.jetbrains.annotations.NotNull;
+import org.napile.idea.thermit.config.AntBuildFile;
+import org.napile.idea.thermit.config.AntBuildModelBase;
+import org.napile.idea.thermit.config.AntBuildTargetBase;
+import org.napile.idea.thermit.config.ExecutionEvent;
+import org.napile.idea.thermit.config.ThermitConfigurationBase;
 import org.napile.idea.thermit.config.impl.AntBeforeRunTask;
 import org.napile.idea.thermit.config.impl.AntBeforeRunTaskProvider;
 import org.napile.idea.thermit.config.impl.ExecuteCompositeTargetEvent;
 import org.napile.idea.thermit.config.impl.MetaTarget;
+import com.intellij.execution.RunManagerEx;
+import com.intellij.icons.AllIcons;
+import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
@@ -37,118 +46,138 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.HtmlListCellRenderer;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
-import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.util.ArrayList;
+final class AntTargetNodeDescriptor extends AntNodeDescriptor
+{
+	private static final TextAttributes ourPostfixAttributes = new TextAttributes(new Color(128, 0, 0), null, null, EffectType.BOXED, Font.PLAIN);
 
-final class AntTargetNodeDescriptor extends AntNodeDescriptor {
-  private static final TextAttributes ourPostfixAttributes = new TextAttributes(new Color(128, 0, 0), null, null, EffectType.BOXED, Font.PLAIN);
+	private final AntBuildTargetBase myTarget;
+	private CompositeAppearance myHighlightedText;
 
-  private final AntBuildTargetBase myTarget;
-  private CompositeAppearance myHighlightedText;
+	public AntTargetNodeDescriptor(final Project project, final NodeDescriptor parentDescriptor, final AntBuildTargetBase target)
+	{
+		super(project, parentDescriptor);
+		myTarget = target;
+		myHighlightedText = new CompositeAppearance();
+	}
 
-  public AntTargetNodeDescriptor(final Project project, final NodeDescriptor parentDescriptor, final AntBuildTargetBase target) {
-    super(project, parentDescriptor);
-    myTarget = target;
-    myHighlightedText = new CompositeAppearance();
-  }
+	public Object getElement()
+	{
+		return myTarget;
+	}
 
-  public Object getElement() {
-    return myTarget;
-  }
+	public AntBuildTargetBase getTarget()
+	{
+		return myTarget;
+	}
 
-  public AntBuildTargetBase getTarget() {
-    return myTarget;
-  }
+	public boolean update()
+	{
+		final CompositeAppearance oldText = myHighlightedText;
+		final boolean isMeta = myTarget instanceof MetaTarget;
 
-  public boolean update() {
-    final CompositeAppearance oldText = myHighlightedText;
-    final boolean isMeta = myTarget instanceof MetaTarget;
+		setIcon(isMeta ? AllIcons.Ant.MetaTarget : AllIcons.Ant.Target);
 
-    setIcon(isMeta ? AllIcons.Ant.MetaTarget : AllIcons.Ant.Target);
+		myHighlightedText = new CompositeAppearance();
 
-    myHighlightedText = new CompositeAppearance();
+		final AntBuildFile buildFile = isMeta ? ((MetaTarget) myTarget).getBuildFile() : myTarget.getModel().getBuildFile();
+		final Color color = buildFile.isTargetVisible(myTarget) ? Color.black : Color.gray;
+		TextAttributes nameAttributes = new TextAttributes(color, null, null, EffectType.BOXED, myTarget.isDefault() ? Font.BOLD : Font.PLAIN);
 
-    final AntBuildFile buildFile = isMeta ? ((MetaTarget)myTarget).getBuildFile() : myTarget.getModel().getBuildFile();
-    final Color color = buildFile.isTargetVisible(myTarget) ? Color.black : Color.gray;
-    TextAttributes nameAttributes = new TextAttributes(color, null, null, EffectType.BOXED, myTarget.isDefault() ? Font.BOLD : Font.PLAIN);
+		myHighlightedText.getEnding().addText(myTarget.getDisplayName(), nameAttributes);
 
-    myHighlightedText.getEnding().addText(myTarget.getDisplayName(), nameAttributes);
+		ThermitConfigurationBase antConfiguration = ThermitConfigurationBase.getInstance(myProject);
+		final ArrayList<String> addedNames = new ArrayList<String>(4);
+		for(final ExecutionEvent event : antConfiguration.getEventsForTarget(myTarget))
+		{
+			final String presentableName;
+			if((event instanceof ExecuteCompositeTargetEvent))
+			{
+				presentableName = ((ExecuteCompositeTargetEvent) event).getMetaTargetName();
+				if(presentableName.equals(myTarget.getName()))
+				{
+					continue;
+				}
+			}
+			else
+			{
+				presentableName = event.getPresentableName();
+			}
+			if(!addedNames.contains(presentableName))
+			{
+				addedNames.add(presentableName);
+				myHighlightedText.getEnding().addText(" (" + presentableName + ')', ourPostfixAttributes);
+			}
+		}
+		final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
+		final VirtualFile vFile = buildFile.getVirtualFile();
+		if(vFile != null)
+		{
+			for(AntBeforeRunTask task : runManager.getBeforeRunTasks(AntBeforeRunTaskProvider.ID))
+			{
+				if(task.isRunningTarget(myTarget))
+				{
+					myHighlightedText.getEnding().addText(" (Before Run/Debug)", ourPostfixAttributes);
+					break;
+				}
+			}
+		}
+		myName = myHighlightedText.getText();
 
-    ThermitConfigurationBase antConfiguration = ThermitConfigurationBase.getInstance(myProject);
-    final ArrayList<String> addedNames = new ArrayList<String>(4);
-    for (final ExecutionEvent event : antConfiguration.getEventsForTarget(myTarget)) {
-      final String presentableName;
-      if ((event instanceof ExecuteCompositeTargetEvent)) {
-        presentableName = ((ExecuteCompositeTargetEvent)event).getMetaTargetName();
-        if (presentableName.equals(myTarget.getName())) {
-          continue;
-        }
-      }
-      else {
-        presentableName = event.getPresentableName();
-      }
-      if (!addedNames.contains(presentableName)) {
-        addedNames.add(presentableName);
-        myHighlightedText.getEnding().addText(" (" + presentableName + ')', ourPostfixAttributes);
-      }
-    }
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(myProject);
-    final VirtualFile vFile = buildFile.getVirtualFile();
-    if (vFile != null) {
-      for (AntBeforeRunTask task : runManager.getBeforeRunTasks(AntBeforeRunTaskProvider.ID)) {
-        if (task.isRunningTarget(myTarget)) {
-          myHighlightedText.getEnding().addText(" (Before Run/Debug)", ourPostfixAttributes);
-          break;
-        }
-      }
-    }
-    myName = myHighlightedText.getText();
+		final AntBuildTargetBase target = getTarget();
+		if(!addShortcutText(target.getActionId()))
+		{
+			if(target.isDefault())
+			{
+				addShortcutText(((AntBuildModelBase) target.getModel()).getDefaultTargetActionId());
+			}
+		}
 
-    final AntBuildTargetBase target = getTarget();
-    if (!addShortcutText(target.getActionId())) {
-      if (target.isDefault()) {
-        addShortcutText(((AntBuildModelBase)target.getModel()).getDefaultTargetActionId());
-      }
-    }
+		return !Comparing.equal(myHighlightedText, oldText);
+	}
 
-    return !Comparing.equal(myHighlightedText, oldText);
-  }
+	private boolean addShortcutText(String actionId)
+	{
+		return addShortcutText(actionId, myHighlightedText);
+	}
 
-  private boolean addShortcutText(String actionId) {
-    return addShortcutText(actionId, myHighlightedText);
-  }
+	public static boolean addShortcutText(String actionId, CompositeAppearance appearance)
+	{
+		Keymap activeKeymap = KeymapManager.getInstance().getActiveKeymap();
+		Shortcut[] shortcuts = activeKeymap.getShortcuts(actionId);
+		if(shortcuts != null && shortcuts.length > 0)
+		{
+			appearance.getEnding().addText(" (" + KeymapUtil.getShortcutText(shortcuts[0]) + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+			return true;
+		}
+		else
+			return false;
+	}
 
-  public static boolean addShortcutText(String actionId, CompositeAppearance appearance) {
-    Keymap activeKeymap = KeymapManager.getInstance().getActiveKeymap();
-    Shortcut[] shortcuts = activeKeymap.getShortcuts(actionId);
-    if (shortcuts != null && shortcuts.length > 0) {
-      appearance.getEnding().addText(" (" + KeymapUtil.getShortcutText(shortcuts[0]) + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
-      return true;
-    } else return false;
-  }
+	public CellAppearanceEx getHighlightedText()
+	{
+		return myHighlightedText;
+	}
 
-  public CellAppearanceEx getHighlightedText() {
-    return myHighlightedText;
-  }
+	public boolean isAutoExpand()
+	{
+		return false;
+	}
 
-  public boolean isAutoExpand() {
-    return false;
-  }
+	public void customize(@NotNull SimpleColoredComponent component)
+	{
+		getHighlightedText().customize(component);
+		component.setIcon(getIcon());
+		String toolTipText = getTarget().getNotEmptyDescription();
+		component.setToolTipText(toolTipText);
+	}
 
-  public void customize(@NotNull SimpleColoredComponent component) {
-    getHighlightedText().customize(component);
-    component.setIcon(getIcon());
-    String toolTipText = getTarget().getNotEmptyDescription();
-    component.setToolTipText(toolTipText);
-  }
-
-  @Override
-  public void customize(@NotNull final HtmlListCellRenderer renderer) {
-    getHighlightedText().customize(renderer);
-    renderer.setIcon(getIcon());
-    String toolTipText = getTarget().getNotEmptyDescription();
-    renderer.setToolTipText(toolTipText);
-  }
+	@Override
+	public void customize(@NotNull final HtmlListCellRenderer renderer)
+	{
+		getHighlightedText().customize(renderer);
+		renderer.setIcon(getIcon());
+		String toolTipText = getTarget().getNotEmptyDescription();
+		renderer.setToolTipText(toolTipText);
+	}
 }

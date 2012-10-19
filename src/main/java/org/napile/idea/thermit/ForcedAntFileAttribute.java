@@ -30,50 +30,62 @@ import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
  * @author Eugene Zhuravlev
  *         Date: Apr 30, 2008
  */
-public class ForcedAntFileAttribute extends FileAttribute {
-  private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.ForcedAntFileAttribute");
+public class ForcedAntFileAttribute extends FileAttribute
+{
+	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.ForcedAntFileAttribute");
 
-  private static final String ANT_ID = "thermit";
+	private static final String ANT_ID = "thermit";
 
-  private static final ForcedAntFileAttribute ourAttribute = new ForcedAntFileAttribute();
-  private static final Key<Boolean> ourAntFileMarker = Key.create("_forced_ant_attribute_");
+	private static final ForcedAntFileAttribute ourAttribute = new ForcedAntFileAttribute();
+	private static final Key<Boolean> ourAntFileMarker = Key.create("_forced_ant_attribute_");
 
-  public ForcedAntFileAttribute() {
-    super("_forced_ant_attribute_", 1, true);
-  }
+	public ForcedAntFileAttribute()
+	{
+		super("_forced_ant_attribute_", 1, true);
+	}
 
-  public static boolean isAntFile(VirtualFile file) {
-    String id = ForcedBuildFileAttribute.getFrameworkIdOfBuildFile(file);
-    return ANT_ID.equals(id) || (StringUtil.isEmpty(id) && isAntFileOld(file));
-  }
+	public static boolean isAntFile(VirtualFile file)
+	{
+		String id = ForcedBuildFileAttribute.getFrameworkIdOfBuildFile(file);
+		return ANT_ID.equals(id) || (StringUtil.isEmpty(id) && isAntFileOld(file));
+	}
 
-  public static boolean mayBeAntFile(VirtualFile file) {
-    String id = ForcedBuildFileAttribute.getFrameworkIdOfBuildFile(file);
-    return StringUtil.isEmpty(id) || ANT_ID.equals(id);
-  }
+	public static boolean mayBeAntFile(VirtualFile file)
+	{
+		String id = ForcedBuildFileAttribute.getFrameworkIdOfBuildFile(file);
+		return StringUtil.isEmpty(id) || ANT_ID.equals(id);
+	}
 
-  private static boolean isAntFileOld(VirtualFile file) {
-    if (file instanceof NewVirtualFile) {
-      final DataInputStream is = ourAttribute.readAttribute(file);
-      if (is != null) {
-        try {
-          try {
-            return is.readBoolean();
-          }
-          finally {
-            is.close();
-          }
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-      }
-      return false;
-    }
-    return Boolean.TRUE.equals(file.getUserData(ourAntFileMarker));
-  }
+	private static boolean isAntFileOld(VirtualFile file)
+	{
+		if(file instanceof NewVirtualFile)
+		{
+			final DataInputStream is = ourAttribute.readAttribute(file);
+			if(is != null)
+			{
+				try
+				{
+					try
+					{
+						return is.readBoolean();
+					}
+					finally
+					{
+						is.close();
+					}
+				}
+				catch(IOException e)
+				{
+					LOG.error(e);
+				}
+			}
+			return false;
+		}
+		return Boolean.TRUE.equals(file.getUserData(ourAntFileMarker));
+	}
 
-  public static void forceAntFile(VirtualFile file, boolean value) {
-    ForcedBuildFileAttribute.forceFileToFramework(file, ANT_ID, value);
-  }
+	public static void forceAntFile(VirtualFile file, boolean value)
+	{
+		ForcedBuildFileAttribute.forceFileToFramework(file, ANT_ID, value);
+	}
 }

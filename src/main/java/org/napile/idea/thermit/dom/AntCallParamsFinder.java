@@ -15,45 +15,53 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiElement;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 22, 2010
  */
 
-public class AntCallParamsFinder extends AntDomRecursiveVisitor {
-  private final String myPropertyName;
-  private final List<PsiElement> myResult = new ArrayList<PsiElement>();
+public class AntCallParamsFinder extends AntDomRecursiveVisitor
+{
+	private final String myPropertyName;
+	private final List<PsiElement> myResult = new ArrayList<PsiElement>();
 
-  private AntCallParamsFinder(@NotNull String propertyName) {
-    myPropertyName = propertyName;
-  }
+	private AntCallParamsFinder(@NotNull String propertyName)
+	{
+		myPropertyName = propertyName;
+	}
 
-  public void visitAntDomElement(AntDomElement element) {
-    if (!element.isDataType()) { // optimization
-      super.visitAntDomElement(element);
-    }
-  }
+	public void visitAntDomElement(AntDomElement element)
+	{
+		if(!element.isDataType())
+		{ // optimization
+			super.visitAntDomElement(element);
+		}
+	}
 
-  public void visitAntDomAntCallParam(AntDomAntCallParam antCallParam) {
-    if (myPropertyName.equals(antCallParam.getName().getStringValue())) {
-      final PsiElement elem = antCallParam.getNavigationElement(myPropertyName);
-      if (elem != null) {
-        myResult.add(elem);
-      }
-    }
-  }
+	public void visitAntDomAntCallParam(AntDomAntCallParam antCallParam)
+	{
+		if(myPropertyName.equals(antCallParam.getName().getStringValue()))
+		{
+			final PsiElement elem = antCallParam.getNavigationElement(myPropertyName);
+			if(elem != null)
+			{
+				myResult.add(elem);
+			}
+		}
+	}
 
-  @NotNull
-  public static List<PsiElement> resolve(@NotNull AntDomProject project, @NotNull String propertyName) {
-    final AntCallParamsFinder resolver = new AntCallParamsFinder(propertyName);
-    project.accept(resolver);
-    return resolver.myResult;
+	@NotNull
+	public static List<PsiElement> resolve(@NotNull AntDomProject project, @NotNull String propertyName)
+	{
+		final AntCallParamsFinder resolver = new AntCallParamsFinder(propertyName);
+		project.accept(resolver);
+		return resolver.myResult;
 
-  }
+	}
 }

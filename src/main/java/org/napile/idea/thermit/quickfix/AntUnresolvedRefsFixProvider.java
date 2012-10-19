@@ -15,27 +15,31 @@
  */
 package org.napile.idea.thermit.quickfix;
 
+import org.jetbrains.annotations.NotNull;
+import org.napile.idea.thermit.dom.AntDomReference;
 import com.intellij.codeInsight.daemon.QuickFixActionRegistrar;
 import com.intellij.codeInsight.quickfix.UnresolvedReferenceQuickFixProvider;
-import org.napile.idea.thermit.dom.AntDomReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.xml.TagNameReference;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: 6/23/12
  */
-public class AntUnresolvedRefsFixProvider extends UnresolvedReferenceQuickFixProvider<PsiReference> {
+public class AntUnresolvedRefsFixProvider extends UnresolvedReferenceQuickFixProvider<PsiReference>
+{
 
-  public void registerFixes(PsiReference ref, QuickFixActionRegistrar registrar) {
-    if (ref instanceof TagNameReference || ref instanceof AntDomReference) {
-      registrar.register(new AntChangeContextFix());
-    }
-  }
+	public void registerFixes(PsiReference ref, QuickFixActionRegistrar registrar)
+	{
+		if(ref instanceof TagNameReference || ref instanceof AntDomReference)
+		{
+			registrar.register(new AntChangeContextFix());
+		}
+	}
 
-  @NotNull
-  public Class<PsiReference> getReferenceClass() {
-    return PsiReference.class;
-  }
+	@NotNull
+	public Class<PsiReference> getReferenceClass()
+	{
+		return PsiReference.class;
+	}
 }

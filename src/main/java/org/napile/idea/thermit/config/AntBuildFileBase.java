@@ -15,48 +15,49 @@
  */
 package org.napile.idea.thermit.config;
 
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.util.config.AbstractProperty;
+import java.util.Map;
+
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.util.config.AbstractProperty;
 
-import java.util.Map;
+public interface AntBuildFileBase extends AntBuildFile
+{
 
-public interface AntBuildFileBase extends AntBuildFile {
+	AntBuildModelBase getModel();
 
-  AntBuildModelBase getModel();
+	@Nullable
+	AntBuildModelBase getModelIfRegistered();
 
-  @Nullable
-  AntBuildModelBase getModelIfRegistered();
+	AbstractProperty.AbstractPropertyContainer getAllOptions();
 
-  AbstractProperty.AbstractPropertyContainer getAllOptions();
+	boolean shouldExpand();
 
-  boolean shouldExpand();
-  
-  void setShouldExpand(boolean expand);
-  
-  void updateProperties();
+	void setShouldExpand(boolean expand);
 
-  void updateConfig();
+	void updateProperties();
 
-  void setTreeView(final boolean value);
+	void updateConfig();
 
-  void setVerboseMode(final boolean value);
+	void setTreeView(final boolean value);
 
-  boolean isViewClosedWhenNoErrors();
+	void setVerboseMode(final boolean value);
 
-  boolean isRunInBackground();
+	boolean isViewClosedWhenNoErrors();
 
-  void readWorkspaceProperties(final Element element) throws InvalidDataException;
+	boolean isRunInBackground();
 
-  void writeWorkspaceProperties(final Element element) throws WriteExternalException;
+	void readWorkspaceProperties(final Element element) throws InvalidDataException;
 
-  void readProperties(final Element element) throws InvalidDataException;
+	void writeWorkspaceProperties(final Element element) throws WriteExternalException;
 
-  void writeProperties(final Element element) throws WriteExternalException;
+	void readProperties(final Element element) throws InvalidDataException;
 
-  @NotNull
-  Map<String, String> getExternalProperties();
+	void writeProperties(final Element element) throws WriteExternalException;
+
+	@NotNull
+	Map<String, String> getExternalProperties();
 }

@@ -15,32 +15,34 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.NameValue;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 10, 2010
  */
-public abstract class AntDomExecTask extends AntDomPropertyDefiningElement{
+public abstract class AntDomExecTask extends AntDomPropertyDefiningElement
+{
 
-  @Attribute("outputproperty")
-  @NameValue
-  public abstract GenericAttributeValue<String> getOutputPropertyName();
+	@Attribute("outputproperty")
+	@NameValue
+	public abstract GenericAttributeValue<String> getOutputPropertyName();
 
-  @Attribute("errorproperty")
-  @NameValue
-  public abstract GenericAttributeValue<String> getErrorPropertyName();
+	@Attribute("errorproperty")
+	@NameValue
+	public abstract GenericAttributeValue<String> getErrorPropertyName();
 
-  @Attribute("resultproperty")
-  @NameValue
-  public abstract GenericAttributeValue<String> getResultPropertyName();
+	@Attribute("resultproperty")
+	@NameValue
+	public abstract GenericAttributeValue<String> getResultPropertyName();
 
-  protected List<GenericAttributeValue<String>> getPropertyDefiningAttributes() {
-    return Arrays.asList(getOutputPropertyName(), getResultPropertyName(), getErrorPropertyName());
-  }
+	protected List<GenericAttributeValue<String>> getPropertyDefiningAttributes()
+	{
+		return Arrays.asList(getOutputPropertyName(), getResultPropertyName(), getErrorPropertyName());
+	}
 }

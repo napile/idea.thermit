@@ -16,25 +16,26 @@
 
 package org.napile.idea.thermit.config;
 
-import org.napile.idea.thermit.config.impl.BuildFileProperty;
-import com.intellij.openapi.actionSystem.DataContext;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 
-public interface AntBuildTarget {
-  @Nullable
-  String getName();
+import org.jetbrains.annotations.Nullable;
+import org.napile.idea.thermit.config.impl.BuildFileProperty;
+import com.intellij.openapi.actionSystem.DataContext;
 
-  @Nullable
-  String getDisplayName();
+public interface AntBuildTarget
+{
+	@Nullable
+	String getName();
 
-  @Nullable
-  String getNotEmptyDescription();
+	@Nullable
+	String getDisplayName();
 
-  boolean isDefault();
+	@Nullable
+	String getNotEmptyDescription();
 
-  void run(DataContext dataContext, List<BuildFileProperty> additionalProperties, AntBuildListener buildListener);
+	boolean isDefault();
 
-  AntBuildModel getModel();
+	void run(DataContext dataContext, List<BuildFileProperty> additionalProperties, AntBuildListener buildListener);
+
+	AntBuildModel getModel();
 }

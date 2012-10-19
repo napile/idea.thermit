@@ -19,5 +19,6 @@ package org.napile.idea.thermit.dom;
  * @author Eugene Zhuravlev
  *         Date: Aug 4, 2010
  */
-public abstract class AntDomScriptdefAttribute extends AntDomNamedElement {
+public abstract class AntDomScriptdefAttribute extends AntDomNamedElement
+{
 }

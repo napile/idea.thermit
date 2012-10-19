@@ -15,40 +15,43 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.util.xml.SubTagList;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+import com.intellij.util.xml.SubTagList;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Jul 8, 2010
  */
-public abstract class AntDomAntlib extends AntDomElement{
+public abstract class AntDomAntlib extends AntDomElement
+{
 
-  public static final String ANTLIB_DEFAULT_FILENAME = "antlib.xml";
-  public static final String ANTLIB_URI_PREFIX = "antlib:";
+	public static final String ANTLIB_DEFAULT_FILENAME = "antlib.xml";
+	public static final String ANTLIB_URI_PREFIX = "antlib:";
 
-  @SubTagList("typedef")
-  public abstract List<AntDomTypeDef> getTypedefs();
+	@SubTagList("typedef")
+	public abstract List<AntDomTypeDef> getTypedefs();
 
-  @SubTagList("taskdef")
-  public abstract List<AntDomTypeDef> getTaskdefs();
+	@SubTagList("taskdef")
+	public abstract List<AntDomTypeDef> getTaskdefs();
 
-  @SubTagList("macrodef")
-  public abstract List<AntDomTypeDef> getMacrodefs();
+	@SubTagList("macrodef")
+	public abstract List<AntDomTypeDef> getMacrodefs();
 
-  @SubTagList("presetdef")
-  public abstract List<AntDomTypeDef> getPresetdefs();
+	@SubTagList("presetdef")
+	public abstract List<AntDomTypeDef> getPresetdefs();
 
-  @SubTagList("scriptdef")
-  public abstract List<AntDomTypeDef> getScriptdefs();
+	@SubTagList("scriptdef")
+	public abstract List<AntDomTypeDef> getScriptdefs();
 
-  @Nullable
-  public static String toAntlibResource(String antlibUri) {
-    if (!antlibUri.startsWith(ANTLIB_URI_PREFIX)) {
-      return null;
-    }
-    return antlibUri.substring(ANTLIB_URI_PREFIX.length()).replace('.', '/') + "/" + ANTLIB_DEFAULT_FILENAME;
-  }
+	@Nullable
+	public static String toAntlibResource(String antlibUri)
+	{
+		if(!antlibUri.startsWith(ANTLIB_URI_PREFIX))
+		{
+			return null;
+		}
+		return antlibUri.substring(ANTLIB_URI_PREFIX.length()).replace('.', '/') + "/" + ANTLIB_DEFAULT_FILENAME;
+	}
 }

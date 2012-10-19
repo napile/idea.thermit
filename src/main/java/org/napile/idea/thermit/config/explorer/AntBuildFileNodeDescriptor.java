@@ -15,70 +15,83 @@
  */
 package org.napile.idea.thermit.config.explorer;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.util.treeView.NodeDescriptor;
+import org.jetbrains.annotations.NotNull;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildModelBase;
+import com.intellij.icons.AllIcons;
+import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.ui.HtmlListCellRenderer;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
-import org.jetbrains.annotations.NotNull;
 
-final class AntBuildFileNodeDescriptor extends AntNodeDescriptor {
+final class AntBuildFileNodeDescriptor extends AntNodeDescriptor
+{
 
-  private final AntBuildFileBase myBuildFile;
-  private CompositeAppearance myAppearance;
+	private final AntBuildFileBase myBuildFile;
+	private CompositeAppearance myAppearance;
 
-  public AntBuildFileNodeDescriptor(Project project, NodeDescriptor parentDescriptor, AntBuildFileBase buildFile) {
-    super(project, parentDescriptor);
-    myBuildFile = buildFile;
-  }
+	public AntBuildFileNodeDescriptor(Project project, NodeDescriptor parentDescriptor, AntBuildFileBase buildFile)
+	{
+		super(project, parentDescriptor);
+		myBuildFile = buildFile;
+	}
 
-  public Object getElement() {
-    return myBuildFile;
-  }
+	public Object getElement()
+	{
+		return myBuildFile;
+	}
 
-  public AntBuildFile getBuildFile() {
-    return myBuildFile;
-  }
+	public AntBuildFile getBuildFile()
+	{
+		return myBuildFile;
+	}
 
-  public boolean update() {
-    CompositeAppearance oldAppearance = myAppearance;
-    myAppearance = new CompositeAppearance();
-    myAppearance.getEnding().addText(myBuildFile.getPresentableName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-    final AntBuildModelBase buildModel = myBuildFile.getModelIfRegistered();
-    if (buildModel != null) {
-      AntTargetNodeDescriptor.addShortcutText(buildModel.getDefaultTargetActionId(), myAppearance);
-    }
-    setIcon(AllIcons.Ant.Build);
-    myName = myBuildFile.getPresentableName();
-    return !Comparing.equal(myAppearance, oldAppearance);
-  }
+	public boolean update()
+	{
+		CompositeAppearance oldAppearance = myAppearance;
+		myAppearance = new CompositeAppearance();
+		myAppearance.getEnding().addText(myBuildFile.getPresentableName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+		final AntBuildModelBase buildModel = myBuildFile.getModelIfRegistered();
+		if(buildModel != null)
+		{
+			AntTargetNodeDescriptor.addShortcutText(buildModel.getDefaultTargetActionId(), myAppearance);
+		}
+		setIcon(AllIcons.Ant.Build);
+		myName = myBuildFile.getPresentableName();
+		return !Comparing.equal(myAppearance, oldAppearance);
+	}
 
-  public void customize(@NotNull SimpleColoredComponent component) {
-    if (myAppearance != null) {
-      myAppearance.customize(component);
-    }
-    else {
-      super.customize(component);
-    }
-  }
+	public void customize(@NotNull SimpleColoredComponent component)
+	{
+		if(myAppearance != null)
+		{
+			myAppearance.customize(component);
+		}
+		else
+		{
+			super.customize(component);
+		}
+	}
 
-  @Override
-  public void customize(@NotNull final HtmlListCellRenderer renderer) {
-    if (myAppearance != null) {
-      myAppearance.customize(renderer);
-    }
-    else {
-      super.customize(renderer);
-    }
-  }
+	@Override
+	public void customize(@NotNull final HtmlListCellRenderer renderer)
+	{
+		if(myAppearance != null)
+		{
+			myAppearance.customize(renderer);
+		}
+		else
+		{
+			super.customize(renderer);
+		}
+	}
 
-  public boolean isAutoExpand() {
-    return myBuildFile.shouldExpand();
-  }
+	public boolean isAutoExpand()
+	{
+		return myBuildFile.shouldExpand();
+	}
 }

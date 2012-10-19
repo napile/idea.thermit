@@ -15,37 +15,44 @@
  */
 package org.napile.idea.thermit.misc;
 
-import com.intellij.psi.PsiReference;
-import com.intellij.util.SpinAllocator;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class PsiReferenceListSpinAllocator {
+import com.intellij.psi.PsiReference;
+import com.intellij.util.SpinAllocator;
 
-  private PsiReferenceListSpinAllocator() {
-  }
+public class PsiReferenceListSpinAllocator
+{
 
-  private static class Creator implements SpinAllocator.ICreator<List<PsiReference>> {
-    public List<PsiReference> createInstance() {
-      return new ArrayList<PsiReference>();
-    }
-  }
+	private PsiReferenceListSpinAllocator()
+	{
+	}
 
-  private static class Disposer implements SpinAllocator.IDisposer<List<PsiReference>> {
-    public void disposeInstance(final List<PsiReference> instance) {
-      instance.clear();
-    }
-  }
+	private static class Creator implements SpinAllocator.ICreator<List<PsiReference>>
+	{
+		public List<PsiReference> createInstance()
+		{
+			return new ArrayList<PsiReference>();
+		}
+	}
 
-  private static final SpinAllocator<List<PsiReference>> myAllocator =
-    new SpinAllocator<List<PsiReference>>(new Creator(), new Disposer());
+	private static class Disposer implements SpinAllocator.IDisposer<List<PsiReference>>
+	{
+		public void disposeInstance(final List<PsiReference> instance)
+		{
+			instance.clear();
+		}
+	}
 
-  public static List<PsiReference> alloc() {
-    return myAllocator.alloc();
-  }
+	private static final SpinAllocator<List<PsiReference>> myAllocator = new SpinAllocator<List<PsiReference>>(new Creator(), new Disposer());
 
-  public static void dispose(List<PsiReference> instance) {
-    myAllocator.dispose(instance);
-  }
+	public static List<PsiReference> alloc()
+	{
+		return myAllocator.alloc();
+	}
+
+	public static void dispose(List<PsiReference> instance)
+	{
+		myAllocator.dispose(instance);
+	}
 }

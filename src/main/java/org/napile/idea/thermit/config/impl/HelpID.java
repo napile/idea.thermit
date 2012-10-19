@@ -17,6 +17,8 @@ package org.napile.idea.thermit.config.impl;
 
 import org.jetbrains.annotations.NonNls;
 
-public interface HelpID {
-  @NonNls String ANT = "thermit.antToolWindow";
+public interface HelpID
+{
+	@NonNls
+	String ANT = "thermit.antToolWindow";
 }

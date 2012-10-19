@@ -37,42 +37,47 @@ import com.intellij.util.PathUtil;
 /**
  * @author nik
  */
-public class AntArtifactBuildExtension extends ChunkBuildExtension {
-  @Override
-  public void generateTasksForArtifact(Artifact artifact, boolean preprocessing, ArtifactAntGenerationContext context,
-                                       CompositeGenerator generator) {
-    final ArtifactPropertiesProvider provider;
-    if (preprocessing) {
-      provider = AntArtifactPreProcessingPropertiesProvider.getInstance();
-    }
-    else {
-      provider = AntArtifactPostprocessingPropertiesProvider.getInstance();
-    }
-    final AntArtifactProperties properties = (AntArtifactProperties)artifact.getProperties(provider);
-    if (properties != null && properties.isEnabled()) {
-      final String path = VfsUtil.urlToPath(properties.getFileUrl());
-      String fileName = PathUtil.getFileName(path);
-      String dirPath = PathUtil.getParentPath(path);
-      final String relativePath = GenerationUtils.toRelativePath(dirPath, BuildProperties.getProjectBaseDir(context.getProject()),
-                                                                 BuildProperties.getProjectBaseDirProperty(), context.getGenerationOptions());
-      final Tag ant = new Tag("thermit", Pair.create("antfile", fileName), Pair.create("target", properties.getTargetName()),
-                                     Pair.create("dir", relativePath));
-      final String outputPath = BuildProperties.propertyRef(context.getArtifactOutputProperty(artifact));
-      ant.add(new Property(AntArtifactProperties.ARTIFACT_OUTPUT_PATH_PROPERTY, outputPath));
-      for (BuildFileProperty property : properties.getUserProperties()) {
-        ant.add(new Property(property.getPropertyName(), property.getPropertyValue()));
-      }
-      generator.add(ant);
-    }
-  }
+public class AntArtifactBuildExtension extends ChunkBuildExtension
+{
+	@Override
+	public void generateTasksForArtifact(Artifact artifact, boolean preprocessing, ArtifactAntGenerationContext context, CompositeGenerator generator)
+	{
+		final ArtifactPropertiesProvider provider;
+		if(preprocessing)
+		{
+			provider = AntArtifactPreProcessingPropertiesProvider.getInstance();
+		}
+		else
+		{
+			provider = AntArtifactPostprocessingPropertiesProvider.getInstance();
+		}
+		final AntArtifactProperties properties = (AntArtifactProperties) artifact.getProperties(provider);
+		if(properties != null && properties.isEnabled())
+		{
+			final String path = VfsUtil.urlToPath(properties.getFileUrl());
+			String fileName = PathUtil.getFileName(path);
+			String dirPath = PathUtil.getParentPath(path);
+			final String relativePath = GenerationUtils.toRelativePath(dirPath, BuildProperties.getProjectBaseDir(context.getProject()), BuildProperties.getProjectBaseDirProperty(), context.getGenerationOptions());
+			final Tag ant = new Tag("thermit", Pair.create("antfile", fileName), Pair.create("target", properties.getTargetName()), Pair.create("dir", relativePath));
+			final String outputPath = BuildProperties.propertyRef(context.getArtifactOutputProperty(artifact));
+			ant.add(new Property(AntArtifactProperties.ARTIFACT_OUTPUT_PATH_PROPERTY, outputPath));
+			for(BuildFileProperty property : properties.getUserProperties())
+			{
+				ant.add(new Property(property.getPropertyName(), property.getPropertyValue()));
+			}
+			generator.add(ant);
+		}
+	}
 
-  @NotNull
-  @Override
-  public String[] getTargets(ModuleChunk chunk) {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
-  }
+	@NotNull
+	@Override
+	public String[] getTargets(ModuleChunk chunk)
+	{
+		return ArrayUtil.EMPTY_STRING_ARRAY;
+	}
 
-  @Override
-  public void process(Project project, ModuleChunk chunk, GenerationOptions genOptions, CompositeGenerator generator) {
-  }
+	@Override
+	public void process(Project project, ModuleChunk chunk, GenerationOptions genOptions, CompositeGenerator generator)
+	{
+	}
 }

@@ -15,38 +15,44 @@
  */
 package org.napile.idea.thermit.config.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.config.AntBuildTargetBase;
 import org.napile.idea.thermit.dom.AntDomElement;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xml.DomTarget;
-import org.jetbrains.annotations.Nullable;
 
-public final class BuildTask {
-  public static final BuildTask[] EMPTY_ARRAY = new BuildTask[0];
-  private final AntBuildTargetBase myTarget;
-  private final String myName;
-  private final int myOffset;
+public final class BuildTask
+{
+	public static final BuildTask[] EMPTY_ARRAY = new BuildTask[0];
+	private final AntBuildTargetBase myTarget;
+	private final String myName;
+	private final int myOffset;
 
-  public BuildTask(final AntBuildTargetBase target, final AntDomElement task) {
-    myTarget = target;
-    myName = task.getXmlElementName();
-    final DomTarget domTarget = DomTarget.getTarget(task);
-    if (domTarget != null) {
-      myOffset = domTarget.getTextOffset();
-    }
-    else {
-      myOffset = task.getXmlTag().getTextOffset();
-    }
-  }
+	public BuildTask(final AntBuildTargetBase target, final AntDomElement task)
+	{
+		myTarget = target;
+		myName = task.getXmlElementName();
+		final DomTarget domTarget = DomTarget.getTarget(task);
+		if(domTarget != null)
+		{
+			myOffset = domTarget.getTextOffset();
+		}
+		else
+		{
+			myOffset = task.getXmlTag().getTextOffset();
+		}
+	}
 
-  public String getName() {
-    return myName;
-  }
+	public String getName()
+	{
+		return myName;
+	}
 
-  @Nullable
-  public OpenFileDescriptor getOpenFileDescriptor() {
-    final VirtualFile vFile = myTarget.getContainingFile();
-    return vFile != null? new OpenFileDescriptor(myTarget.getProject(), vFile, myOffset) : null;
-  }
+	@Nullable
+	public OpenFileDescriptor getOpenFileDescriptor()
+	{
+		final VirtualFile vFile = myTarget.getContainingFile();
+		return vFile != null ? new OpenFileDescriptor(myTarget.getProject(), vFile, myOffset) : null;
+	}
 }

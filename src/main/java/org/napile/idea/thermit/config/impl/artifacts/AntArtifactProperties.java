@@ -15,12 +15,18 @@
  */
 package org.napile.idea.thermit.config.impl.artifacts;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildModel;
 import org.napile.idea.thermit.config.AntBuildTarget;
 import org.napile.idea.thermit.config.ThermitConfiguration;
-import org.napile.idea.thermit.config.impl.ThermitConfigurationImpl;
 import org.napile.idea.thermit.config.impl.BuildFileProperty;
+import org.napile.idea.thermit.config.impl.ThermitConfigurationImpl;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.compiler.CompileContext;
@@ -35,132 +41,155 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
-* @author nik
-*/
-public class AntArtifactProperties extends ArtifactProperties<AntArtifactProperties> {
-  @NonNls static final String ARTIFACT_OUTPUT_PATH_PROPERTY = "artifact.output.path";
-  private String myFileUrl;
-  private String myTargetName;
-  private boolean myEnabled;
-  private boolean myPostProcessing;
-  private List<BuildFileProperty> myUserProperties = new ArrayList<BuildFileProperty>();
+ * @author nik
+ */
+public class AntArtifactProperties extends ArtifactProperties<AntArtifactProperties>
+{
+	@NonNls
+	static final String ARTIFACT_OUTPUT_PATH_PROPERTY = "artifact.output.path";
+	private String myFileUrl;
+	private String myTargetName;
+	private boolean myEnabled;
+	private boolean myPostProcessing;
+	private List<BuildFileProperty> myUserProperties = new ArrayList<BuildFileProperty>();
 
-  public AntArtifactProperties() {
-  }
+	public AntArtifactProperties()
+	{
+	}
 
-  public AntArtifactProperties(boolean postProcessing) {
-    myPostProcessing = postProcessing;
-  }
+	public AntArtifactProperties(boolean postProcessing)
+	{
+		myPostProcessing = postProcessing;
+	}
 
-  public ArtifactPropertiesEditor createEditor(@NotNull ArtifactEditorContext context) {
-    return new AntArtifactPropertiesEditor(this, context, myPostProcessing);
-  }
+	public ArtifactPropertiesEditor createEditor(@NotNull ArtifactEditorContext context)
+	{
+		return new AntArtifactPropertiesEditor(this, context, myPostProcessing);
+	}
 
-  public AntArtifactProperties getState() {
-    return this;
-  }
+	public AntArtifactProperties getState()
+	{
+		return this;
+	}
 
-  @Override
-  public void onBuildStarted(@NotNull Artifact artifact, @NotNull CompileContext compileContext) {
-    if (!myPostProcessing) {
-      runAntTarget(compileContext, artifact);
-    }
-  }
+	@Override
+	public void onBuildStarted(@NotNull Artifact artifact, @NotNull CompileContext compileContext)
+	{
+		if(!myPostProcessing)
+		{
+			runAntTarget(compileContext, artifact);
+		}
+	}
 
-  @Override
-  public void onBuildFinished(@NotNull Artifact artifact, @NotNull final CompileContext compileContext) {
-    if (myPostProcessing) {
-      runAntTarget(compileContext, artifact);
-    }
-  }
+	@Override
+	public void onBuildFinished(@NotNull Artifact artifact, @NotNull final CompileContext compileContext)
+	{
+		if(myPostProcessing)
+		{
+			runAntTarget(compileContext, artifact);
+		}
+	}
 
-  private void runAntTarget(CompileContext compileContext, final Artifact artifact) {
-    if (myEnabled) {
-      final Project project = compileContext.getProject();
-      final AntBuildTarget target = findTarget(ThermitConfiguration.getInstance(project));
-      if (target != null) {
-        final DataContext dataContext = SimpleDataContext.getProjectContext(project);
-        List<BuildFileProperty> properties = getAllProperties(artifact);
-        final boolean success = ThermitConfigurationImpl.executeTargetSynchronously(dataContext, target, properties);
-        if (!success) {
-          compileContext.addMessage(CompilerMessageCategory.ERROR, "Cannot build artifact '" + artifact.getName() + "': thermit target '" + target.getDisplayName() + "' failed with error", null, -1, -1);
-        }
-      }
-    }
-  }
+	private void runAntTarget(CompileContext compileContext, final Artifact artifact)
+	{
+		if(myEnabled)
+		{
+			final Project project = compileContext.getProject();
+			final AntBuildTarget target = findTarget(ThermitConfiguration.getInstance(project));
+			if(target != null)
+			{
+				final DataContext dataContext = SimpleDataContext.getProjectContext(project);
+				List<BuildFileProperty> properties = getAllProperties(artifact);
+				final boolean success = ThermitConfigurationImpl.executeTargetSynchronously(dataContext, target, properties);
+				if(!success)
+				{
+					compileContext.addMessage(CompilerMessageCategory.ERROR, "Cannot build artifact '" + artifact.getName() + "': thermit target '" + target.getDisplayName() + "' failed with error", null, -1, -1);
+				}
+			}
+		}
+	}
 
-  public void loadState(AntArtifactProperties state) {
-    XmlSerializerUtil.copyBean(state, this);
-  }
+	public void loadState(AntArtifactProperties state)
+	{
+		XmlSerializerUtil.copyBean(state, this);
+	}
 
-  @Tag("file")
-  public String getFileUrl() {
-    return myFileUrl;
-  }
+	@Tag("file")
+	public String getFileUrl()
+	{
+		return myFileUrl;
+	}
 
-  @Tag("target")
-  public String getTargetName() {
-    return myTargetName;
-  }
+	@Tag("target")
+	public String getTargetName()
+	{
+		return myTargetName;
+	}
 
-  @Attribute("enabled")
-  public boolean isEnabled() {
-    return myEnabled;
-  }
+	@Attribute("enabled")
+	public boolean isEnabled()
+	{
+		return myEnabled;
+	}
 
-  @Tag("build-properties")
-  @AbstractCollection(surroundWithTag = false)
-  public List<BuildFileProperty> getUserProperties() {
-    return myUserProperties;
-  }
+	@Tag("build-properties")
+	@AbstractCollection(surroundWithTag = false)
+	public List<BuildFileProperty> getUserProperties()
+	{
+		return myUserProperties;
+	}
 
-  public void setUserProperties(List<BuildFileProperty> userProperties) {
-    myUserProperties = userProperties;
-  }
+	public void setUserProperties(List<BuildFileProperty> userProperties)
+	{
+		myUserProperties = userProperties;
+	}
 
-  public void setEnabled(boolean enabled) {
-    myEnabled = enabled;
-  }
+	public void setEnabled(boolean enabled)
+	{
+		myEnabled = enabled;
+	}
 
-  public void setFileUrl(String fileUrl) {
-    myFileUrl = fileUrl;
-  }
+	public void setFileUrl(String fileUrl)
+	{
+		myFileUrl = fileUrl;
+	}
 
-  public void setTargetName(String targetName) {
-    myTargetName = targetName;
-  }
+	public void setTargetName(String targetName)
+	{
+		myTargetName = targetName;
+	}
 
-  @Nullable
-  public AntBuildTarget findTarget(final ThermitConfiguration thermitConfiguration) {
-    if (myFileUrl == null || myTargetName == null) return null;
+	@Nullable
+	public AntBuildTarget findTarget(final ThermitConfiguration thermitConfiguration)
+	{
+		if(myFileUrl == null || myTargetName == null)
+			return null;
 
-    final AntBuildFile[] buildFiles = thermitConfiguration.getBuildFiles();
-    for (AntBuildFile buildFile : buildFiles) {
-      final VirtualFile file = buildFile.getVirtualFile();
-      if (file != null && file.getUrl().equals(myFileUrl)) {
-        final AntBuildModel buildModel = buildFile.getModel();
-        return buildModel != null ? buildModel.findTarget(myTargetName) : null;
-      }
-    }
-    return null;
-  }
+		final AntBuildFile[] buildFiles = thermitConfiguration.getBuildFiles();
+		for(AntBuildFile buildFile : buildFiles)
+		{
+			final VirtualFile file = buildFile.getVirtualFile();
+			if(file != null && file.getUrl().equals(myFileUrl))
+			{
+				final AntBuildModel buildModel = buildFile.getModel();
+				return buildModel != null ? buildModel.findTarget(myTargetName) : null;
+			}
+		}
+		return null;
+	}
 
-  public List<BuildFileProperty> getAllProperties(@NotNull Artifact artifact) {
-    final List<BuildFileProperty> properties = new ArrayList<BuildFileProperty>();
-    properties.add(new BuildFileProperty(ARTIFACT_OUTPUT_PATH_PROPERTY, artifact.getOutputPath()));
-    properties.addAll(myUserProperties);
-    return properties;
-  }
+	public List<BuildFileProperty> getAllProperties(@NotNull Artifact artifact)
+	{
+		final List<BuildFileProperty> properties = new ArrayList<BuildFileProperty>();
+		properties.add(new BuildFileProperty(ARTIFACT_OUTPUT_PATH_PROPERTY, artifact.getOutputPath()));
+		properties.addAll(myUserProperties);
+		return properties;
+	}
 
-  public static boolean isPredefinedProperty(String propertyName) {
-    return ARTIFACT_OUTPUT_PATH_PROPERTY.equals(propertyName);
-  }
+	public static boolean isPredefinedProperty(String propertyName)
+	{
+		return ARTIFACT_OUTPUT_PATH_PROPERTY.equals(propertyName);
+	}
 }

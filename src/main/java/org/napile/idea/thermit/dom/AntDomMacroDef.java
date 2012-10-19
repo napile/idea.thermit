@@ -15,28 +15,33 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.util.xml.*;
-
 import java.util.List;
+
+import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.Required;
+import com.intellij.util.xml.SubTag;
+import com.intellij.util.xml.SubTagList;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Jul 8, 2010
  */
-public abstract class AntDomMacroDef extends AntDomNamedElement{
-  @Attribute("uri")
-  public abstract GenericAttributeValue<String> getUri();
-  
-  @SubTagList("attribute")
-  public abstract List<AntDomMacrodefAttribute> getMacroAttributes();
+public abstract class AntDomMacroDef extends AntDomNamedElement
+{
+	@Attribute("uri")
+	public abstract GenericAttributeValue<String> getUri();
 
-  @SubTagList("element")
-  public abstract List<AntDomMacrodefElement> getMacroElements();
-  
-  @SubTag("text")
-  public abstract AntDomMacrodefText getTextElement();
+	@SubTagList("attribute")
+	public abstract List<AntDomMacrodefAttribute> getMacroAttributes();
 
-  @SubTag("sequential")
-  @Required
-  public abstract AntDomSequentialTask getMacroBody();
+	@SubTagList("element")
+	public abstract List<AntDomMacrodefElement> getMacroElements();
+
+	@SubTag("text")
+	public abstract AntDomMacrodefText getTextElement();
+
+	@SubTag("sequential")
+	@Required
+	public abstract AntDomSequentialTask getMacroBody();
 }

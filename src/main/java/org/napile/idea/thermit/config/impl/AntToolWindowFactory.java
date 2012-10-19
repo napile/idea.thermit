@@ -26,13 +26,15 @@ import com.intellij.ui.content.ContentManager;
 /**
  * @author yole
  */
-public class AntToolWindowFactory implements ToolWindowFactory {
-  @Override
-  public void createToolWindowContent(Project project, ToolWindow toolWindow) {
-    AntExplorer explorer = new AntExplorer(project);
-    final ContentManager contentManager = toolWindow.getContentManager();
-    final Content content = contentManager.getFactory().createContent(explorer, null, false);
-    contentManager.addContent(content);
-    Disposer.register(project, explorer);
-  }
+public class AntToolWindowFactory implements ToolWindowFactory
+{
+	@Override
+	public void createToolWindowContent(Project project, ToolWindow toolWindow)
+	{
+		AntExplorer explorer = new AntExplorer(project);
+		final ContentManager contentManager = toolWindow.getContentManager();
+		final Content content = contentManager.getFactory().createContent(explorer, null, false);
+		contentManager.addContent(content);
+		Disposer.register(project, explorer);
+	}
 }

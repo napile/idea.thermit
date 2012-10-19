@@ -17,14 +17,17 @@ package org.napile.idea.thermit.misc;
 
 import com.intellij.util.containers.StringInterner;
 
-public class AntStringInterner {
+public class AntStringInterner
+{
 
-  private static final StringInterner ourInterner = new StringInterner();
+	private static final StringInterner ourInterner = new StringInterner();
 
-  public static String intern(final String str) {
-    return ourInterner.intern(str);
-  }
+	public static String intern(final String str)
+	{
+		return ourInterner.intern(str);
+	}
 
-  private AntStringInterner() {
-  }
+	private AntStringInterner()
+	{
+	}
 }

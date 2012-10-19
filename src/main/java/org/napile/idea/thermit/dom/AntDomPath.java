@@ -15,31 +15,35 @@
  */
 package org.napile.idea.thermit.dom;
 
-import org.napile.idea.thermit.AntFilesProvider;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.jetbrains.annotations.NotNull;
+import org.napile.idea.thermit.AntFilesProvider;
+
 /**
  * @author Eugene Zhuravlev
  *         Date: Jun 22, 2010
  */
-public abstract class AntDomPath extends AntDomPathElement{
+public abstract class AntDomPath extends AntDomPathElement
+{
 
-  @NotNull 
-  protected List<File> getFiles(AntDomPattern pattern, Set<AntFilesProvider> processed) {
-    final List<File> files = super.getFiles(pattern, processed);
-    
-    for (Iterator<AntDomElement> iterator = getAntChildrenIterator(); iterator.hasNext();) {
-      AntDomElement child = iterator.next();
-      if (child instanceof AntFilesProvider) {
-        files.addAll(((AntFilesProvider)child).getFiles(processed));
-      }
-    }
-    return files;
-  }
+	@NotNull
+	protected List<File> getFiles(AntDomPattern pattern, Set<AntFilesProvider> processed)
+	{
+		final List<File> files = super.getFiles(pattern, processed);
+
+		for(Iterator<AntDomElement> iterator = getAntChildrenIterator(); iterator.hasNext(); )
+		{
+			AntDomElement child = iterator.next();
+			if(child instanceof AntFilesProvider)
+			{
+				files.addAll(((AntFilesProvider) child).getFiles(processed));
+			}
+		}
+		return files;
+	}
 
 }

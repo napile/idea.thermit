@@ -15,28 +15,31 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.util.xml.Attribute;
-import com.intellij.util.xml.GenericAttributeValue;
-
 import java.util.Collections;
 import java.util.List;
+
+import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.GenericAttributeValue;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 6, 2010
  */
-public abstract class AntDomChecksumTask extends AntDomPropertyDefiningTask {
+public abstract class AntDomChecksumTask extends AntDomPropertyDefiningTask
+{
 
-  @Attribute("verifyproperty")
-  public abstract GenericAttributeValue<String> getVerifyProperty();
-  
+	@Attribute("verifyproperty")
+	public abstract GenericAttributeValue<String> getVerifyProperty();
 
-  protected List<GenericAttributeValue<String>> getPropertyDefiningAttributes() {
-    final GenericAttributeValue<String> verifyProperty = getVerifyProperty();
-    if (verifyProperty.getRawText() != null) {
-      return Collections.singletonList(verifyProperty);
-    }
-    return Collections.singletonList(getPropertyName());
-  }
-  
+
+	protected List<GenericAttributeValue<String>> getPropertyDefiningAttributes()
+	{
+		final GenericAttributeValue<String> verifyProperty = getVerifyProperty();
+		if(verifyProperty.getRawText() != null)
+		{
+			return Collections.singletonList(verifyProperty);
+		}
+		return Collections.singletonList(getPropertyName());
+	}
+
 }

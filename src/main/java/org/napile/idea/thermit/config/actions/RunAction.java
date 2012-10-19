@@ -15,36 +15,36 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import com.intellij.icons.AllIcons;
+import java.util.Collections;
+
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.config.AntBuildListener;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
 import org.napile.idea.thermit.config.execution.ExecutionHandler;
 import org.napile.idea.thermit.config.impl.BuildFileProperty;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 
-import java.util.Collections;
+public final class RunAction extends AnAction
+{
+	private final AntBuildMessageView myAntBuildMessageView;
 
-public final class RunAction extends AnAction {
-  private final AntBuildMessageView myAntBuildMessageView;
+	public RunAction(AntBuildMessageView antBuildMessageView)
+	{
+		super(AntBundle.message("rerun.ant.action.name"), null, AllIcons.Actions.RefreshUsages);
+		myAntBuildMessageView = antBuildMessageView;
+	}
 
-  public RunAction(AntBuildMessageView antBuildMessageView) {
-    super(AntBundle.message("rerun.ant.action.name"), null, AllIcons.Actions.RefreshUsages);
-    myAntBuildMessageView = antBuildMessageView;
-  }
+	public void actionPerformed(AnActionEvent e)
+	{
+		ExecutionHandler.runBuild(myAntBuildMessageView.getBuildFile(), myAntBuildMessageView.getTargets(), myAntBuildMessageView, e.getDataContext(), Collections.<BuildFileProperty>emptyList(), AntBuildListener.NULL);
+	}
 
-  public void actionPerformed(AnActionEvent e) {
-    ExecutionHandler.runBuild(
-      myAntBuildMessageView.getBuildFile(),
-      myAntBuildMessageView.getTargets(),
-      myAntBuildMessageView,
-      e.getDataContext(), Collections.<BuildFileProperty>emptyList(), AntBuildListener.NULL);
-  }
-
-  public void update(AnActionEvent event){
-    Presentation presentation = event.getPresentation();
-    presentation.setEnabled(myAntBuildMessageView.isStopped());
-  }
+	public void update(AnActionEvent event)
+	{
+		Presentation presentation = event.getPresentation();
+		presentation.setEnabled(myAntBuildMessageView.isStopped());
+	}
 }

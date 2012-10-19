@@ -15,64 +15,81 @@
  */
 package org.napile.idea.thermit.config.execution;
 
+import javax.swing.Icon;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+
 import com.intellij.icons.AllIcons;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.MultilineTreeCellRenderer;
 import com.intellij.ui.SideBorder;
 import com.intellij.util.PlatformIcons;
 
-import javax.swing.*;
+final class MessageTreeRenderer extends MultilineTreeCellRenderer
+{
 
-final class MessageTreeRenderer extends MultilineTreeCellRenderer {
+	private MessageTreeRenderer()
+	{
+	}
 
-  private MessageTreeRenderer() {
-  }
+	public static JScrollPane install(JTree tree)
+	{
+		JScrollPane scrollPane = MultilineTreeCellRenderer.installRenderer(tree, new MessageTreeRenderer());
+		scrollPane.setBorder(IdeBorderFactory.createBorder(SideBorder.LEFT));
+		return scrollPane;
+	}
 
-  public static JScrollPane install(JTree tree) {
-    JScrollPane scrollPane = MultilineTreeCellRenderer.installRenderer(tree, new MessageTreeRenderer());
-    scrollPane.setBorder(IdeBorderFactory.createBorder(SideBorder.LEFT));
-    return scrollPane;
-  }
+	protected void initComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus)
+	{
+		if(value instanceof MessageNode)
+		{
+			MessageNode messageNode = (MessageNode) value;
+			setText(messageNode.getText(), messageNode.getTypeString() + messageNode.getPositionString());
+		}
+		else
+		{
+			String[] text = new String[]{value.toString()};
+			if(text[0] == null)
+			{
+				text[0] = "";
+			}
+			setText(text, null);
+		}
 
-  protected void initComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-    if(value instanceof MessageNode) {
-      MessageNode messageNode = (MessageNode)value;
-      setText(messageNode.getText(), messageNode.getTypeString() + messageNode.getPositionString());
-    }
-    else {
-      String[] text = new String[] {value.toString()};
-      if(text[0] == null) {
-        text[0] = "";
-      }
-      setText(text, null);
-    }
+		Icon icon = null;
 
-    Icon icon = null;
-
-    if (value instanceof MessageNode) {
-      MessageNode node = (MessageNode)value;
-      AntBuildMessageView.MessageType type = node.getType();
-      if (type == AntBuildMessageView.MessageType.BUILD) {
-        icon = AllIcons.Ant.Build;
-      }
-      else if (type == AntBuildMessageView.MessageType.TARGET) {
-        icon = AllIcons.Ant.Target;
-      }
-      else if (type == AntBuildMessageView.MessageType.TASK) {
-        icon = PlatformIcons.TASK_ICON;
-      }
-      else if (type == AntBuildMessageView.MessageType.MESSAGE) {
-        if (node.getPriority() == AntBuildMessageView.PRIORITY_WARN) {
-          icon = AllIcons.Compiler.Warning;
-        }
-        else {
-          icon = AllIcons.Ant.Message;
-        }
-      }
-      else if (type == AntBuildMessageView.MessageType.ERROR) {
-        icon = AllIcons.Compiler.Error;
-      }
-    }
-    setIcon(icon);
-  }
+		if(value instanceof MessageNode)
+		{
+			MessageNode node = (MessageNode) value;
+			AntBuildMessageView.MessageType type = node.getType();
+			if(type == AntBuildMessageView.MessageType.BUILD)
+			{
+				icon = AllIcons.Ant.Build;
+			}
+			else if(type == AntBuildMessageView.MessageType.TARGET)
+			{
+				icon = AllIcons.Ant.Target;
+			}
+			else if(type == AntBuildMessageView.MessageType.TASK)
+			{
+				icon = PlatformIcons.TASK_ICON;
+			}
+			else if(type == AntBuildMessageView.MessageType.MESSAGE)
+			{
+				if(node.getPriority() == AntBuildMessageView.PRIORITY_WARN)
+				{
+					icon = AllIcons.Compiler.Warning;
+				}
+				else
+				{
+					icon = AllIcons.Ant.Message;
+				}
+			}
+			else if(type == AntBuildMessageView.MessageType.ERROR)
+			{
+				icon = AllIcons.Compiler.Error;
+			}
+		}
+		setIcon(icon);
+	}
 }

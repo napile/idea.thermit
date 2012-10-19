@@ -19,10 +19,11 @@ package org.napile.idea.thermit.dom;
  * @author Eugene Zhuravlev
  *         Date: Aug 13, 2010
  */
-public interface AntDomReference {
-  boolean shouldBeSkippedByAnnotator();
+public interface AntDomReference
+{
+	boolean shouldBeSkippedByAnnotator();
 
-  void setShouldBeSkippedByAnnotator(boolean value);
+	void setShouldBeSkippedByAnnotator(boolean value);
 
-  String getUnresolvedMessagePattern();
+	String getUnresolvedMessagePattern();
 }

@@ -15,28 +15,34 @@
  */
 package org.napile.idea.thermit.config.impl;
 
+import org.jetbrains.annotations.NonNls;
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.config.ExecutionEvent;
-import org.jetbrains.annotations.NonNls;
 
-public final class ExecuteBeforeCompilationEvent extends ExecutionEvent {
-  @NonNls public static final String TYPE_ID = "beforeCompilation";
+public final class ExecuteBeforeCompilationEvent extends ExecutionEvent
+{
+	@NonNls
+	public static final String TYPE_ID = "beforeCompilation";
 
-  private static final ExecuteBeforeCompilationEvent ourInstance = new ExecuteBeforeCompilationEvent();
+	private static final ExecuteBeforeCompilationEvent ourInstance = new ExecuteBeforeCompilationEvent();
 
-  private ExecuteBeforeCompilationEvent() {
-  }
+	private ExecuteBeforeCompilationEvent()
+	{
+	}
 
-  public static ExecuteBeforeCompilationEvent getInstance() {
-    return ourInstance;
-  }
+	public static ExecuteBeforeCompilationEvent getInstance()
+	{
+		return ourInstance;
+	}
 
-  public String getTypeId() {
-    return TYPE_ID;
-  }
+	public String getTypeId()
+	{
+		return TYPE_ID;
+	}
 
-  public String getPresentableName() {
-    return AntBundle.message("ant.event.before.compilation.presentable.name");
-  }
+	public String getPresentableName()
+	{
+		return AntBundle.message("ant.event.before.compilation.presentable.name");
+	}
 }
 

@@ -20,35 +20,43 @@ import com.intellij.util.config.AbstractProperty;
 /**
  * @author nik
  */
-class SinglePropertyContainer<T extends AbstractProperty> extends AbstractProperty.AbstractPropertyContainer<T> {
-  private T myProperty;
-  private Object myValue;
+class SinglePropertyContainer<T extends AbstractProperty> extends AbstractProperty.AbstractPropertyContainer<T>
+{
+	private T myProperty;
+	private Object myValue;
 
-  SinglePropertyContainer(T property, Object value) {
-    myProperty = property;
-    myValue = value;
-  }
+	SinglePropertyContainer(T property, Object value)
+	{
+		myProperty = property;
+		myValue = value;
+	}
 
-  @Override
-  protected Object getValueOf(T t) {
-    if (myProperty.equals(t)) {
-      return myValue;
-    }
-    throw new IllegalArgumentException("Property " + t.getName() + " not found");
-  }
+	@Override
+	protected Object getValueOf(T t)
+	{
+		if(myProperty.equals(t))
+		{
+			return myValue;
+		}
+		throw new IllegalArgumentException("Property " + t.getName() + " not found");
+	}
 
-  @Override
-  protected void setValueOf(T t, Object value) {
-    if (myProperty.equals(t)) {
-      myValue = value;
-    }
-    else {
-      throw new IllegalArgumentException("Property " + t.getName() + " not found");
-    }
-  }
+	@Override
+	protected void setValueOf(T t, Object value)
+	{
+		if(myProperty.equals(t))
+		{
+			myValue = value;
+		}
+		else
+		{
+			throw new IllegalArgumentException("Property " + t.getName() + " not found");
+		}
+	}
 
-  @Override
-  public boolean hasProperty(AbstractProperty property) {
-    return myProperty.equals(property);
-  }
+	@Override
+	public boolean hasProperty(AbstractProperty property)
+	{
+		return myProperty.equals(property);
+	}
 }

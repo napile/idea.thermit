@@ -15,23 +15,24 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.List;
+
 import com.intellij.util.xml.SubTag;
 import com.intellij.util.xml.SubTagList;
-
-import java.util.List;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Jul 8, 2010
  */
-public abstract class AntDomScriptDef extends AntDomCustomClasspathComponent{
+public abstract class AntDomScriptDef extends AntDomCustomClasspathComponent
+{
 
-  @SubTagList("attribute")
-  public abstract List<AntDomScriptdefAttribute> getScriptdefAttributes();
+	@SubTagList("attribute")
+	public abstract List<AntDomScriptdefAttribute> getScriptdefAttributes();
 
-  @SubTagList("element")
-  public abstract List<AntDomScriptdefElement> getScriptdefElements();
-  
-  @SubTag("classpath")
-  public abstract AntDomClasspath getClasspathElement();
+	@SubTagList("element")
+	public abstract List<AntDomScriptdefElement> getScriptdefElements();
+
+	@SubTag("classpath")
+	public abstract AntDomClasspath getClasspathElement();
 }

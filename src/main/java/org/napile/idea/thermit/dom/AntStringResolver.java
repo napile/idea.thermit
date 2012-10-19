@@ -15,100 +15,119 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.openapi.util.Key;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.xml.DomElement;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiElement;
+import com.intellij.util.xml.DomElement;
+
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 22, 2010
  */
-public class AntStringResolver extends PropertyProviderFinder{
-  private final PropertyExpander myExpander;
-  private final boolean mySkipCustomTags;
-  private static final Key<Map<String, String>> RESOLVED_STRINGS_MAP_KEY = Key.create("_ant_resolved_strings_cache_");
+public class AntStringResolver extends PropertyProviderFinder
+{
+	private final PropertyExpander myExpander;
+	private final boolean mySkipCustomTags;
+	private static final Key<Map<String, String>> RESOLVED_STRINGS_MAP_KEY = Key.create("_ant_resolved_strings_cache_");
 
-  private AntStringResolver(DomElement contextElement, PropertyExpander expander) {
-    super(contextElement);
-    myExpander = expander;
-    mySkipCustomTags = CustomAntElementsRegistry.ourIsBuildingClasspathForCustomTagLoading.get();
-  }
+	private AntStringResolver(DomElement contextElement, PropertyExpander expander)
+	{
+		super(contextElement);
+		myExpander = expander;
+		mySkipCustomTags = CustomAntElementsRegistry.ourIsBuildingClasspathForCustomTagLoading.get();
+	}
 
 
-  public void visitAntDomCustomElement(AntDomCustomElement custom) {
-    if (!mySkipCustomTags) {
-      super.visitAntDomCustomElement(custom);
-    }
-  }
+	public void visitAntDomCustomElement(AntDomCustomElement custom)
+	{
+		if(!mySkipCustomTags)
+		{
+			super.visitAntDomCustomElement(custom);
+		}
+	}
 
-  @NotNull
-  public static String computeString(@NotNull final DomElement context, @NotNull String valueString) {
-    PropertyExpander expander = new PropertyExpander(valueString);
-    if (!expander.hasPropertiesToExpand()) {
-      return valueString;
-    }
-    
-    final Map<String, String> cached = context.getUserData(RESOLVED_STRINGS_MAP_KEY);
-    if (cached != null) {
-      expander.acceptProvider(new CachedPropertiesProvider(cached));
-      if (!expander.hasPropertiesToExpand()) {
-        return expander.getResult();
-      }
-    }
-    
-    expander.setPropertyExpansionListener(new PropertyExpander.PropertyExpansionListener() {
-      public void onPropertyExpanded(String propName, String propValue) {
-        cacheResult(context, RESOLVED_STRINGS_MAP_KEY, propName, propValue);
-      }
-    });
-    
-    AntDomProject project = context.getParentOfType(AntDomProject.class, false);
-    if (project == null) {
-      return expander.getResult();
-    }
-    project = project.getContextAntProject();
+	@NotNull
+	public static String computeString(@NotNull final DomElement context, @NotNull String valueString)
+	{
+		PropertyExpander expander = new PropertyExpander(valueString);
+		if(!expander.hasPropertiesToExpand())
+		{
+			return valueString;
+		}
 
-    new AntStringResolver(context, expander).execute(project, project.getDefaultTarget().getRawText());
+		final Map<String, String> cached = context.getUserData(RESOLVED_STRINGS_MAP_KEY);
+		if(cached != null)
+		{
+			expander.acceptProvider(new CachedPropertiesProvider(cached));
+			if(!expander.hasPropertiesToExpand())
+			{
+				return expander.getResult();
+			}
+		}
 
-    return expander.getResult();
-  }
+		expander.setPropertyExpansionListener(new PropertyExpander.PropertyExpansionListener()
+		{
+			public void onPropertyExpanded(String propName, String propValue)
+			{
+				cacheResult(context, RESOLVED_STRINGS_MAP_KEY, propName, propValue);
+			}
+		});
 
-  protected void propertyProviderFound(PropertiesProvider propertiesProvider) {
-    myExpander.acceptProvider(propertiesProvider);
-    if (!myExpander.hasPropertiesToExpand()) {
-      stop();
-    }
-  }
+		AntDomProject project = context.getParentOfType(AntDomProject.class, false);
+		if(project == null)
+		{
+			return expander.getResult();
+		}
+		project = project.getContextAntProject();
 
-  private static class CachedPropertiesProvider implements PropertiesProvider, PropertiesProvider.SkipPropertyExpansionInValues {
-    Set<String> allNames;
-    private final Map<String, String> myCached;
+		new AntStringResolver(context, expander).execute(project, project.getDefaultTarget().getRawText());
 
-    public CachedPropertiesProvider(Map<String, String> cached) {
-      myCached = cached;
-    }
+		return expander.getResult();
+	}
 
-    @NotNull
-    public Iterator<String> getNamesIterator() {
-      if (allNames == null) {
-        allNames = new HashSet<String>(myCached.keySet());
-      }
-      return allNames.iterator();
-    }
+	protected void propertyProviderFound(PropertiesProvider propertiesProvider)
+	{
+		myExpander.acceptProvider(propertiesProvider);
+		if(!myExpander.hasPropertiesToExpand())
+		{
+			stop();
+		}
+	}
 
-    public String getPropertyValue(String propertyName) {
-      return myCached.get(propertyName);
-    }
+	private static class CachedPropertiesProvider implements PropertiesProvider, PropertiesProvider.SkipPropertyExpansionInValues
+	{
+		Set<String> allNames;
+		private final Map<String, String> myCached;
 
-    public PsiElement getNavigationElement(String propertyName) {
-      return null;
-    }
-  }
+		public CachedPropertiesProvider(Map<String, String> cached)
+		{
+			myCached = cached;
+		}
+
+		@NotNull
+		public Iterator<String> getNamesIterator()
+		{
+			if(allNames == null)
+			{
+				allNames = new HashSet<String>(myCached.keySet());
+			}
+			return allNames.iterator();
+		}
+
+		public String getPropertyValue(String propertyName)
+		{
+			return myCached.get(propertyName);
+		}
+
+		public PsiElement getNavigationElement(String propertyName)
+		{
+			return null;
+		}
+	}
 }
 

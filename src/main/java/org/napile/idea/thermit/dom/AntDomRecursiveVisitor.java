@@ -15,77 +15,94 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.Iterator;
+
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomElementVisitor;
-
-import java.util.Iterator;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 22, 2010
  */
-public class AntDomRecursiveVisitor implements DomElementVisitor{
-  public void visitDomElement(DomElement element) {
-  }
+public class AntDomRecursiveVisitor implements DomElementVisitor
+{
+	public void visitDomElement(DomElement element)
+	{
+	}
 
-  public void visitAntDomElement(AntDomElement element) {
-    for (Iterator<AntDomElement> iterator = element.getAntChildrenIterator(); iterator.hasNext();) {
-      AntDomElement child = iterator.next();
-      child.accept(this);
-    }
-  }
+	public void visitAntDomElement(AntDomElement element)
+	{
+		for(Iterator<AntDomElement> iterator = element.getAntChildrenIterator(); iterator.hasNext(); )
+		{
+			AntDomElement child = iterator.next();
+			child.accept(this);
+		}
+	}
 
-  public void visitAntDomCustomElement(AntDomCustomElement custom) {
-    visitAntDomElement(custom);
-  }
-  
+	public void visitAntDomCustomElement(AntDomCustomElement custom)
+	{
+		visitAntDomElement(custom);
+	}
 
-  public void visitTypeDef(AntDomTypeDef typedef) {
-    visitAntDomElement(typedef);
-  }
 
-  public void visitTaskDef(AntDomTaskdef typedef) {
-    visitTypeDef(typedef);
-  }
+	public void visitTypeDef(AntDomTypeDef typedef)
+	{
+		visitAntDomElement(typedef);
+	}
 
-  public void visitMacroDef(AntDomMacroDef macrodef) {
-    visitAntDomElement(macrodef);
-  }
+	public void visitTaskDef(AntDomTaskdef typedef)
+	{
+		visitTypeDef(typedef);
+	}
 
-  public void visitPresetDef(AntDomPresetDef presetdef) {
-    visitAntDomElement(presetdef);
-  }
+	public void visitMacroDef(AntDomMacroDef macrodef)
+	{
+		visitAntDomElement(macrodef);
+	}
 
-  public void visitScriptDef(AntDomScriptDef scriptdef) {
-    visitAntDomElement(scriptdef);
-  }
+	public void visitPresetDef(AntDomPresetDef presetdef)
+	{
+		visitAntDomElement(presetdef);
+	}
 
-  public void visitTarget(AntDomTarget target) {
-    visitAntDomElement(target);
-  }
+	public void visitScriptDef(AntDomScriptDef scriptdef)
+	{
+		visitAntDomElement(scriptdef);
+	}
 
-  public void visitProject(AntDomProject project) {
-    visitAntDomElement(project);
-  }
+	public void visitTarget(AntDomTarget target)
+	{
+		visitAntDomElement(target);
+	}
 
-  public void visitProperty(AntDomProperty property) {
-    visitAntDomElement(property);
-  }
+	public void visitProject(AntDomProject project)
+	{
+		visitAntDomElement(project);
+	}
 
-  public void visitInclude(AntDomInclude includeTag) {
-    visitAntDomElement(includeTag);
-  }
+	public void visitProperty(AntDomProperty property)
+	{
+		visitAntDomElement(property);
+	}
 
-  public void visitImport(AntDomImport importTag) {
-    visitAntDomElement(importTag);
-  }
-  
-  public void visitAntDomAntCall(AntDomAntCall antCall) {
-    visitAntDomElement(antCall);
-  }
-  
-  public void visitAntDomAntCallParam(AntDomAntCallParam antCallParam) {
-    visitAntDomElement(antCallParam);
-  }
-  
+	public void visitInclude(AntDomInclude includeTag)
+	{
+		visitAntDomElement(includeTag);
+	}
+
+	public void visitImport(AntDomImport importTag)
+	{
+		visitAntDomElement(importTag);
+	}
+
+	public void visitAntDomAntCall(AntDomAntCall antCall)
+	{
+		visitAntDomElement(antCall);
+	}
+
+	public void visitAntDomAntCallParam(AntDomAntCallParam antCallParam)
+	{
+		visitAntDomElement(antCallParam);
+	}
+
 }

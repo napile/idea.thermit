@@ -15,22 +15,25 @@
  */
 package org.napile.idea.thermit.validation;
 
+import org.jetbrains.annotations.NotNull;
 import org.napile.idea.thermit.dom.AntDomFileDescription;
 import com.intellij.openapi.editor.HectorComponentPanel;
 import com.intellij.openapi.editor.HectorComponentPanelsProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: May 12, 2008
  */
-public class AntHectorPanelProvider implements HectorComponentPanelsProvider{
-  public HectorComponentPanel createConfigurable(@NotNull final PsiFile file) {
-    if (file instanceof XmlFile && AntDomFileDescription.isAntFile(((XmlFile)file))) {
-      return new AntHectorConfigurable(((XmlFile)file));
-    }
-    return null;
-  }
+public class AntHectorPanelProvider implements HectorComponentPanelsProvider
+{
+	public HectorComponentPanel createConfigurable(@NotNull final PsiFile file)
+	{
+		if(file instanceof XmlFile && AntDomFileDescription.isAntFile(((XmlFile) file)))
+		{
+			return new AntHectorConfigurable(((XmlFile) file));
+		}
+		return null;
+	}
 }

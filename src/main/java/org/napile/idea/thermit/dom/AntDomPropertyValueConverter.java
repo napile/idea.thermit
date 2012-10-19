@@ -15,33 +15,39 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.util.xml.Converter;
-import com.intellij.util.xml.GenericDomValue;
-import com.intellij.util.xml.WrappingConverter;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+import com.intellij.util.xml.Converter;
+import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.WrappingConverter;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: May 25, 2010
  */
-public class AntDomPropertyValueConverter extends WrappingConverter{
+public class AntDomPropertyValueConverter extends WrappingConverter
+{
 
-  @NotNull public List<Converter> getConverters(@NotNull GenericDomValue domElement) {
-    final String raw = domElement.getRawText();
-    if (raw != null) {
-      if (raw.contains("${") || raw.contains(File.separator) || (File.separatorChar != '/' && raw.contains("/"))) {
-        return Collections.<Converter>singletonList(new AntPathConverter());
-      }
-    }
-    return Collections.emptyList();
-  }
+	@NotNull
+	public List<Converter> getConverters(@NotNull GenericDomValue domElement)
+	{
+		final String raw = domElement.getRawText();
+		if(raw != null)
+		{
+			if(raw.contains("${") || raw.contains(File.separator) || (File.separatorChar != '/' && raw.contains("/")))
+			{
+				return Collections.<Converter>singletonList(new AntPathConverter());
+			}
+		}
+		return Collections.emptyList();
+	}
 
-  public Converter getConverter(@NotNull GenericDomValue domElement) {
-    final List<Converter> converterList = getConverters(domElement);
-    return converterList.isEmpty()? null : converterList.get(0);
-  }
+	public Converter getConverter(@NotNull GenericDomValue domElement)
+	{
+		final List<Converter> converterList = getConverters(domElement);
+		return converterList.isEmpty() ? null : converterList.get(0);
+	}
 }

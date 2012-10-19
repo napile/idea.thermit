@@ -15,33 +15,38 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import com.intellij.icons.AllIcons;
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 
-public final class PauseOutputAction extends ToggleAction {
-  private final AntBuildMessageView myAntBuildMessageView;
+public final class PauseOutputAction extends ToggleAction
+{
+	private final AntBuildMessageView myAntBuildMessageView;
 
-  public PauseOutputAction(AntBuildMessageView antBuildMessageView) {
-    super(AntBundle.message("ant.view.pause.output.action.name"),null, AllIcons.Actions.Pause);
-    myAntBuildMessageView = antBuildMessageView;
-  }
+	public PauseOutputAction(AntBuildMessageView antBuildMessageView)
+	{
+		super(AntBundle.message("ant.view.pause.output.action.name"), null, AllIcons.Actions.Pause);
+		myAntBuildMessageView = antBuildMessageView;
+	}
 
-  public boolean isSelected(AnActionEvent event) {
-    return myAntBuildMessageView.isOutputPaused();
-  }
+	public boolean isSelected(AnActionEvent event)
+	{
+		return myAntBuildMessageView.isOutputPaused();
+	}
 
-  public void setSelected(AnActionEvent event,boolean flag) {
-    myAntBuildMessageView.setOutputPaused(flag);
-  }
+	public void setSelected(AnActionEvent event, boolean flag)
+	{
+		myAntBuildMessageView.setOutputPaused(flag);
+	}
 
-  public void update(AnActionEvent event){
-    super.update(event);
-    Presentation presentation = event.getPresentation();
-    presentation.setEnabled(!myAntBuildMessageView.isStopped() || isSelected(event));
-  }
+	public void update(AnActionEvent event)
+	{
+		super.update(event);
+		Presentation presentation = event.getPresentation();
+		presentation.setEnabled(!myAntBuildMessageView.isStopped() || isSelected(event));
+	}
 }
 

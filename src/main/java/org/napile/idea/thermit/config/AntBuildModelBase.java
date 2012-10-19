@@ -15,19 +15,21 @@
  */
 package org.napile.idea.thermit.config;
 
+import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.config.impl.BuildTask;
 import org.napile.idea.thermit.dom.AntDomProject;
-import org.jetbrains.annotations.Nullable;
 
-public interface AntBuildModelBase extends AntBuildModel {
+public interface AntBuildModelBase extends AntBuildModel
+{
 
-  @Nullable
-  String getDefaultTargetActionId();
+	@Nullable
+	String getDefaultTargetActionId();
 
-  @Nullable
-  BuildTask findTask(final String targetName, final String taskName);
+	@Nullable
+	BuildTask findTask(final String targetName, final String taskName);
 
-  @Nullable AntDomProject getAntProject();
+	@Nullable
+	AntDomProject getAntProject();
 
-  boolean hasTargetWithActionId(final String id);
+	boolean hasTargetWithActionId(final String id);
 }

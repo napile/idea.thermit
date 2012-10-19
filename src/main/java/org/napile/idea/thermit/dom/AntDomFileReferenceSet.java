@@ -15,6 +15,11 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -28,113 +33,130 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.xml.GenericAttributeValue;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
+public class AntDomFileReferenceSet extends FileReferenceSet
+{
 
-public class AntDomFileReferenceSet extends FileReferenceSet {
+	private final GenericAttributeValue myValue;
 
-  private final GenericAttributeValue myValue;
+	public AntDomFileReferenceSet(final GenericAttributeValue attribValue, boolean validateFileRefs)
+	{
+		this(attribValue, attribValue.getRawText(), 0, validateFileRefs);
+	}
 
-  public AntDomFileReferenceSet(final GenericAttributeValue attribValue, boolean validateFileRefs) {
-    this(attribValue, attribValue.getRawText(), 0, validateFileRefs);
-  }
+	public AntDomFileReferenceSet(final GenericAttributeValue attribValue, final String pathSubstring, int beginOffset, boolean validateFileRefs)
+	{
+		super(cutTrailingSlash(FileUtil.toSystemIndependentName(pathSubstring)), attribValue.getXmlAttributeValue(), ElementManipulators.getOffsetInElement(attribValue.getXmlAttributeValue()) + beginOffset, null, SystemInfo.isFileSystemCaseSensitive);
+		myValue = attribValue;
+		for(FileReference reference : getAllReferences())
+		{
+			if(reference instanceof AntDomReference)
+			{
+				((AntDomReference) reference).setShouldBeSkippedByAnnotator(!validateFileRefs);
+			}
+		}
+	}
 
-  public AntDomFileReferenceSet(final GenericAttributeValue attribValue, final String pathSubstring, int beginOffset, boolean validateFileRefs) {
-    super(cutTrailingSlash(FileUtil.toSystemIndependentName(pathSubstring)),
-          attribValue.getXmlAttributeValue(),
-          ElementManipulators.getOffsetInElement(attribValue.getXmlAttributeValue()) + beginOffset,
-          null,
-          SystemInfo.isFileSystemCaseSensitive
-    );
-    myValue = attribValue;
-    for (FileReference reference : getAllReferences()) {
-      if (reference instanceof AntDomReference) {
-        ((AntDomReference)reference).setShouldBeSkippedByAnnotator(!validateFileRefs);
-      }
-    }
-  }
+	public GenericAttributeValue getAttributeValue()
+	{
+		return myValue;
+	}
 
-  public GenericAttributeValue getAttributeValue() {
-    return myValue;
-  }
+	private static String cutTrailingSlash(String path)
+	{
+		if(path.endsWith("/"))
+		{
+			return path.substring(0, path.length() - 1);
+		}
+		return path;
+	}
 
-  private static String cutTrailingSlash(String path) {
-    if (path.endsWith("/")) {
-      return path.substring(0, path.length() - 1);
-    }
-    return path;
-  }
-  
-  protected boolean isSoft() {
-    return true;
-  }
+	protected boolean isSoft()
+	{
+		return true;
+	}
 
-  public FileReference createFileReference(final TextRange range, final int index, final String text) {
-    return new AntDomFileReference(this, range, index, text);
-  }
+	public FileReference createFileReference(final TextRange range, final int index, final String text)
+	{
+		return new AntDomFileReference(this, range, index, text);
+	}
 
-  @Override
-  public XmlAttributeValue getElement() {
-    return (XmlAttributeValue)super.getElement();
-  }
+	@Override
+	public XmlAttributeValue getElement()
+	{
+		return (XmlAttributeValue) super.getElement();
+	}
 
-  @Nullable
-  public String getPathString() {
-    return myValue.getStringValue();
-  }
+	@Nullable
+	public String getPathString()
+	{
+		return myValue.getStringValue();
+	}
 
-  public boolean isAbsolutePathReference() {
-    if (super.isAbsolutePathReference()) {
-      return true;
-    }
-    return FileUtil.isAbsolute(getPathString());
-  }
+	public boolean isAbsolutePathReference()
+	{
+		if(super.isAbsolutePathReference())
+		{
+			return true;
+		}
+		return FileUtil.isAbsolute(getPathString());
+	}
 
-  @NotNull
-  public Collection<PsiFileSystemItem> computeDefaultContexts() {
-    final AntDomElement element = myValue.getParentOfType(AntDomElement.class, false);
-    final AntDomProject containingProject = element != null? element.getAntProject() : null;
-    if (containingProject != null) {
-      VirtualFile root = null;
-      if (isAbsolutePathReference()) {
-        root = LocalFileSystem.getInstance().getRoot();
-      }
-      else {
-        
-        if (element instanceof AntDomAnt) {
-          final PsiFileSystemItem dirValue = ((AntDomAnt)element).getAntFileDir().getValue();
-          if (dirValue instanceof PsiDirectory) {
-            root = dirValue.getVirtualFile();
-          }
-        }
+	@NotNull
+	public Collection<PsiFileSystemItem> computeDefaultContexts()
+	{
+		final AntDomElement element = myValue.getParentOfType(AntDomElement.class, false);
+		final AntDomProject containingProject = element != null ? element.getAntProject() : null;
+		if(containingProject != null)
+		{
+			VirtualFile root = null;
+			if(isAbsolutePathReference())
+			{
+				root = LocalFileSystem.getInstance().getRoot();
+			}
+			else
+			{
 
-        if (root == null) {
-          final String basedir;
-          if (element instanceof AntDomIncludingDirective) {
-            basedir = containingProject.getContainingFileDir();
-          }
-          else {
-            basedir = containingProject.getContextAntProject().getProjectBasedirPath();
-          }
-          if (basedir != null) {
-            root = LocalFileSystem.getInstance().findFileByPath(basedir);
-          }
-        }
-      }
+				if(element instanceof AntDomAnt)
+				{
+					final PsiFileSystemItem dirValue = ((AntDomAnt) element).getAntFileDir().getValue();
+					if(dirValue instanceof PsiDirectory)
+					{
+						root = dirValue.getVirtualFile();
+					}
+				}
 
-      if (root != null) {
-        final XmlElement xmlElement = containingProject.getXmlElement();
-        if (xmlElement != null) {
-          final PsiDirectory directory = xmlElement.getManager().findDirectory(root);
-          if (directory != null) {
-            return Collections.<PsiFileSystemItem>singleton(directory);
-          }
-        }
-      }
-    }
-    return super.computeDefaultContexts();
-  }
+				if(root == null)
+				{
+					final String basedir;
+					if(element instanceof AntDomIncludingDirective)
+					{
+						basedir = containingProject.getContainingFileDir();
+					}
+					else
+					{
+						basedir = containingProject.getContextAntProject().getProjectBasedirPath();
+					}
+					if(basedir != null)
+					{
+						root = LocalFileSystem.getInstance().findFileByPath(basedir);
+					}
+				}
+			}
+
+			if(root != null)
+			{
+				final XmlElement xmlElement = containingProject.getXmlElement();
+				if(xmlElement != null)
+				{
+					final PsiDirectory directory = xmlElement.getManager().findDirectory(root);
+					if(directory != null)
+					{
+						return Collections.<PsiFileSystemItem>singleton(directory);
+					}
+				}
+			}
+		}
+		return super.computeDefaultContexts();
+	}
 }

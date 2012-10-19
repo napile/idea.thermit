@@ -15,37 +15,43 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.util.xml.Attribute;
-import com.intellij.util.xml.GenericAttributeValue;
-
 import java.util.Arrays;
 import java.util.List;
+
+import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.GenericAttributeValue;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 12, 2010
  */
-public abstract class AntDomTimestampTask extends AntDomPropertyDefiningElement {
-  // implicit properties
-  public static final String DSTAMP = "DSTAMP";
-  public static final String TSTAMP = "TSTAMP";
-  public static final String TODAY  = "TODAY";
-  
-  @Attribute("prefix")
-  public abstract GenericAttributeValue<String> getPrefix();
+public abstract class AntDomTimestampTask extends AntDomPropertyDefiningElement
+{
+	// implicit properties
+	public static final String DSTAMP = "DSTAMP";
+	public static final String TSTAMP = "TSTAMP";
+	public static final String TODAY = "TODAY";
 
-  protected List<String> getImplicitPropertyNames() {
-    String prefix = getPrefix().getStringValue();
-    if (prefix == null) {
-      return Arrays.asList(DSTAMP, TSTAMP, TODAY);
-    }
-    if (!prefix.endsWith(".")) {
-      prefix += ".";
-    }
-    return Arrays.asList(prefix + DSTAMP, prefix + TSTAMP, prefix + TODAY);
-  }
-  // todo: provide real values if that is really needed
-  protected String calcPropertyValue(String propertyName) {
-    return super.calcPropertyValue(propertyName);
-  }
+	@Attribute("prefix")
+	public abstract GenericAttributeValue<String> getPrefix();
+
+	protected List<String> getImplicitPropertyNames()
+	{
+		String prefix = getPrefix().getStringValue();
+		if(prefix == null)
+		{
+			return Arrays.asList(DSTAMP, TSTAMP, TODAY);
+		}
+		if(!prefix.endsWith("."))
+		{
+			prefix += ".";
+		}
+		return Arrays.asList(prefix + DSTAMP, prefix + TSTAMP, prefix + TODAY);
+	}
+
+	// todo: provide real values if that is really needed
+	protected String calcPropertyValue(String propertyName)
+	{
+		return super.calcPropertyValue(propertyName);
+	}
 }

@@ -15,40 +15,43 @@
  */
 package org.napile.idea.thermit.dom;
 
+import org.jetbrains.annotations.NotNull;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: Apr 26, 2010
  */
-public abstract class AntDomIncludingDirective extends AntDomElement {
-  private static final String DEFAULT_SEPARATOR = ".";
+public abstract class AntDomIncludingDirective extends AntDomElement
+{
+	private static final String DEFAULT_SEPARATOR = ".";
 
-  @Attribute("file")
-  @Convert(value = AntPathRelativeToAntFileConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
+	@Attribute("file")
+	@Convert(value = AntPathRelativeToAntFileConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getFile();
 
-  @Attribute("optional")
-  @Convert(value = AntBooleanConverterDefaultFalse.class)
-  public abstract GenericAttributeValue<Boolean> isOptional();
+	@Attribute("optional")
+	@Convert(value = AntBooleanConverterDefaultFalse.class)
+	public abstract GenericAttributeValue<Boolean> isOptional();
 
-  @Attribute("as")
-  public abstract GenericAttributeValue<String> getTargetPrefix();
+	@Attribute("as")
+	public abstract GenericAttributeValue<String> getTargetPrefix();
 
-  @Attribute("prefixSeparator")
-  public abstract GenericAttributeValue<String> getTargetPrefixSeparator();
+	@Attribute("prefixSeparator")
+	public abstract GenericAttributeValue<String> getTargetPrefixSeparator();
 
-  @NotNull
-  public final String getTargetPrefixSeparatorValue() {
-    final GenericAttributeValue<String> separator = getTargetPrefixSeparator();
-    if (separator == null) {
-      return DEFAULT_SEPARATOR;
-    }
-    final String separatorValue = separator.getStringValue();
-    return separatorValue != null? separatorValue : DEFAULT_SEPARATOR;
-  }
+	@NotNull
+	public final String getTargetPrefixSeparatorValue()
+	{
+		final GenericAttributeValue<String> separator = getTargetPrefixSeparator();
+		if(separator == null)
+		{
+			return DEFAULT_SEPARATOR;
+		}
+		final String separatorValue = separator.getStringValue();
+		return separatorValue != null ? separatorValue : DEFAULT_SEPARATOR;
+	}
 }

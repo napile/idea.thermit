@@ -16,32 +16,34 @@
 
 package org.napile.idea.thermit.config;
 
+import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
-import org.jetbrains.annotations.Nullable;
 
-public interface AntBuildFile {
+public interface AntBuildFile
+{
 
-  @Nullable
-  String getPresentableName();
+	@Nullable
+	String getPresentableName();
 
-  @Nullable
-  String getName();
+	@Nullable
+	String getName();
 
-  AntBuildModel getModel();
+	AntBuildModel getModel();
 
-  @Nullable XmlFile getAntFile();
+	@Nullable
+	XmlFile getAntFile();
 
-  Project getProject();
+	Project getProject();
 
-  @Nullable
-  VirtualFile getVirtualFile();
+	@Nullable
+	VirtualFile getVirtualFile();
 
-  @Nullable
-  String getPresentableUrl();
+	@Nullable
+	String getPresentableUrl();
 
-  boolean isTargetVisible(final AntBuildTarget target);
+	boolean isTargetVisible(final AntBuildTarget target);
 
-  boolean exists();
+	boolean exists();
 }

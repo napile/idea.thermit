@@ -15,6 +15,13 @@
  */
 package org.napile.idea.thermit.config.impl;
 
+import java.io.File;
+import java.util.List;
+
+import javax.swing.JComponent;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.roots.ui.CellAppearanceEx;
 import com.intellij.openapi.roots.ui.FileAppearanceService;
@@ -25,58 +32,65 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 
-import javax.swing.*;
-import java.io.File;
-import java.util.List;
+public class SinglePathEntry implements AntClasspathEntry
+{
+	private static final Function<VirtualFile, AntClasspathEntry> CREATE_FROM_VIRTUAL_FILE = new Function<VirtualFile, AntClasspathEntry>()
+	{
+		public AntClasspathEntry fun(VirtualFile singlePathEntry)
+		{
+			return fromVirtualFile(singlePathEntry);
+		}
+	};
 
-public class SinglePathEntry implements AntClasspathEntry {
-  private static final Function<VirtualFile, AntClasspathEntry> CREATE_FROM_VIRTUAL_FILE = new Function<VirtualFile, AntClasspathEntry>() {
-    public AntClasspathEntry fun(VirtualFile singlePathEntry) {
-      return fromVirtualFile(singlePathEntry);
-    }
-  };
+	@NonNls
+	static final String PATH = "path";
 
-  @NonNls static final String PATH = "path";
+	private File myFile;
 
-  private File myFile;
+	public SinglePathEntry(File file)
+	{
+		myFile = file;
+	}
 
-  public SinglePathEntry(File file) {
-    myFile = file;
-  }
+	public SinglePathEntry(final String osPath)
+	{
+		this(new File(osPath));
+	}
 
-  public SinglePathEntry(final String osPath) {
-    this(new File(osPath));
-  }
+	public void readExternal(final Element element) throws InvalidDataException
+	{
+		String value = element.getAttributeValue(PATH);
+		myFile = new File(PathUtil.toPresentableUrl(value));
+	}
 
-  public void readExternal(final Element element) throws InvalidDataException {
-    String value = element.getAttributeValue(PATH);
-    myFile = new File(PathUtil.toPresentableUrl(value));
-  }
+	public void writeExternal(final Element element) throws WriteExternalException
+	{
+		String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, myFile.getAbsolutePath().replace(File.separatorChar, '/'));
+		element.setAttribute(PATH, url);
+	}
 
-  public void writeExternal(final Element element) throws WriteExternalException {
-    String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, myFile.getAbsolutePath().replace(File.separatorChar, '/'));
-    element.setAttribute(PATH, url);
-  }
+	public void addFilesTo(final List<File> files)
+	{
+		files.add(myFile);
+	}
 
-  public void addFilesTo(final List<File> files) {
-    files.add(myFile);
-  }
+	public CellAppearanceEx getAppearance()
+	{
+		return FileAppearanceService.getInstance().forIoFile(myFile);
+	}
 
-  public CellAppearanceEx getAppearance() {
-    return FileAppearanceService.getInstance().forIoFile(myFile);
-  }
+	private static SinglePathEntry fromVirtualFile(VirtualFile file)
+	{
+		return new SinglePathEntry(file.getPresentableUrl());
+	}
 
-  private static SinglePathEntry fromVirtualFile(VirtualFile file) {
-    return new SinglePathEntry(file.getPresentableUrl());
-  }
-
-  @SuppressWarnings("ClassNameSameAsAncestorName")
-  public static class AddEntriesFactory extends AntClasspathEntry.AddEntriesFactory {
-    public AddEntriesFactory(final JComponent parentComponent) {
-      super(parentComponent, new FileChooserDescriptor(false, true, true, true, false, true), CREATE_FROM_VIRTUAL_FILE);
-    }
-  }
+	@SuppressWarnings("ClassNameSameAsAncestorName")
+	public static class AddEntriesFactory extends AntClasspathEntry.AddEntriesFactory
+	{
+		public AddEntriesFactory(final JComponent parentComponent)
+		{
+			super(parentComponent, new FileChooserDescriptor(false, true, true, true, false, true), CREATE_FROM_VIRTUAL_FILE);
+		}
+	}
 }

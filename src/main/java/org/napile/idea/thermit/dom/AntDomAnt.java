@@ -26,63 +26,73 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Aug 3, 2010
  */
-public abstract class AntDomAnt extends AntDomElement {
-  public static final String DEFAULT_ANTFILE_NAME = "build.xml";
+public abstract class AntDomAnt extends AntDomElement
+{
+	public static final String DEFAULT_ANTFILE_NAME = "build.xml";
 
-  @Attribute("antfile")
-  @Convert(value = AntFilePathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getAntFilePath();
+	@Attribute("antfile")
+	@Convert(value = AntFilePathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getAntFilePath();
 
-  @Attribute("dir")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getAntFileDir();
+	@Attribute("dir")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getAntFileDir();
 
-  @Attribute("target")
-  @Convert(value = AntDomDefaultTargetConverter.class)
-  public abstract GenericAttributeValue<TargetResolver.Result> getDefaultTarget();
+	@Attribute("target")
+	@Convert(value = AntDomDefaultTargetConverter.class)
+	public abstract GenericAttributeValue<TargetResolver.Result> getDefaultTarget();
 
-  @Attribute("output")
-  @Convert(value = AntPathConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getOutputtFileName();
+	@Attribute("output")
+	@Convert(value = AntPathConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getOutputtFileName();
 
-  @Attribute("inheritall")
-  @Convert(value = AntBooleanConverterDefaultTrue.class)
-  public abstract GenericAttributeValue<Boolean> isInheritAllProperties();
+	@Attribute("inheritall")
+	@Convert(value = AntBooleanConverterDefaultTrue.class)
+	public abstract GenericAttributeValue<Boolean> isInheritAllProperties();
 
-  @Attribute("inheritrefs")
-  @Convert(value = AntBooleanConverterDefaultFalse.class)
-  public abstract GenericAttributeValue<Boolean> isInheritRefsProperties();
+	@Attribute("inheritrefs")
+	@Convert(value = AntBooleanConverterDefaultFalse.class)
+	public abstract GenericAttributeValue<Boolean> isInheritRefsProperties();
 
-  @Attribute("usenativebasedir")
-  @Convert(value = AntBooleanConverterDefaultFalse.class)
-  public abstract GenericAttributeValue<Boolean> isUseNativeBasedir();
+	@Attribute("usenativebasedir")
+	@Convert(value = AntBooleanConverterDefaultFalse.class)
+	public abstract GenericAttributeValue<Boolean> isUseNativeBasedir();
 
-  public static class  AntFilePathConverter extends AntPathConverter {
-    public AntFilePathConverter() {
-      super(true);
-    }
+	public static class AntFilePathConverter extends AntPathConverter
+	{
+		public AntFilePathConverter()
+		{
+			super(true);
+		}
 
-    protected String getPathResolveRoot(ConvertContext context, AntDomProject antProject) {
-      final AntDomAnt antElement = context.getInvocationElement().getParentOfType(AntDomAnt.class, false);
-      if (antElement != null) {
-        PsiFileSystemItem dir = antElement.getAntFileDir().getValue();
-        if (dir == null) {
-          if (antElement.isInheritAllProperties().getValue()) {
-            dir = antProject.getProjectBasedir();
-          }
-        }
-        if (dir != null) {
-          final VirtualFile vFile = dir.getVirtualFile();
-          if (vFile != null) {
-            return vFile.getPath();
-          }
-        }
-      }
-      return super.getPathResolveRoot(context, antProject);
-    }
+		protected String getPathResolveRoot(ConvertContext context, AntDomProject antProject)
+		{
+			final AntDomAnt antElement = context.getInvocationElement().getParentOfType(AntDomAnt.class, false);
+			if(antElement != null)
+			{
+				PsiFileSystemItem dir = antElement.getAntFileDir().getValue();
+				if(dir == null)
+				{
+					if(antElement.isInheritAllProperties().getValue())
+					{
+						dir = antProject.getProjectBasedir();
+					}
+				}
+				if(dir != null)
+				{
+					final VirtualFile vFile = dir.getVirtualFile();
+					if(vFile != null)
+					{
+						return vFile.getPath();
+					}
+				}
+			}
+			return super.getPathResolveRoot(context, antProject);
+		}
 
-    protected String getAttributeDefaultValue(ConvertContext context, GenericAttributeValue attribValue) {
-      return DEFAULT_ANTFILE_NAME;
-    }
-  }
+		protected String getAttributeDefaultValue(ConvertContext context, GenericAttributeValue attribValue)
+		{
+			return DEFAULT_ANTFILE_NAME;
+		}
+	}
 }

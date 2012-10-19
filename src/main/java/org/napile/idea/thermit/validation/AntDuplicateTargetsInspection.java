@@ -15,6 +15,9 @@
  */
 package org.napile.idea.thermit.validation;
 
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.dom.AntDomProject;
 import org.napile.idea.thermit.dom.AntDomTarget;
@@ -23,48 +26,51 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import com.intellij.util.xml.highlighting.DomHighlightingHelper;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
-public class AntDuplicateTargetsInspection extends AntInspection {
+public class AntDuplicateTargetsInspection extends AntInspection
+{
 
-  @NonNls private static final String SHORT_NAME = "AntDuplicateTargetsInspection";
+	@NonNls
+	private static final String SHORT_NAME = "AntDuplicateTargetsInspection";
 
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return AntBundle.message("ant.duplicate.targets.inspection");
-  }
+	@Nls
+	@NotNull
+	public String getDisplayName()
+	{
+		return AntBundle.message("ant.duplicate.targets.inspection");
+	}
 
-  @NonNls
-  @NotNull
-  public String getShortName() {
-    return SHORT_NAME;
-  }
+	@NonNls
+	@NotNull
+	public String getShortName()
+	{
+		return SHORT_NAME;
+	}
 
-  protected void checkDomElement(DomElement element, final DomElementAnnotationHolder holder, DomHighlightingHelper helper) {
-    if (element instanceof AntDomProject) {
-      final AntDomProject project = (AntDomProject)element;
-      TargetResolver.validateDuplicateTargets(project.getContextAntProject(), new TargetResolver.TargetSink() {
-        public void duplicateTargetDetected(AntDomTarget existingTarget, AntDomTarget duplicatingTarget, String targetEffectiveName) {
-          final AntDomProject existingTargetProj = existingTarget.getAntProject();
-          final AntDomProject duplucatingTargetProj = duplicatingTarget.getAntProject();
-          final boolean isFromDifferentFiles = !Comparing.equal(existingTargetProj, duplucatingTargetProj);
-          if (project.equals(existingTargetProj)) {
-            final String duplicatedMessage = isFromDifferentFiles? 
-              AntBundle.message("target.is.duplicated.in.imported.file", targetEffectiveName, duplucatingTargetProj != null? duplucatingTargetProj.getName() : "") : 
-              AntBundle.message("target.is.duplicated", targetEffectiveName);
-            holder.createProblem(existingTarget.getName(), duplicatedMessage);
-          }
-          if (project.equals(duplucatingTargetProj)) {
-            final String duplicatedMessage = isFromDifferentFiles? 
-              AntBundle.message("target.is.duplicated.in.imported.file", targetEffectiveName, existingTargetProj != null? existingTargetProj.getName() : "") : 
-              AntBundle.message("target.is.duplicated", targetEffectiveName);
-            holder.createProblem(duplicatingTarget.getName(), duplicatedMessage);
-          }
-        }
-      });      
-    }
-  }
+	protected void checkDomElement(DomElement element, final DomElementAnnotationHolder holder, DomHighlightingHelper helper)
+	{
+		if(element instanceof AntDomProject)
+		{
+			final AntDomProject project = (AntDomProject) element;
+			TargetResolver.validateDuplicateTargets(project.getContextAntProject(), new TargetResolver.TargetSink()
+			{
+				public void duplicateTargetDetected(AntDomTarget existingTarget, AntDomTarget duplicatingTarget, String targetEffectiveName)
+				{
+					final AntDomProject existingTargetProj = existingTarget.getAntProject();
+					final AntDomProject duplucatingTargetProj = duplicatingTarget.getAntProject();
+					final boolean isFromDifferentFiles = !Comparing.equal(existingTargetProj, duplucatingTargetProj);
+					if(project.equals(existingTargetProj))
+					{
+						final String duplicatedMessage = isFromDifferentFiles ? AntBundle.message("target.is.duplicated.in.imported.file", targetEffectiveName, duplucatingTargetProj != null ? duplucatingTargetProj.getName() : "") : AntBundle.message("target.is.duplicated", targetEffectiveName);
+						holder.createProblem(existingTarget.getName(), duplicatedMessage);
+					}
+					if(project.equals(duplucatingTargetProj))
+					{
+						final String duplicatedMessage = isFromDifferentFiles ? AntBundle.message("target.is.duplicated.in.imported.file", targetEffectiveName, existingTargetProj != null ? existingTargetProj.getName() : "") : AntBundle.message("target.is.duplicated", targetEffectiveName);
+						holder.createProblem(duplicatingTarget.getName(), duplicatedMessage);
+					}
+				}
+			});
+		}
+	}
 }

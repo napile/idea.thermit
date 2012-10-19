@@ -19,5 +19,6 @@ package org.napile.idea.thermit.dom;
  * @author Eugene Zhuravlev
  *         Date: Jul 8, 2010
  */
-public abstract class AntDomTaskdef extends AntDomTypeDef{
+public abstract class AntDomTaskdef extends AntDomTypeDef
+{
 }

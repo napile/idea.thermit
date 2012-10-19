@@ -15,44 +15,52 @@
  */
 package org.napile.idea.thermit.config.impl;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.config.AbstractProperty;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AntBuildFileClassLoaderHolder extends ClassLoaderHolder {
-  private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.config.impl.AntBuildFileClassLoaderHolder");
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.config.AbstractProperty;
 
-  public AntBuildFileClassLoaderHolder(AbstractProperty.AbstractPropertyContainer options) {
-    super(options);
-  }
+public class AntBuildFileClassLoaderHolder extends ClassLoaderHolder
+{
+	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.config.impl.AntBuildFileClassLoaderHolder");
 
-  protected ClassLoader buildClasspath() {
-    final ArrayList<File> files = new ArrayList<File>();
-    for (final AntClasspathEntry entry : AntBuildFileImpl.ADDITIONAL_CLASSPATH.get(myOptions)) {
-      entry.addFilesTo(files);
-    }
-    
-    final AntInstallation antInstallation = AntBuildFileImpl.RUN_WITH_ANT.get(myOptions);
-    final ClassLoader parentLoader = (antInstallation != null) ? antInstallation.getClassLoader() : null;
-    if (parentLoader != null && files.size() == 0) {
-      // no additional classpath, so it's ok to use thermit installation's loader
-      return parentLoader;
-    }
+	public AntBuildFileClassLoaderHolder(AbstractProperty.AbstractPropertyContainer options)
+	{
+		super(options);
+	}
 
-    final List<URL> urls = new ArrayList<URL>(files.size());
-    for (File file : files) {
-      try {
-        urls.add(file.toURI().toURL());
-      }
-      catch (MalformedURLException e) {
-        LOG.debug(e);
-      }
-    }
-    return new AntResourcesClassLoader(urls, parentLoader, false, false);
-  }
+	protected ClassLoader buildClasspath()
+	{
+		final ArrayList<File> files = new ArrayList<File>();
+		for(final AntClasspathEntry entry : AntBuildFileImpl.ADDITIONAL_CLASSPATH.get(myOptions))
+		{
+			entry.addFilesTo(files);
+		}
+
+		final AntInstallation antInstallation = AntBuildFileImpl.RUN_WITH_ANT.get(myOptions);
+		final ClassLoader parentLoader = (antInstallation != null) ? antInstallation.getClassLoader() : null;
+		if(parentLoader != null && files.size() == 0)
+		{
+			// no additional classpath, so it's ok to use thermit installation's loader
+			return parentLoader;
+		}
+
+		final List<URL> urls = new ArrayList<URL>(files.size());
+		for(File file : files)
+		{
+			try
+			{
+				urls.add(file.toURI().toURL());
+			}
+			catch(MalformedURLException e)
+			{
+				LOG.debug(e);
+			}
+		}
+		return new AntResourcesClassLoader(urls, parentLoader, false, false);
+	}
 }

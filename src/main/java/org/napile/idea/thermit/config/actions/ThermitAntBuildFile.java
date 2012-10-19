@@ -16,10 +16,14 @@
 package org.napile.idea.thermit.config.actions;
 
 import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.config.AntNoFileException;
 import org.napile.idea.thermit.config.ThermitConfiguration;
 import org.napile.idea.thermit.config.ThermitConfigurationBase;
-import org.napile.idea.thermit.config.AntNoFileException;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,81 +35,96 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 
-public class ThermitAntBuildFile extends AnAction {
-  public void actionPerformed(AnActionEvent event) {
-    DataContext dataContext = event.getDataContext();
-    Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-    VirtualFile file = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
-    ThermitConfiguration thermitConfiguration = ThermitConfiguration.getInstance(project);
-    try {
-      thermitConfiguration.addBuildFile(file);
-      ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.ANT_BUILD).activate(null);
-    }
-    catch (AntNoFileException e) {
-      String message = e.getMessage();
-      if (message == null || message.length() == 0) {
-        message = AntBundle.message("cannot.add.build.files.from.excluded.directories.error.message", e.getFile().getPresentableUrl());
-      }
+public class ThermitAntBuildFile extends AnAction
+{
+	public void actionPerformed(AnActionEvent event)
+	{
+		DataContext dataContext = event.getDataContext();
+		Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+		VirtualFile file = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
+		ThermitConfiguration thermitConfiguration = ThermitConfiguration.getInstance(project);
+		try
+		{
+			thermitConfiguration.addBuildFile(file);
+			ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.ANT_BUILD).activate(null);
+		}
+		catch(AntNoFileException e)
+		{
+			String message = e.getMessage();
+			if(message == null || message.length() == 0)
+			{
+				message = AntBundle.message("cannot.add.build.files.from.excluded.directories.error.message", e.getFile().getPresentableUrl());
+			}
 
-      Messages.showWarningDialog(project, message, AntBundle.message("cannot.add.build.file.dialog.title"));
-    }
-  }
+			Messages.showWarningDialog(project, message, AntBundle.message("cannot.add.build.file.dialog.title"));
+		}
+	}
 
-  public void update(AnActionEvent e) {
-    final DataContext dataContext = e.getDataContext();
-    final Presentation presentation = e.getPresentation();
-    final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-    if (project == null) {
-      disable(presentation);
-      return;
-    }
+	public void update(AnActionEvent e)
+	{
+		final DataContext dataContext = e.getDataContext();
+		final Presentation presentation = e.getPresentation();
+		final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+		if(project == null)
+		{
+			disable(presentation);
+			return;
+		}
 
-    final VirtualFile file = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
-    if (file == null) {
-      disable(presentation);
-      return;
-    }
+		final VirtualFile file = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
+		if(file == null)
+		{
+			disable(presentation);
+			return;
+		}
 
-    final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-    if (!(psiFile instanceof XmlFile)) {
-      disable(presentation);
-      return;
-    }
+		final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+		if(!(psiFile instanceof XmlFile))
+		{
+			disable(presentation);
+			return;
+		}
 
-    final XmlFile xmlFile = (XmlFile)psiFile;
-    final XmlDocument document = xmlFile.getDocument();
-    if (document == null) {
-      disable(presentation);
-      return;
-    }
+		final XmlFile xmlFile = (XmlFile) psiFile;
+		final XmlDocument document = xmlFile.getDocument();
+		if(document == null)
+		{
+			disable(presentation);
+			return;
+		}
 
-    final XmlTag rootTag = document.getRootTag();
-    if (rootTag == null) {
-      disable(presentation);
-      return;
-    }
+		final XmlTag rootTag = document.getRootTag();
+		if(rootTag == null)
+		{
+			disable(presentation);
+			return;
+		}
 
-    if (!"project".equals(rootTag.getName())) {
-      disable(presentation);
-      return;
-    }
+		if(!"project".equals(rootTag.getName()))
+		{
+			disable(presentation);
+			return;
+		}
 
-    if (ThermitConfigurationBase.getInstance(project).getAntBuildFile(psiFile) != null) {
-      disable(presentation);
-      return;
-    }
+		if(ThermitConfigurationBase.getInstance(project).getAntBuildFile(psiFile) != null)
+		{
+			disable(presentation);
+			return;
+		}
 
-    enable(presentation);
-  }
+		enable(presentation);
+	}
 
-  private static void enable(Presentation presentation) {
-    presentation.setEnabled(true);
-    presentation.setVisible(true);
-  }
+	private static void enable(Presentation presentation)
+	{
+		presentation.setEnabled(true);
+		presentation.setVisible(true);
+	}
 
-  private static void disable(Presentation presentation) {
-    presentation.setEnabled(false);
-    presentation.setVisible(false);
-  }
+	private static void disable(Presentation presentation)
+	{
+		presentation.setEnabled(false);
+		presentation.setVisible(false);
+	}
 }
 

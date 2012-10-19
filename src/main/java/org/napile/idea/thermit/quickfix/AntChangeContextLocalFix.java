@@ -15,44 +15,51 @@
  */
 package org.napile.idea.thermit.quickfix;
 
+import org.jetbrains.annotations.NotNull;
+import org.napile.idea.thermit.AntBundle;
 import com.intellij.codeInsight.daemon.impl.HectorComponent;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import org.napile.idea.thermit.AntBundle;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Eugene Zhuravlev
  *         Date: May 12, 2008
  */
-public class AntChangeContextLocalFix implements LocalQuickFix {
+public class AntChangeContextLocalFix implements LocalQuickFix
+{
 
-  @NotNull public String getName() {
-    return AntBundle.message("intention.configure.highlighting.text");
-  }
+	@NotNull
+	public String getName()
+	{
+		return AntBundle.message("intention.configure.highlighting.text");
+	}
 
-  @NotNull
-  public final String getFamilyName() {
-    return AntBundle.message("intention.configure.highlighting.family.name");
-  }
+	@NotNull
+	public final String getFamilyName()
+	{
+		return AntBundle.message("intention.configure.highlighting.family.name");
+	}
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-    final PsiElement psiElement = descriptor.getPsiElement();
-    final PsiFile containingFile = psiElement.getContainingFile();
-    if (containingFile == null) {
-      return;
-    }
-    final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-    if (editor == null) {
-      return;
-    }
-    final HectorComponent component = new HectorComponent(containingFile.getOriginalFile());
-    component.showComponent(JBPopupFactory.getInstance().guessBestPopupLocation(editor));
-  }
+	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
+	{
+		final PsiElement psiElement = descriptor.getPsiElement();
+		final PsiFile containingFile = psiElement.getContainingFile();
+		if(containingFile == null)
+		{
+			return;
+		}
+		final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+		if(editor == null)
+		{
+			return;
+		}
+		final HectorComponent component = new HectorComponent(containingFile.getOriginalFile());
+		component.showComponent(JBPopupFactory.getInstance().guessBestPopupLocation(editor));
+	}
 }

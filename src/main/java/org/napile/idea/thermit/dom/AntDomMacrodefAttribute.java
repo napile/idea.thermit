@@ -22,9 +22,10 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Aug 4, 2010
  */
-public abstract class AntDomMacrodefAttribute extends AntDomNamedElement {
-  
-  @Attribute("default")
-  public abstract GenericAttributeValue<String> getDefaultValue();
+public abstract class AntDomMacrodefAttribute extends AntDomNamedElement
+{
+
+	@Attribute("default")
+	public abstract GenericAttributeValue<String> getDefaultValue();
 
 }

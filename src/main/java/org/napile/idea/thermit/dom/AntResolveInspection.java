@@ -15,10 +15,15 @@
  */
 package org.napile.idea.thermit.dom;
 
-import com.intellij.codeInspection.ProblemHighlightType;
+import java.util.List;
+import java.util.Set;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.quickfix.AntChangeContextLocalFix;
 import org.napile.idea.thermit.validation.AntInspection;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
@@ -29,98 +34,118 @@ import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.GenericDomValue;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import com.intellij.util.xml.highlighting.DomHighlightingHelper;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Set;
+public class AntResolveInspection extends AntInspection
+{
 
-public class AntResolveInspection extends AntInspection {
+	public static final String SHORT_NAME = "AntResolveInspection";
 
-  public static final String SHORT_NAME = "AntResolveInspection";
+	@NotNull
+	public String getDisplayName()
+	{
+		return "Ant references resolve problems";
+	}
 
-  @NotNull
-  public String getDisplayName() {
-    return "Ant references resolve problems";
-  }
+	@NotNull
+	public String getShortName()
+	{
+		return SHORT_NAME;
+	}
 
-  @NotNull
-  public String getShortName() {
-    return SHORT_NAME;
-  }
+	protected void checkDomElement(DomElement element, DomElementAnnotationHolder holder, DomHighlightingHelper helper)
+	{
+		if(element instanceof GenericDomValue)
+		{
+			final XmlElement valueElement = DomUtil.getValueElement(((GenericDomValue) element));
+			if(valueElement != null)
+			{
+				checkReferences(valueElement, holder, element);
+			}
+		}
+		else if(element instanceof AntDomTypeDef)
+		{
+			final AntDomTypeDef typeDef = (AntDomTypeDef) element;
+			final List<String> errors = typeDef.getErrorDescriptions();
+			if(!errors.isEmpty())
+			{
+				final StringBuilder builder = new StringBuilder();
+				builder.append(AntBundle.message("failed.to.load.types")).append(":");
+				for(String error : errors)
+				{
+					builder.append("\n").append(error);
+				}
+				holder.createProblem(typeDef, builder.toString());
+			}
+		}
+		else if(element instanceof AntDomCustomElement)
+		{
+			final AntDomCustomElement custom = (AntDomCustomElement) element;
+			if(custom.getDefinitionClass() == null)
+			{
+				final AntDomNamedElement declaringElement = custom.getDeclaringElement();
+				if(declaringElement instanceof AntDomTypeDef)
+				{
+					String failedMessage = AntBundle.message("using.definition.which.type.failed.to.load");
+					final String error = custom.getLoadError();
+					if(error != null)
+					{
+						failedMessage = failedMessage + ": " + error;
+					}
+					holder.createProblem(custom, failedMessage);
+				}
+			}
+		}
+	}
 
-  protected void checkDomElement(DomElement element, DomElementAnnotationHolder holder, DomHighlightingHelper helper) {
-    if (element instanceof GenericDomValue) {
-      final XmlElement valueElement = DomUtil.getValueElement(((GenericDomValue)element));
-      if (valueElement != null) {
-        checkReferences(valueElement, holder, element);
-      }
-    }
-    else if (element instanceof AntDomTypeDef) {
-      final AntDomTypeDef typeDef = (AntDomTypeDef)element;
-      final List<String> errors = typeDef.getErrorDescriptions();
-      if (!errors.isEmpty()) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(AntBundle.message("failed.to.load.types")).append(":");
-        for (String error : errors) {
-          builder.append("\n").append(error);
-        }
-        holder.createProblem(typeDef, builder.toString());
-      }
-    }
-    else if (element instanceof AntDomCustomElement) {
-      final AntDomCustomElement custom = (AntDomCustomElement)element;
-      if (custom.getDefinitionClass() == null) {
-        final AntDomNamedElement declaringElement = custom.getDeclaringElement();
-        if (declaringElement instanceof AntDomTypeDef) {
-          String failedMessage = AntBundle.message("using.definition.which.type.failed.to.load");
-          final String error = custom.getLoadError();
-          if (error != null) {
-            failedMessage = failedMessage + ": " + error;
-          }
-          holder.createProblem(custom, failedMessage);
-        }
-      }
-    }
-  }
-  
-  private static void checkReferences(final XmlElement xmlElement, final @NonNls DomElementAnnotationHolder holder, DomElement domElement) {
-    if (xmlElement == null) {
-      return;
-    }
-    Set<PsiReference> processed = null;
-    for (final PsiReference ref : xmlElement.getReferences()) {
-      if (!(ref instanceof AntDomReference)) {
-        continue;
-      }
-      final AntDomReference antDomRef = (AntDomReference)ref;
-      if (antDomRef.shouldBeSkippedByAnnotator()) {
-        continue;
-      }
-      if (processed != null && processed.contains(ref)) {
-        continue;
-      }
-      if (!isResolvable(ref)) {
+	private static void checkReferences(final XmlElement xmlElement, final @NonNls DomElementAnnotationHolder holder, DomElement domElement)
+	{
+		if(xmlElement == null)
+		{
+			return;
+		}
+		Set<PsiReference> processed = null;
+		for(final PsiReference ref : xmlElement.getReferences())
+		{
+			if(!(ref instanceof AntDomReference))
+			{
+				continue;
+			}
+			final AntDomReference antDomRef = (AntDomReference) ref;
+			if(antDomRef.shouldBeSkippedByAnnotator())
+			{
+				continue;
+			}
+			if(processed != null && processed.contains(ref))
+			{
+				continue;
+			}
+			if(!isResolvable(ref))
+			{
 
-        holder.createProblem(domElement, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, antDomRef.getUnresolvedMessagePattern(), ref.getRangeInElement(), new AntChangeContextLocalFix());
+				holder.createProblem(domElement, ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, antDomRef.getUnresolvedMessagePattern(), ref.getRangeInElement(), new AntChangeContextLocalFix());
 
-        if (ref instanceof AntDomFileReference) {
-          if (processed == null) {
-            processed = new HashSet<PsiReference>();
-          }
-          ContainerUtil.addAll(processed, ((AntDomFileReference)ref).getFileReferenceSet().getAllReferences());
-        }
-      }
-    }
-  }
+				if(ref instanceof AntDomFileReference)
+				{
+					if(processed == null)
+					{
+						processed = new HashSet<PsiReference>();
+					}
+					ContainerUtil.addAll(processed, ((AntDomFileReference) ref).getFileReferenceSet().getAllReferences());
+				}
+			}
+		}
+	}
 
-  private static boolean isResolvable(PsiReference ref) {
-    if (ref.resolve() != null) {
-      return true;
-    }
-    if (ref instanceof PsiPolyVariantReference) {
-      return ((PsiPolyVariantReference)ref).multiResolve(false).length > 0;
-    }
-    return false;
-  }
+	private static boolean isResolvable(PsiReference ref)
+	{
+		if(ref.resolve() != null)
+		{
+			return true;
+		}
+		if(ref instanceof PsiPolyVariantReference)
+		{
+			return ((PsiPolyVariantReference) ref).multiResolve(false).length > 0;
+		}
+		return false;
+	}
 }

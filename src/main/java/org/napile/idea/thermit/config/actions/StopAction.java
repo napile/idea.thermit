@@ -15,27 +15,31 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import com.intellij.icons.AllIcons;
 import org.napile.idea.thermit.AntBundle;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 
-public final class StopAction extends AnAction {
-  private final AntBuildMessageView myAntBuildMessageView;
+public final class StopAction extends AnAction
+{
+	private final AntBuildMessageView myAntBuildMessageView;
 
-  public StopAction(AntBuildMessageView antBuildMessageView) {
-    super(AntBundle.message("stop.ant.action.name"),null, AllIcons.Actions.Suspend);
-    myAntBuildMessageView = antBuildMessageView;
-  }
+	public StopAction(AntBuildMessageView antBuildMessageView)
+	{
+		super(AntBundle.message("stop.ant.action.name"), null, AllIcons.Actions.Suspend);
+		myAntBuildMessageView = antBuildMessageView;
+	}
 
-  public void actionPerformed(AnActionEvent e) {
-    myAntBuildMessageView.stopProcess();
-  }
+	public void actionPerformed(AnActionEvent e)
+	{
+		myAntBuildMessageView.stopProcess();
+	}
 
-  public void update(AnActionEvent event){
-    Presentation presentation = event.getPresentation();
-    presentation.setEnabled(!myAntBuildMessageView.isStopped());
-  }
+	public void update(AnActionEvent event)
+	{
+		Presentation presentation = event.getPresentation();
+		presentation.setEnabled(!myAntBuildMessageView.isStopped());
+	}
 }

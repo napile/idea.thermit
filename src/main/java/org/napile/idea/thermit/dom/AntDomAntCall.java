@@ -15,31 +15,32 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.util.List;
+
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.SubTagList;
 
-import java.util.List;
-
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 3, 2010
  */
-public abstract class AntDomAntCall extends AntDomElement {
-  
-  @Attribute("target")
-  @Convert(value = AntDomDefaultTargetConverter.class)
-  public abstract GenericAttributeValue<TargetResolver.Result> getTarget();
+public abstract class AntDomAntCall extends AntDomElement
+{
 
-  @Attribute("inheritall")
-  @Convert(value = AntBooleanConverterDefaultTrue.class)
-  public abstract GenericAttributeValue<Boolean> isInheritAllProperties();
+	@Attribute("target")
+	@Convert(value = AntDomDefaultTargetConverter.class)
+	public abstract GenericAttributeValue<TargetResolver.Result> getTarget();
 
-  @Attribute("inheritrefs")
-  @Convert(value = AntBooleanConverterDefaultFalse.class)
-  public abstract GenericAttributeValue<Boolean> isInheritRefsProperties();
-  
-  @SubTagList("param")
-  public abstract List<AntDomAntCallParam> getParams();
+	@Attribute("inheritall")
+	@Convert(value = AntBooleanConverterDefaultTrue.class)
+	public abstract GenericAttributeValue<Boolean> isInheritAllProperties();
+
+	@Attribute("inheritrefs")
+	@Convert(value = AntBooleanConverterDefaultFalse.class)
+	public abstract GenericAttributeValue<Boolean> isInheritRefsProperties();
+
+	@SubTagList("param")
+	public abstract List<AntDomAntCallParam> getParams();
 }

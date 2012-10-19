@@ -15,23 +15,32 @@
  */
 package org.napile.idea.thermit.config.execution;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
-public interface AntOutputView {
-  Object addMessage(AntMessage message);
-  void addJavacMessage(AntMessage message, String url);
-  void addException(AntMessage exception, boolean showFullTrace);
-  void startBuild(AntMessage message);
-  void startTarget(AntMessage message);
-  void startTask(AntMessage message);
-  void finishBuild(String messageText);
-  void finishTarget();
-  void finishTask();
+public interface AntOutputView
+{
+	Object addMessage(AntMessage message);
 
-  Object getData(String dataId);
+	void addJavacMessage(AntMessage message, String url);
 
-  void buildFailed(AntMessage message);
+	void addException(AntMessage exception, boolean showFullTrace);
 
-  JComponent getComponent();
+	void startBuild(AntMessage message);
+
+	void startTarget(AntMessage message);
+
+	void startTask(AntMessage message);
+
+	void finishBuild(String messageText);
+
+	void finishTarget();
+
+	void finishTask();
+
+	Object getData(String dataId);
+
+	void buildFailed(AntMessage message);
+
+	JComponent getComponent();
 }
 

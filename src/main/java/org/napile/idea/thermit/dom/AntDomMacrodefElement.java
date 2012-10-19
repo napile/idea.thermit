@@ -23,14 +23,15 @@ import com.intellij.util.xml.GenericAttributeValue;
  * @author Eugene Zhuravlev
  *         Date: Aug 4, 2010
  */
-public abstract class AntDomMacrodefElement extends AntDomNamedElement {
-  
-  @Attribute("optional")
-  @Convert(value = AntBooleanConverterDefaultFalse.class)
-  public abstract GenericAttributeValue<Boolean> isOptional();
+public abstract class AntDomMacrodefElement extends AntDomNamedElement
+{
 
-  @Attribute("implicit")
-  @Convert(value = AntBooleanConverterDefaultFalse.class)
-  public abstract GenericAttributeValue<Boolean> isImplicit();
+	@Attribute("optional")
+	@Convert(value = AntBooleanConverterDefaultFalse.class)
+	public abstract GenericAttributeValue<Boolean> isOptional();
+
+	@Attribute("implicit")
+	@Convert(value = AntBooleanConverterDefaultFalse.class)
+	public abstract GenericAttributeValue<Boolean> isImplicit();
 
 }

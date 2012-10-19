@@ -15,6 +15,8 @@
  */
 package org.napile.idea.thermit.dom;
 
+import java.io.IOException;
+
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,46 +26,51 @@ import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
 
-import java.io.IOException;
-
 /**
  * @author Eugene Zhuravlev
  *         Date: Aug 6, 2010
  */
-public abstract class AntDomLoadFileTask extends AntDomPropertyDefiningTask {
+public abstract class AntDomLoadFileTask extends AntDomPropertyDefiningTask
+{
 
-  private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.dom.AntDomLoadFileTask");
-  
-  private String myCachedText;
+	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.dom.AntDomLoadFileTask");
 
-  @Attribute("srcfile")
-  @Convert(value = AntPathValidatingConverter.class)
-  public abstract GenericAttributeValue<PsiFileSystemItem> getSrcFile();
+	private String myCachedText;
 
-  @Attribute("encoding")
-  public abstract GenericAttributeValue<String> getEncoding();
-  
-  protected String calcPropertyValue(String propertyName) {
-    String text = myCachedText;
-    if (text != null) {
-      return text; 
-    }
-    final PsiFileSystemItem file = getSrcFile().getValue();
-    if (!(file instanceof PsiFile)) {
-      return "";
-    }
-    final VirtualFile vFile = ((PsiFile)file).getOriginalFile().getVirtualFile();
-    if (vFile == null) {
-      return "";
-    }
-    try {
-      text = VfsUtil.loadText(vFile);
-      myCachedText = text;
-    }
-    catch (IOException e) {
-      LOG.info(e);
-      text = "";
-    }
-    return text;
-  }
+	@Attribute("srcfile")
+	@Convert(value = AntPathValidatingConverter.class)
+	public abstract GenericAttributeValue<PsiFileSystemItem> getSrcFile();
+
+	@Attribute("encoding")
+	public abstract GenericAttributeValue<String> getEncoding();
+
+	protected String calcPropertyValue(String propertyName)
+	{
+		String text = myCachedText;
+		if(text != null)
+		{
+			return text;
+		}
+		final PsiFileSystemItem file = getSrcFile().getValue();
+		if(!(file instanceof PsiFile))
+		{
+			return "";
+		}
+		final VirtualFile vFile = ((PsiFile) file).getOriginalFile().getVirtualFile();
+		if(vFile == null)
+		{
+			return "";
+		}
+		try
+		{
+			text = VfsUtil.loadText(vFile);
+			myCachedText = text;
+		}
+		catch(IOException e)
+		{
+			LOG.info(e);
+			text = "";
+		}
+		return text;
+	}
 }

@@ -15,6 +15,14 @@
  */
 package org.napile.idea.thermit.config.impl;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.util.List;
+
+import javax.swing.JComponent;
+
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.roots.ui.CellAppearanceEx;
@@ -26,65 +34,75 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 
-import javax.swing.*;
-import java.io.File;
-import java.io.FileFilter;
-import java.util.List;
+public class AllJarsUnderDirEntry implements AntClasspathEntry
+{
+	@NonNls
+	private static final String JAR_SUFFIX = ".jar";
 
-public class AllJarsUnderDirEntry implements AntClasspathEntry {
-  @NonNls private static final String JAR_SUFFIX = ".jar";
+	private static final Function<VirtualFile, AntClasspathEntry> CREATE_FROM_VIRTUAL_FILE = new Function<VirtualFile, AntClasspathEntry>()
+	{
+		public AntClasspathEntry fun(VirtualFile file)
+		{
+			return fromVirtualFile(file);
+		}
+	};
 
-  private static final Function<VirtualFile, AntClasspathEntry> CREATE_FROM_VIRTUAL_FILE = new Function<VirtualFile, AntClasspathEntry>() {
-    public AntClasspathEntry fun(VirtualFile file) {
-      return fromVirtualFile(file);
-    }
-  };
+	@NonNls
+	static final String DIR = "dir";
 
-  @NonNls static final String DIR = "dir";
+	private final File myDir;
 
-  private final File myDir;
+	public AllJarsUnderDirEntry(final File dir)
+	{
+		myDir = dir;
+	}
 
-  public AllJarsUnderDirEntry(final File dir) {
-    myDir = dir;
-  }
+	public AllJarsUnderDirEntry(final String osPath)
+	{
+		this(new File(osPath));
+	}
 
-  public AllJarsUnderDirEntry(final String osPath) {
-    this(new File(osPath));
-  }
+	public void writeExternal(final Element dataElement) throws WriteExternalException
+	{
+		String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, myDir.getAbsolutePath().replace(File.separatorChar, '/'));
+		dataElement.setAttribute(DIR, url);
+	}
 
-  public void writeExternal(final Element dataElement) throws WriteExternalException {
-    String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, myDir.getAbsolutePath().replace(File.separatorChar, '/'));
-    dataElement.setAttribute(DIR, url);
-  }
+	public void addFilesTo(final List<File> files)
+	{
+		File[] children = myDir.listFiles(new FileFilter()
+		{
+			public boolean accept(File pathName)
+			{
+				return pathName.getName().endsWith(JAR_SUFFIX) && pathName.isFile();
+			}
+		});
+		if(children != null)
+			ContainerUtil.addAll(files, children);
+	}
 
-  public void addFilesTo(final List<File> files) {
-    File[] children = myDir.listFiles(new FileFilter() {
-      public boolean accept(File pathName) {
-        return pathName.getName().endsWith(JAR_SUFFIX) && pathName.isFile();
-      }
-    });
-    if (children != null) ContainerUtil.addAll(files, children);
-  }
+	public CellAppearanceEx getAppearance()
+	{
+		CellAppearanceEx appearance = FileAppearanceService.getInstance().forIoFile(myDir);
+		if(appearance instanceof ModifiableCellAppearanceEx)
+		{
+			((ModifiableCellAppearanceEx) appearance).setIcon(AllIcons.Nodes.JarDirectory);
+		}
+		return appearance;
+	}
 
-  public CellAppearanceEx getAppearance() {
-    CellAppearanceEx appearance = FileAppearanceService.getInstance().forIoFile(myDir);
-    if (appearance instanceof ModifiableCellAppearanceEx) {
-      ((ModifiableCellAppearanceEx)appearance).setIcon(AllIcons.Nodes.JarDirectory);
-    }
-    return appearance;
-  }
+	private static AntClasspathEntry fromVirtualFile(final VirtualFile file)
+	{
+		return new AllJarsUnderDirEntry(file.getPath());
+	}
 
-  private static AntClasspathEntry fromVirtualFile(final VirtualFile file) {
-    return new AllJarsUnderDirEntry(file.getPath());
-  }
-
-  @SuppressWarnings("ClassNameSameAsAncestorName")
-  public static class AddEntriesFactory extends AntClasspathEntry.AddEntriesFactory {
-    public AddEntriesFactory(final JComponent parentComponent) {
-      super(parentComponent, FileChooserDescriptorFactory.createMultipleFoldersDescriptor(), CREATE_FROM_VIRTUAL_FILE);
-    }
-  }
+	@SuppressWarnings("ClassNameSameAsAncestorName")
+	public static class AddEntriesFactory extends AntClasspathEntry.AddEntriesFactory
+	{
+		public AddEntriesFactory(final JComponent parentComponent)
+		{
+			super(parentComponent, FileChooserDescriptorFactory.createMultipleFoldersDescriptor(), CREATE_FROM_VIRTUAL_FILE);
+		}
+	}
 }

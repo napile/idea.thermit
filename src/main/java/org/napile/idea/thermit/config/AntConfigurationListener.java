@@ -18,12 +18,13 @@ package org.napile.idea.thermit.config;
 
 import java.util.EventListener;
 
-public interface AntConfigurationListener extends EventListener {
-  void configurationLoaded();
-  
-  void buildFileChanged(final AntBuildFile buildFile);
+public interface AntConfigurationListener extends EventListener
+{
+	void configurationLoaded();
 
-  void buildFileAdded(final AntBuildFile buildFile);
+	void buildFileChanged(final AntBuildFile buildFile);
 
-  void buildFileRemoved(final AntBuildFile buildFile);
+	void buildFileAdded(final AntBuildFile buildFile);
+
+	void buildFileRemoved(final AntBuildFile buildFile);
 }

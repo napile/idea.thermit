@@ -19,9 +19,11 @@ package org.napile.idea.thermit.dom;
  * @author Eugene Zhuravlev
  *         Date: Aug 13, 2010
  */
-public class AntPathValidatingConverter extends AntPathConverter{
+public class AntPathValidatingConverter extends AntPathConverter
+{
 
-  public AntPathValidatingConverter() {
-    super(true);
-  }
+	public AntPathValidatingConverter()
+	{
+		super(true);
+	}
 }

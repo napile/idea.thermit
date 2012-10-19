@@ -18,19 +18,20 @@ package org.napile.idea.thermit.config;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface AntBuildModel {
-  @Nullable
-  String getDefaultTargetName();
+public interface AntBuildModel
+{
+	@Nullable
+	String getDefaultTargetName();
 
-  AntBuildTarget[] getTargets();
+	AntBuildTarget[] getTargets();
 
-  AntBuildTarget[] getFilteredTargets();
+	AntBuildTarget[] getFilteredTargets();
 
-  AntBuildFile getBuildFile();
+	AntBuildFile getBuildFile();
 
-  @Nullable
-  AntBuildTarget findTarget(final String name);
+	@Nullable
+	AntBuildTarget findTarget(final String name);
 
-  @Nullable
-  String getName();
+	@Nullable
+	String getName();
 }

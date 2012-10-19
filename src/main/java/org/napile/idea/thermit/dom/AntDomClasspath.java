@@ -19,5 +19,6 @@ package org.napile.idea.thermit.dom;
  * @author Eugene Zhuravlev
  *         Date: Aug 5, 2010
  */
-public abstract class AntDomClasspath extends AntDomPath{
+public abstract class AntDomClasspath extends AntDomPath
+{
 }

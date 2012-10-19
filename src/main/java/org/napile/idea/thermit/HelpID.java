@@ -17,6 +17,8 @@ package org.napile.idea.thermit;
 
 import org.jetbrains.annotations.NonNls;
 
-public interface HelpID {
-  @NonNls String FIND_OTHER_USAGES = "find.findOtherUsages";
+public interface HelpID
+{
+	@NonNls
+	String FIND_OTHER_USAGES = "find.findOtherUsages";
 }

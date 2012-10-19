@@ -28,34 +28,41 @@ import com.intellij.psi.xml.XmlTag;
  * @author Eugene Zhuravlev
  *         Date: Apr 6, 2010
  */
-public class AntDomFileDescription extends AntFileDescription<AntDomProject> {
-  private static final String ROOT_TAG_NAME = "project";
-  private static final String EXTENSION = "txml";
+public class AntDomFileDescription extends AntFileDescription<AntDomProject>
+{
+	private static final String ROOT_TAG_NAME = "project";
+	private static final String EXTENSION = "txml";
 
-  public AntDomFileDescription() {
-    super(AntDomProject.class, ROOT_TAG_NAME);
-  }
+	public AntDomFileDescription()
+	{
+		super(AntDomProject.class, ROOT_TAG_NAME);
+	}
 
-  public boolean isMyFile(@NotNull XmlFile file, @Nullable Module module) {
-    return super.isMyFile(file, module) && isAntFile(file) && EXTENSION.equals(file.getVirtualFile().getExtension());
-  }
+	public boolean isMyFile(@NotNull XmlFile file, @Nullable Module module)
+	{
+		return super.isMyFile(file, module) && isAntFile(file) && EXTENSION.equals(file.getVirtualFile().getExtension());
+	}
 
-  public static boolean isAntFile(final XmlFile xmlFile) {
-    final XmlDocument document = xmlFile.getDocument();
-    if (document != null) {
-      final XmlTag tag = document.getRootTag();
-      final VirtualFile vFile = xmlFile.getOriginalFile().getVirtualFile();
-      if (tag != null && ROOT_TAG_NAME.equals(tag.getName()) && tag.getContext() instanceof XmlDocument) {
-        if (tag.getAttributeValue("name") != null && tag.getAttributeValue("default") != null
-            && vFile != null && ForcedAntFileAttribute.mayBeAntFile(vFile)) {
-          return true;
-        }
-      }
-      if (vFile != null && ForcedAntFileAttribute.isAntFile(vFile)) {
-        return true;
-      }
-    }
-    return false;
-  }
+	public static boolean isAntFile(final XmlFile xmlFile)
+	{
+		final XmlDocument document = xmlFile.getDocument();
+		if(document != null)
+		{
+			final XmlTag tag = document.getRootTag();
+			final VirtualFile vFile = xmlFile.getOriginalFile().getVirtualFile();
+			if(tag != null && ROOT_TAG_NAME.equals(tag.getName()) && tag.getContext() instanceof XmlDocument)
+			{
+				if(tag.getAttributeValue("name") != null && tag.getAttributeValue("default") != null && vFile != null && ForcedAntFileAttribute.mayBeAntFile(vFile))
+				{
+					return true;
+				}
+			}
+			if(vFile != null && ForcedAntFileAttribute.isAntFile(vFile))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
