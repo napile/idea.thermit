@@ -1,0 +1,106 @@
+<idea-plugin version="2">
+	<name>napile : Thermit Support</name>
+	<id>org.napile.idea.thermit</id>
+	<version>1.0</version>
+	<description>Editing, maintaining and running Thermit build scripts inside IntelliJ IDEA.</description>
+	<vendor>napile.org</vendor>
+
+	<resource-bundle>org.napile.idea.thermit.resources.AntActionsBundle</resource-bundle>
+	<depends>com.intellij.properties</depends>
+
+	<extensionPoints>
+		<extensionPoint name="AntMessageCustomizer" interface="org.napile.idea.thermit.config.execution.AntMessageCustomizer"/>
+	</extensionPoints>
+
+	<extensions defaultExtensionNs="com.intellij">
+		<projectService serviceInterface="org.napile.idea.thermit.config.ThermitConfiguration" serviceImplementation="org.napile.idea.thermit.config.impl.ThermitConfigurationImpl"/>
+		<projectService serviceInterface="org.napile.idea.thermit.config.impl.ThermitWorkspaceConfiguration" serviceImplementation="org.napile.idea.thermit.config.impl.ThermitWorkspaceConfiguration"/>
+
+		<errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+		<renameHandler implementation="org.napile.idea.thermit.refactoring.AntRenameHandler"/>
+		<stepsBeforeRunProvider implementation="org.napile.idea.thermit.config.impl.AntBeforeRunTaskProvider"/>
+		<fileTypeFactory implementation="org.napile.idea.thermit.TXmlFileFactory" />
+		<!--<antBuildGen implementation="org.napile.idea.thermit.config.impl.artifacts.AntArtifactBuildExtension"/> -->
+		<packaging.artifactPropertiesProvider implementation="org.napile.idea.thermit.config.impl.artifacts.AntArtifactPostprocessingPropertiesProvider"/>
+		<packaging.artifactPropertiesProvider implementation="org.napile.idea.thermit.config.impl.artifacts.AntArtifactPreProcessingPropertiesProvider"/>
+		<keymapExtension implementation="org.napile.idea.thermit.config.impl.AntKeymapExtension"/>
+		<highlightRangeExtension implementation="org.napile.idea.thermit.AntHighlightRangeExtension"/>
+		<renamePsiElementProcessor implementation="org.napile.idea.thermit.dom.AntRenameProcessor"/>
+		<daemon.externalAnnotatorsFilter implementation="org.napile.idea.thermit.validation.AntAnnotatorsFilter"/>
+		<lang.documentationProvider language="XML" implementationClass="org.napile.idea.thermit.doc.AntDomDocumentationProvider"/>
+
+		<fileBasedIndex implementation="org.napile.idea.thermit.AntImportsIndex"/>
+		<codeInsight.unresolvedReferenceQuickFixProvider implementation="org.napile.idea.thermit.quickfix.AntUnresolvedRefsFixProvider"/>
+		<hectorComponentProvider implementation="org.napile.idea.thermit.validation.AntHectorPanelProvider"/>
+
+		<localInspection language="XML" shortName="AntDuplicateTargetsInspection" bundle="messages.AntBundle" key="ant.duplicate.targets.inspection"
+						 groupKey="ant.inspections.display.name" enabledByDefault="true" level="ERROR"
+						 implementationClass="org.napile.idea.thermit.validation.AntDuplicateTargetsInspection"/>
+		<localInspection language="XML" shortName="AntMissingPropertiesFileInspection" bundle="messages.AntBundle" key="ant.missing.properties.file.inspection"
+						 groupKey="ant.inspections.display.name" enabledByDefault="true" level="ERROR"
+						 implementationClass="org.napile.idea.thermit.validation.AntMissingPropertiesFileInspection"/>
+		<localInspection language="XML" shortName="AntResolveInspection" displayName="Ant references resolve problems" bundle="messages.AntBundle"
+						 groupKey="ant.inspections.display.name"
+						 enabledByDefault="true" level="ERROR" implementationClass="org.napile.idea.thermit.dom.AntResolveInspection"/>
+
+		<dom.fileDescription implementation="org.napile.idea.thermit.dom.AntDomFileDescription"/>
+		<dom.fileDescription implementation="org.napile.idea.thermit.dom.AntlibDomFileDescription"/>
+		<dom.extender domClass="org.napile.idea.thermit.dom.AntDomElement" extenderClass="org.napile.idea.thermit.dom.AntDomExtender"/>
+		<pom.declarationSearcher implementation="org.napile.idea.thermit.dom.AntDomDeclarationSearcher"/>
+
+		<!--Type Presentation-->
+		<typeName className="org.napile.idea.thermit.dom.AntDomMacroDef" name="macro definition"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomMacrodefElement" name="macrodef nested element"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomTypeDef" name="type definition"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomTaskdef" name="task definition"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomPresetDef" name="preset definition"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomScriptDef" name="script definition"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomProperty" name="property"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomDirSet" name="directory set"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomFileSet" name="file set"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomFileList" name="file list"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomPath" name="path"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomPathElement" name="pathelement"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomTarget" name="target"/>
+		<typeName className="org.napile.idea.thermit.dom.AntDomAntCallParam" name="antcall parameter"/>
+
+		<toolWindow anchor="right" icon="AllIcons.Toolwindows.ToolWindowAnt" id="Thermit Build"
+					factoryClass="org.napile.idea.thermit.config.impl.AntToolWindowFactory" />
+	</extensions>
+
+	<application-components>
+		<component>
+			<interface-class>org.napile.idea.thermit.ThermitSupport</interface-class>
+			<implementation-class>org.napile.idea.thermit.ThermitSupport</implementation-class>
+		</component>
+		<component>
+			<interface-class>org.napile.idea.thermit.config.impl.GlobalThermitConfiguration</interface-class>
+			<implementation-class>org.napile.idea.thermit.config.impl.GlobalThermitConfiguration</implementation-class>
+		</component>
+	</application-components>
+
+	<project-components>
+		<component>
+			<implementation-class>org.napile.idea.thermit.config.impl.ThermitToolwindowRegistrar</implementation-class>
+		</component>
+	</project-components>
+
+	<actions>
+		<group id="ThermitBuildGroup" class="org.napile.idea.thermit.config.actions.AntBuildGroup">
+			<add-to-group group-id="BuildMenu" relative-to-action="BuildJar" anchor="before"/>
+		</group>
+		<action id="AddThermitBuildFile" class="org.napile.idea.thermit.config.actions.ThermitAntBuildFile">
+			<add-to-group group-id="ToolsXmlGroup" relative-to-action="GenerateDTD" anchor="before"/>
+			<add-to-group group-id="EditorPopupMenu" relative-to-action="PackageFile" anchor="after"/>
+			<add-to-group group-id="ProjectViewPopupMenu" relative-to-action="ValidateXml" anchor="after"/>
+			<add-to-group group-id="FavoritesViewPopupMenu" relative-to-action="ValidateXml" anchor="after"/>
+			<add-to-group group-id="ScopeViewPopupMenu" relative-to-action="ValidateXml" anchor="after"/>
+			<add-to-group group-id="CommanderPopupMenu" relative-to-action="ValidateXml" anchor="after"/>
+		</action>
+		<action id="RunThermitTargetAction" class="org.napile.idea.thermit.config.actions.RunTargetAction">
+			<add-to-group group-id="BuildMenu" relative-to-action="BuildJar" anchor="before"/>
+			<keyboard-shortcut first-keystroke="control shift F10" keymap="$default"/>
+		</action>
+	</actions>
+</idea-plugin>
+
