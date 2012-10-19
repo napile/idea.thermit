@@ -64,7 +64,7 @@
 		<typeName className="org.napile.idea.thermit.dom.AntDomTarget" name="target"/>
 		<typeName className="org.napile.idea.thermit.dom.AntDomAntCallParam" name="antcall parameter"/>
 
-		<toolWindow anchor="right" icon="AllIcons.Toolwindows.ToolWindowAnt" id="Thermit Build"
+		<toolWindow anchor="right" icon="/org/napile/idea/thermit/icons/toolWindowThermit.png" id="Thermit Build"
 					factoryClass="org.napile.idea.thermit.config.impl.AntToolWindowFactory" />
 	</extensions>
 
