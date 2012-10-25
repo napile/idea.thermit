@@ -19,7 +19,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tools.ant.PathTokenizer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +53,7 @@ public class AntMultiPathStringConverter extends Converter<List<File>> implement
 		}
 		final List<File> result = new ArrayList<File>();
 		Computable<String> basedirComputable = null;
-		final PathTokenizer pathTokenizer = new PathTokenizer(path);
+		final org.napile.idea.thermit.util.PathTokenizer pathTokenizer = new org.napile.idea.thermit.util.PathTokenizer(path);
 		while(pathTokenizer.hasMoreTokens())
 		{
 			File file = new File(pathTokenizer.nextToken());
@@ -121,7 +120,7 @@ public class AntMultiPathStringConverter extends Converter<List<File>> implement
 		}
 
 		final List<PsiReference> result = new ArrayList<PsiReference>();
-		final PathTokenizer pathTokenizer = new PathTokenizer(cpString);
+		final org.napile.idea.thermit.util.PathTokenizer pathTokenizer = new org.napile.idea.thermit.util.PathTokenizer(cpString);
 		int searchFromIndex = 0;
 		while(pathTokenizer.hasMoreTokens())
 		{

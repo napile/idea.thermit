@@ -17,7 +17,7 @@ package org.napile.idea.thermit.dom;
 
 import java.util.List;
 
-import org.apache.tools.ant.Task;
+import org.napile.idea.thermit.ThermitClasses;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
@@ -70,7 +70,7 @@ public abstract class AntDomTypeDef extends AntDomCustomClasspathComponent
 		final String adaptto = getAdaptto().getStringValue();
 		if(adaptto != null && isAssignableFrom(adaptto, clazz))
 		{
-			return isAssignableFrom(Task.class.getName(), clazz);
+			return isAssignableFrom(ThermitClasses.Task, clazz);
 		}
 
 		final String adapter = getAdapter().getStringValue();
@@ -79,7 +79,7 @@ public abstract class AntDomTypeDef extends AntDomCustomClasspathComponent
 			try
 			{
 				final Class adapterClass = clazz.getClassLoader().loadClass(adapter);
-				return isAssignableFrom(Task.class.getName(), adapterClass);
+				return isAssignableFrom(ThermitClasses.Task, adapterClass);
 			}
 			catch(ClassNotFoundException ignored)
 			{
@@ -92,7 +92,7 @@ public abstract class AntDomTypeDef extends AntDomCustomClasspathComponent
 			}
 		}
 
-		return isAssignableFrom(Task.class.getName(), clazz);
+		return isAssignableFrom(ThermitClasses.Task, clazz);
 	}
 
 	private static boolean isAssignableFrom(final String baseClassName, final Class clazz)

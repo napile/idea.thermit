@@ -21,11 +21,19 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitClasses;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
@@ -59,8 +67,6 @@ public class AntInstallation
 		}
 	};
 	public static final AbstractProperty<String> VERSION = new StringProperty("version", AntBundle.message("ant.unknown.version.string.presentation"));
-	@NonNls
-	private static final String PROPERTY_VERSION = "VERSION";
 
 	private final ClassLoaderHolder myClassLoaderHolder;
 	@NonNls
@@ -69,8 +75,6 @@ public class AntInstallation
 	public static final String LIB_DIR = "lib";
 	@NonNls
 	public static final String ANT_JAR_FILE = "thermit.jar";
-	@NonNls
-	public static final String VERSION_RESOURCE = "org/apache/tools/thermit/version.txt";
 
 	public AntReference getReference()
 	{
@@ -105,8 +109,7 @@ public class AntInstallation
 		{
 			try
 			{
-				Properties antProps = loadProperties(antJar);
-				VERSION.set(getProperties(), antProps.getProperty(PROPERTY_VERSION));
+				VERSION.set(getProperties(), loadVersion(antJar));
 			}
 			catch(Exception e)
 			{
@@ -179,13 +182,13 @@ public class AntInstallation
 		}
 		try
 		{
-			Properties properties = loadProperties(antJar);
+			String version = loadVersion(antJar);
 			AntInstallation antInstallation = new AntInstallation();
 			HOME_DIR.set(antInstallation.getProperties(), antHome.getAbsolutePath());
-			final String versionProp = properties.getProperty(PROPERTY_VERSION);
-			NAME.set(antInstallation.getProperties(), AntBundle.message("apache.ant.with.version.string.presentation", versionProp));
-			VERSION.set(antInstallation.getProperties(), versionProp);
-			antInstallation.addClasspathEntry(new AllJarsUnderDirEntry(lib));
+
+			NAME.set(antInstallation.getProperties(), AntBundle.message("apache.ant.with.version.string.presentation", version));
+			VERSION.set(antInstallation.getProperties(), version);
+			antInstallation.addClasspathEntry(new AllNZipsUnderDirEntry(lib));
 			return antInstallation;
 		}
 		catch(MalformedURLException e)
@@ -195,18 +198,36 @@ public class AntInstallation
 		}
 	}
 
-	private static Properties loadProperties(File antJar) throws MalformedURLException, ConfigurationException
+	private static String loadVersion(File antJar) throws MalformedURLException, ConfigurationException
 	{
-		Properties properties = new Properties();
+		String version = null;
 		InputStream stream = null;
 		try
 		{
-			stream = new UrlClassLoader(Collections.singletonList(antJar.toURL()), null, false, false, true).getResourceAsStream(VERSION_RESOURCE);
-			properties.load(stream);
+			stream = new UrlClassLoader(Collections.singletonList(antJar.toURL()), null, false, false, true).getResourceAsStream(ThermitClasses.MODULE_FILE_NAME);
+
+			DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+			f.setValidating(false);
+
+			DocumentBuilder builder = f.newDocumentBuilder();
+
+			Document doc = builder.parse(stream);
+
+			NodeList nodeList = doc.getChildNodes();
+
+			Node node = nodeList.item(0);
+
+			for(Node it = node.getFirstChild(); it != null; it = it.getNextSibling())
+				if(it.getNodeName().equals("version"))
+					version = it.getChildNodes().item(0).getNodeValue();
 		}
-		catch(MalformedURLException e)
+		catch(SAXException e)
 		{
-			throw e;
+			throw new RuntimeException(e);
+		}
+		catch(ParserConfigurationException e)
+		{
+			throw new RuntimeException(e);
 		}
 		catch(IOException e)
 		{
@@ -226,7 +247,7 @@ public class AntInstallation
 				}
 			}
 		}
-		return properties;
+		return version == null ? "unknown" : version;
 	}
 
 	private void addClasspathEntry(AntClasspathEntry entry)

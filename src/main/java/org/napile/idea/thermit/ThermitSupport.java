@@ -40,7 +40,6 @@ import com.intellij.util.xml.DomManager;
 
 public class ThermitSupport implements ApplicationComponent
 {
-
 	public ThermitSupport()
 	{
 	}

@@ -9,7 +9,7 @@
 	<depends>com.intellij.properties</depends>
 
 	<extensionPoints>
-		<extensionPoint name="AntMessageCustomizer" interface="org.napile.idea.thermit.config.execution.AntMessageCustomizer"/>
+		<extensionPoint name="messageCustomizer" interface="org.napile.idea.thermit.config.execution.AntMessageCustomizer"/>
 	</extensionPoints>
 
 	<extensions defaultExtensionNs="com.intellij">

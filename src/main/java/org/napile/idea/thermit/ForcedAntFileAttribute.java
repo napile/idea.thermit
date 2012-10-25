@@ -37,11 +37,11 @@ public class ForcedAntFileAttribute extends FileAttribute
 	private static final String ANT_ID = "thermit";
 
 	private static final ForcedAntFileAttribute ourAttribute = new ForcedAntFileAttribute();
-	private static final Key<Boolean> ourAntFileMarker = Key.create("_forced_ant_attribute_");
+	private static final Key<Boolean> ourAntFileMarker = Key.create("_forced_thermit_attribute_");
 
 	public ForcedAntFileAttribute()
 	{
-		super("_forced_ant_attribute_", 1, true);
+		super("_forced_thermit_attribute_", 1, true);
 	}
 
 	public static boolean isAntFile(VirtualFile file)

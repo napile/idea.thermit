@@ -102,7 +102,7 @@ public final class ReflectedProject
 		Object project = null;
 		try
 		{
-			final Class projectClass = classLoader.loadClass("org.apache.tools.thermit.Project");
+			final Class projectClass = classLoader.loadClass("org.napile.thermit.Project");
 			if(projectClass != null)
 			{
 				project = projectClass.newInstance();
@@ -114,7 +114,7 @@ public final class ReflectedProject
 				myDataTypeDefinitions = (Hashtable) method.invoke(project);
 				method = getMethod(projectClass, GET_PROPERTIES_METHOD_NAME);
 				myProperties = (Hashtable) method.invoke(project);
-				myTargetClass = classLoader.loadClass("org.apache.tools.thermit.Target");
+				myTargetClass = classLoader.loadClass("org.napile.thermit.Target");
 			}
 		}
 		catch(ProcessCanceledException e)

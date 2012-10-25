@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tools.ant.IntrospectionHelper;
-import org.apache.tools.ant.TaskContainer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.diagnostic.Logger;
@@ -39,7 +37,7 @@ import com.intellij.util.Alarm;
  */
 public final class AntIntrospector
 {
-	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.AntIntrospector");
+	private static final Logger LOG = Logger.getInstance(AntIntrospector.class);
 	private final Object myHelper;
 	//private static final ObjectCache<String, SoftReference<Object>> ourCache = new ObjectCache<String, SoftReference<Object>>(300);
 	private static final HashMap<Class, Object> ourCache = new HashMap<Class, Object>();
@@ -174,7 +172,7 @@ public final class AntIntrospector
 			final ClassLoader loader = myTypeClass.getClassLoader();
 			try
 			{
-				final Class<?> containerClass = loader != null ? loader.loadClass(TaskContainer.class.getName()) : TaskContainer.class;
+				final Class<?> containerClass = loader != null ? loader.loadClass(ThermitClasses.TaskContainer) : null;
 				return containerClass.isAssignableFrom(myTypeClass);
 			}
 			catch(ClassNotFoundException ignored)
@@ -227,7 +225,7 @@ public final class AntIntrospector
 			Class<?> helperClass = null;
 			try
 			{
-				helperClass = loader != null ? loader.loadClass(IntrospectionHelper.class.getName()) : IntrospectionHelper.class;
+				helperClass = loader != null ? loader.loadClass(ThermitClasses.IntrospectionHelper) : null;
 				final Method getHelperMethod = helperClass.getMethod("getHelper", Class.class);
 				result = getHelperMethod.invoke(null, aClass);
 			}

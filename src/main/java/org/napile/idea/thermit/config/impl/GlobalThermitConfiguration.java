@@ -48,7 +48,7 @@ public class GlobalThermitConfiguration implements ApplicationComponent, JDOMExt
 	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.config.impl.AntGlobalConfiguration");
 	public static final StorageProperty FILTERS_TABLE_LAYOUT = new StorageProperty("filtersTableLayout");
 	public static final StorageProperty PROPERTIES_TABLE_LAYOUT = new StorageProperty("propertiesTableLayout");
-	static final ListProperty<AntInstallation> ANTS = ListProperty.create("registeredAnts");
+	static final ListProperty<AntInstallation> ANTS = ListProperty.create("registeredThermits");
 	private final ExternalizablePropertyContainer myProperties = new ExternalizablePropertyContainer();
 	private final AntInstallation myBundledAnt;
 	public static final String BUNDLED_ANT_NAME = AntBundle.message("ant.reference.bundled.ant.name");
@@ -64,9 +64,9 @@ public class GlobalThermitConfiguration implements ApplicationComponent, JDOMExt
 	@NonNls
 	public static final String ANT_FILE = "thermit";
 	@NonNls
-	public static final String LIB_DIR = "lib";
+	public static final String ANT_JAR_FILE_NAME = "thermit.nzip";
 	@NonNls
-	public static final String ANT_JAR_FILE_NAME = "thermit.jar";
+	public static final String PLUGIN_LIB_DIR = "/idea.thermit/lib";
 
 	public GlobalThermitConfiguration()
 	{
@@ -98,14 +98,34 @@ public class GlobalThermitConfiguration implements ApplicationComponent, JDOMExt
 				return AntReference.BUNDLED_ANT;
 			}
 		};
+
+		File antHome = findCorrectLibHome();
 		AntInstallation.NAME.set(bundledAnt.getProperties(), BUNDLED_ANT_NAME);
-		final File antHome = PathManager.findFileInLibDirectory(ANT_FILE);
 		AntInstallation.HOME_DIR.set(bundledAnt.getProperties(), antHome.getAbsolutePath());
+
 		ArrayList<AntClasspathEntry> classpath = AntInstallation.CLASS_PATH.getModifiableList(bundledAnt.getProperties());
-		File antLibDir = new File(antHome, LIB_DIR);
-		classpath.add(new AllJarsUnderDirEntry(antLibDir));
-		bundledAnt.updateVersion(new File(antLibDir, ANT_JAR_FILE_NAME));
+
+		classpath.add(new AllNZipsUnderDirEntry(antHome));
+		bundledAnt.updateVersion(new File(antHome, ANT_JAR_FILE_NAME));
 		return bundledAnt;
+	}
+
+	private static File findCorrectLibHome()
+	{
+		// work if when u develop plugin
+		File antHome = new File(PathManager.getPluginsPath() + PLUGIN_LIB_DIR);
+		if(antHome.exists() && new File(antHome, ANT_JAR_FILE_NAME).exists())
+			return antHome;
+
+		// search in bundled plugins
+		antHome = new File(PathManager.getHomePath());
+		if(antHome.exists())
+		{
+			antHome = new File(antHome, "plugins" + PLUGIN_LIB_DIR);
+			if(antHome.exists() && new File(antHome, ANT_JAR_FILE_NAME).exists())
+				return antHome;
+		}
+		throw new UnsupportedOperationException("Cant find thermit bundled lib");
 	}
 
 	public void disposeComponent()

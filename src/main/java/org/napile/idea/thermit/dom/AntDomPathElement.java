@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.tools.ant.PathTokenizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.AntFilesProvider;
@@ -62,7 +61,7 @@ public abstract class AntDomPathElement extends AntDomFilesProviderImpl
 		final String pathString = getPath().getStringValue();
 		if(pathString != null)
 		{
-			final PathTokenizer tokenizer = new PathTokenizer(pathString);
+			final org.napile.idea.thermit.util.PathTokenizer tokenizer = new org.napile.idea.thermit.util.PathTokenizer(pathString);
 			while(tokenizer.hasMoreTokens())
 			{
 				addLocation(baseDir, files, tokenizer.nextToken());

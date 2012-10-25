@@ -42,9 +42,9 @@ public interface AntClasspathEntry
 			String pathUrl = dataElement.getAttributeValue(SinglePathEntry.PATH);
 			if(pathUrl != null)
 				return new SinglePathEntry(PathUtil.toPresentableUrl(pathUrl));
-			String dirUrl = dataElement.getAttributeValue(AllJarsUnderDirEntry.DIR);
+			String dirUrl = dataElement.getAttributeValue(AllNZipsUnderDirEntry.DIR);
 			if(dirUrl != null)
-				return new AllJarsUnderDirEntry(PathUtil.toPresentableUrl(dirUrl));
+				return new AllNZipsUnderDirEntry(PathUtil.toPresentableUrl(dirUrl));
 			throw new InvalidDataException();
 		}
 

@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import org.napile.idea.thermit.config.impl.AllJarsUnderDirEntry;
+import org.napile.idea.thermit.config.impl.AllNZipsUnderDirEntry;
 import org.napile.idea.thermit.config.impl.AntClasspathEntry;
 import org.napile.idea.thermit.config.impl.SinglePathEntry;
 import com.intellij.ui.ListUtil;
@@ -50,7 +50,7 @@ public class AntClasspathEditorPanel extends JPanel
 		myBinding = new UIPropertyBinding.Composite();
 		UIPropertyBinding.OrderListBinding<AntClasspathEntry> classpathBinding = myBinding.bindList(myForm.myClasspathList, myClasspathProperty);
 		classpathBinding.addAddManyFacility(myForm.myAddButton, new SinglePathEntry.AddEntriesFactory(myForm.myClasspathList));
-		classpathBinding.addAddManyFacility(myForm.myAddAllInDir, new AllJarsUnderDirEntry.AddEntriesFactory(myForm.myClasspathList));
+		classpathBinding.addAddManyFacility(myForm.myAddAllInDir, new AllNZipsUnderDirEntry.AddEntriesFactory(myForm.myClasspathList));
 		myBinding.addBinding(new UIPropertyBinding()
 		{
 			public void loadValues(AbstractProperty.AbstractPropertyContainer container)

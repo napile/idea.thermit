@@ -225,7 +225,7 @@ public class AntBuildFileImpl implements AntBuildFileBase
 	{
 		ArrayList<File> classpath = new ArrayList<File>();
 		final String homeDir = SystemProperties.getUserHome();
-		new AllJarsUnderDirEntry(new File(homeDir, ANT_LIB)).addFilesTo(classpath);
+		new AllNZipsUnderDirEntry(new File(homeDir, ANT_LIB)).addFilesTo(classpath);
 		return classpath;
 	}
 

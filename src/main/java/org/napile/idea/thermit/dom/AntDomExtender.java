@@ -20,11 +20,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import org.apache.tools.ant.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.AntIntrospector;
 import org.napile.idea.thermit.ReflectedProject;
+import org.napile.idea.thermit.ThermitClasses;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -264,7 +264,7 @@ public class AntDomExtender extends DomExtender<AntDomElement>
 							{
 								role = AntDomElement.Role.TASK;
 							}
-							else if(type != null && isAssignableFrom(Task.class.getName(), type))
+							else if(type != null && isAssignableFrom(ThermitClasses.Task, type))
 							{
 								role = AntDomElement.Role.TASK;
 							}
@@ -409,6 +409,7 @@ public class AntDomExtender extends DomExtender<AntDomElement>
 		}
 		catch(Throwable ignored)
 		{
+			ignored.printStackTrace();
 		}
 		return null;
 	}

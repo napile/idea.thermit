@@ -62,7 +62,7 @@ import com.intellij.util.xml.SubTagList;
 @DefinesXml
 public abstract class AntDomProject extends AntDomNamedElement implements PropertiesProvider
 {
-	private static final Logger LOG = Logger.getInstance("#org.napile.idea.thermit.dom.AntDomProject");
+	private static final Logger LOG = Logger.getInstance(AntDomProject.class);
 
 	@NonNls
 	public static final String DEFAULT_ENVIRONMENT_PREFIX = "env.";
