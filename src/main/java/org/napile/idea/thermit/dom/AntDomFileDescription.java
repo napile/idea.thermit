@@ -15,10 +15,14 @@
  */
 package org.napile.idea.thermit.dom;
 
+import javax.swing.Icon;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.ForcedAntFileAttribute;
+import org.napile.idea.thermit.ThermitIcons;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
@@ -38,6 +42,13 @@ public class AntDomFileDescription extends AntFileDescription<AntDomProject>
 		super(AntDomProject.class, ROOT_TAG_NAME);
 	}
 
+	@Override
+	public Icon getFileIcon(@Iconable.IconFlags int flags)
+	{
+		return ThermitIcons.FILE_ICON;
+	}
+
+	@Override
 	public boolean isMyFile(@NotNull XmlFile file, @Nullable Module module)
 	{
 		return super.isMyFile(file, module) && isAntFile(file) && EXTENSION.equals(file.getVirtualFile().getExtension());

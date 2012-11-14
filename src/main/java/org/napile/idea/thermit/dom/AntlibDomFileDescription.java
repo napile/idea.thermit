@@ -15,9 +15,13 @@
  */
 package org.napile.idea.thermit.dom;
 
+import javax.swing.Icon;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.napile.idea.thermit.ThermitIcons;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -35,6 +39,13 @@ public class AntlibDomFileDescription extends AntFileDescription<AntDomAntlib>
 		super(AntDomAntlib.class, ROOT_TAG_NAME);
 	}
 
+	@Override
+	public Icon getFileIcon(@Iconable.IconFlags int flags)
+	{
+		return ThermitIcons.FILE_ICON;
+	}
+
+	@Override
 	public boolean isMyFile(@NotNull XmlFile file, @Nullable Module module)
 	{
 		return super.isMyFile(file, module) && isAntLibFile(file);
