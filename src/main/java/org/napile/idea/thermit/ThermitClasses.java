@@ -32,33 +32,14 @@ public interface ThermitClasses
 
 	String Project = "org.napile.thermit.Project";
 
-	//public static final String PathTokenizer = "org.napile.thermit.PathTokenizer";
+	//String PathTokenizer = "org.napile.thermit.PathTokenizer";
 
 	String MODULE_FILE_NAME = "@module@.xml";
 
-	/*private static volatile UrlClassLoader bundledClassLoader;
+	//
+	String RUNNER_LOGGER = "org.napile.thermit.idea.runner.IdeaThermitLogger2";
 
-	private static ClassLoader getBundledClassLoader()
-	{
-		if(bundledClassLoader == null)
-		{
-			File dir = new File(PathManager.getPluginsPath() + "/idea.thermit/lib");
-			if(!dir.exists())
-				throw new RuntimeException("Plugin dir is not found");
+	String RUNNER_INPUT_HANDLER = "org.napile.thermit.idea.runner.IdeaInputHandler";
 
-			bundledClassLoader = new UrlClassLoader(Collections.<URL>emptyList(), null);
-			try
-			{
-				for(File f : dir.listFiles())
-					if(f.getName().endsWith(".nzip"))
-						bundledClassLoader.addURL(f.toURL());
-			}
-			catch(MalformedURLException e)
-			{
-				throw new RuntimeException(e);
-			}
-		}
-
-		return bundledClassLoader;
-	}  */
+	String RUNNER_MAIN = "org.napile.thermit.idea.runner.ThermitMain2";
 }

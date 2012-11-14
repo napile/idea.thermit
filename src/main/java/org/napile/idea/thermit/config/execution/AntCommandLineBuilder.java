@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NonNls;
 import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitClasses;
 import org.napile.idea.thermit.config.impl.AntBuildFileImpl;
 import org.napile.idea.thermit.config.impl.AntInstallation;
 import org.napile.idea.thermit.config.impl.BuildFileProperty;
@@ -32,14 +33,12 @@ import com.intellij.execution.configurations.ParametersList;
 import com.intellij.ide.macro.Macro;
 import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.rt.ant.execution.AntMain2;
-import com.intellij.rt.ant.execution.IdeaAntLogger2;
-import com.intellij.rt.ant.execution.IdeaInputHandler;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.config.AbstractProperty;
@@ -126,7 +125,7 @@ public class AntCommandLineBuilder
 		}
 
 		final String antHome = AntInstallation.HOME_DIR.get(antInstallation.getProperties());
-		vmParametersList.add("-Dant.home=" + antHome);
+		vmParametersList.add("-Dthermit.home=" + antHome);
 
 		String[] urls = jdk.getRootProvider().getUrls(OrderRootType.CLASSES);
 		final String jdkHome = homeDirectory.getPath().replace('/', File.separatorChar);
@@ -153,9 +152,12 @@ public class AntCommandLineBuilder
 				myCommandLine.getClassPath().add(toolsJar);
 			}
 		}
+
 		PathUtilEx.addRtJar(myCommandLine.getClassPath());
 
-		myCommandLine.setMainClass(AntMain2.class.getName());
+		myCommandLine.getClassPath().add(findIdeaRunnerLib());
+
+		myCommandLine.setMainClass(ThermitClasses.RUNNER_MAIN);
 		final ParametersList programParameters = myCommandLine.getProgramParametersList();
 
 		final String additionalParams = AntBuildFileImpl.ANT_COMMAND_LINE_PARAMETERS.get(container);
@@ -179,18 +181,36 @@ public class AntCommandLineBuilder
 		}
 
 		if(!(programParameters.getList().contains(LOGFILE_SHORT_PARAMETER) || programParameters.getList().contains(LOGFILE_PARAMETER)))
-		{
-			programParameters.add("-logger", IdeaAntLogger2.class.getName());
-		}
+			programParameters.add("-logger", ThermitClasses.RUNNER_LOGGER);
+
 		if(!programParameters.getList().contains(INPUT_HANDLER_PARAMETER))
-		{
-			programParameters.add(INPUT_HANDLER_PARAMETER, IdeaInputHandler.class.getName());
-		}
+
+			programParameters.add(INPUT_HANDLER_PARAMETER, ThermitClasses.RUNNER_INPUT_HANDLER);
 
 		myProperties = AntBuildFileImpl.ANT_PROPERTIES.get(container);
 
 		myBuildFilePath = buildFile.getAbsolutePath();
 		myCommandLine.setWorkingDirectory(buildFile.getParent());
+	}
+
+	private File findIdeaRunnerLib()
+	{
+		File temp = null;
+		File antHome = new File(PathManager.getPluginsPath() + "/idea.thermit/lib");
+		if(antHome.exists() && (temp = new File(antHome, "idea.thermit.runner.jar")).exists())
+			return temp;
+
+		// search in bundled plugins
+		antHome = new File(PathManager.getHomePath());
+		if(antHome.exists())
+		{
+			antHome = new File(antHome, "plugins/idea.thermit/lib");
+
+			if(antHome.exists() && (temp = new File(antHome, "idea.thermit.runner.jar")).exists())
+				return temp;
+		}
+
+		throw new UnsupportedOperationException();
 	}
 
 	public JavaParameters getCommandLine()

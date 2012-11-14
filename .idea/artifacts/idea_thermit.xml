@@ -1,0 +1,24 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="idea.thermit">
+    <output-path>D:/Programs/IDEA CE/plugins/idea.thermit</output-path>
+    <root id="root">
+      <element id="directory" name="lib">
+        <element id="archive" name="idea.thermit.jar">
+          <element id="module-output" name="idea.thermit" />
+          <element id="directory" name="META-INF">
+            <element id="file-copy" path="$PROJECT_DIR$/META-INF/plugin.xml" />
+            <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+          </element>
+        </element>
+        <element id="directory" name="thermit">
+          <element id="directory" name="lib">
+            <element id="library" level="project" name="thermit-lib" />
+          </element>
+        </element>
+        <element id="archive" name="idea.thermit.runner.jar">
+          <element id="module-output" name="idea.runner" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

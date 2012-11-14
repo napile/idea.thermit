@@ -63,10 +63,11 @@ public class GlobalThermitConfiguration implements ApplicationComponent, JDOMExt
 	public static final AbstractProperty<GlobalThermitConfiguration> INSTANCE = new ValueProperty<GlobalThermitConfiguration>("$GlobalThermitConfiguration.INSTANCE", null);
 	@NonNls
 	public static final String ANT_FILE = "thermit";
+
 	@NonNls
-	public static final String ANT_JAR_FILE_NAME = "thermit.nzip";
+	public static final String ANT_JAR_FILE_NAME = "/lib/thermit.nzip";
 	@NonNls
-	public static final String PLUGIN_LIB_DIR = "/idea.thermit/lib";
+	public static final String PLUGIN_LIB_DIR = "/idea.thermit/lib/thermit";
 
 	public GlobalThermitConfiguration()
 	{
@@ -105,7 +106,7 @@ public class GlobalThermitConfiguration implements ApplicationComponent, JDOMExt
 
 		ArrayList<AntClasspathEntry> classpath = AntInstallation.CLASS_PATH.getModifiableList(bundledAnt.getProperties());
 
-		classpath.add(new AllNZipsUnderDirEntry(antHome));
+		classpath.add(new AllNZipsUnderDirEntry(new File(antHome, "lib")));
 		bundledAnt.updateVersion(new File(antHome, ANT_JAR_FILE_NAME));
 		return bundledAnt;
 	}
