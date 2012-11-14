@@ -19,6 +19,7 @@ import java.util.Collections;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.ThermitSupport;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildListener;
@@ -26,7 +27,6 @@ import org.napile.idea.thermit.config.ThermitConfigurationBase;
 import org.napile.idea.thermit.config.execution.ExecutionHandler;
 import org.napile.idea.thermit.config.impl.BuildFileProperty;
 import org.napile.idea.thermit.dom.AntDomTarget;
-import org.napile.idea.thermit.resources.AntActionsBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -77,12 +77,12 @@ public class RunTargetAction extends AnAction
 		if(antTarget == null)
 		{
 			presentation.setEnabled(false);
-			presentation.setText(AntActionsBundle.message("action.RunTargetAction.text", ""));
+			presentation.setText(ThermitBundle.message("action.RunTargetAction.text", ""));
 		}
 		else
 		{
 			presentation.setEnabled(true);
-			presentation.setText(AntActionsBundle.message("action.RunTargetAction.text", "'" + antTarget.second.getName().getValue() + "'"));
+			presentation.setText(ThermitBundle.message("action.RunTargetAction.text", "'" + antTarget.second.getName().getValue() + "'"));
 		}
 	}
 

@@ -15,7 +15,7 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -28,7 +28,7 @@ public final class StopAction extends AnAction
 
 	public StopAction(AntBuildMessageView antBuildMessageView)
 	{
-		super(AntBundle.message("stop.ant.action.name"), null, AllIcons.Actions.Suspend);
+		super(ThermitBundle.message("stop.ant.action.name"), null, AllIcons.Actions.Suspend);
 		myAntBuildMessageView = antBuildMessageView;
 	}
 

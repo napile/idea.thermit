@@ -15,7 +15,7 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -27,7 +27,7 @@ public final class VerboseAction extends ToggleAction
 
 	public VerboseAction(AntBuildMessageView antBuildMessageView)
 	{
-		super(AntBundle.message("ant.verbose.show.all.messages.action.name"), AntBundle.message("ant.verbose.show.all.messages.action.description"), AllIcons.Ant.Verbose);
+		super(ThermitBundle.message("ant.verbose.show.all.messages.action.name"), ThermitBundle.message("ant.verbose.show.all.messages.action.description"), AllIcons.Ant.Verbose);
 		myAntBuildMessageView = antBuildMessageView;
 	}
 

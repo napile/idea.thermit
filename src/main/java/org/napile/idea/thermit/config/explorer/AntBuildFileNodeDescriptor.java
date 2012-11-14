@@ -16,10 +16,10 @@
 package org.napile.idea.thermit.config.explorer;
 
 import org.jetbrains.annotations.NotNull;
+import org.napile.idea.thermit.ThermitIcons;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildModelBase;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
@@ -60,7 +60,7 @@ final class AntBuildFileNodeDescriptor extends AntNodeDescriptor
 		{
 			AntTargetNodeDescriptor.addShortcutText(buildModel.getDefaultTargetActionId(), myAppearance);
 		}
-		setIcon(AllIcons.Ant.Build);
+		setIcon(ThermitIcons.TOOLBAR_ICON);
 		myName = myBuildFile.getPresentableName();
 		return !Comparing.equal(myAppearance, oldAppearance);
 	}

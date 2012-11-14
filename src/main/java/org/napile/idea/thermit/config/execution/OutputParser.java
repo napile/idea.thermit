@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.compiler.impl.javaCompiler.FileObject;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacOutputParser;
 import com.intellij.compiler.impl.javaCompiler.jikes.JikesOutputParser;
@@ -143,11 +143,11 @@ public class OutputParser
 
 		if(IdeaAntLogger2.TARGET == tagName)
 		{
-			setProgressStatistics(AntBundle.message("target.tag.name.status.text", tagValue));
+			setProgressStatistics(ThermitBundle.message("target.tag.name.status.text", tagValue));
 		}
 		else if(IdeaAntLogger2.TASK == tagName)
 		{
-			setProgressText(AntBundle.message("executing.task.tag.value.status.text", tagValue));
+			setProgressText(ThermitBundle.message("executing.task.tag.value.status.text", tagValue));
 			if(JAVAC.equals(tagValue))
 			{
 				myJavacMessages = new ArrayList<String>();

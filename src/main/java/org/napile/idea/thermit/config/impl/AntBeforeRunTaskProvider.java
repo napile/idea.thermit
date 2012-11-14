@@ -18,7 +18,7 @@ package org.napile.idea.thermit.config.impl;
 import javax.swing.Icon;
 
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildTarget;
 import org.napile.idea.thermit.config.ThermitConfiguration;
@@ -54,7 +54,7 @@ public class AntBeforeRunTaskProvider extends BeforeRunTaskProvider<AntBeforeRun
 	@Override
 	public String getName()
 	{
-		return AntBundle.message("ant.target.before.run.description.empty");
+		return ThermitBundle.message("ant.target.before.run.description.empty");
 	}
 
 	@Override
@@ -76,9 +76,9 @@ public class AntBeforeRunTaskProvider extends BeforeRunTaskProvider<AntBeforeRun
 		final String targetName = task.getTargetName();
 		if(targetName == null)
 		{
-			return AntBundle.message("ant.target.before.run.description.empty");
+			return ThermitBundle.message("ant.target.before.run.description.empty");
 		}
-		return AntBundle.message("ant.target.before.run.description", targetName != null ? targetName : "<not selected>");
+		return ThermitBundle.message("ant.target.before.run.description", targetName != null ? targetName : "<not selected>");
 	}
 
 	public boolean isConfigurable()

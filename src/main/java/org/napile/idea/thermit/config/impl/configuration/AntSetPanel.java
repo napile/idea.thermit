@@ -34,7 +34,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.impl.AntInstallation;
 import org.napile.idea.thermit.config.impl.AntReference;
 import org.napile.idea.thermit.config.impl.GlobalThermitConfiguration;
@@ -144,7 +144,7 @@ public class AntSetPanel
 			myRightPanel = new RightPanel(myBinding, myImmediateUpdater);
 			mySplitter.setSecondComponent(myRightPanel.myWholePanel);
 			myAnts.addAddAction(new NewAntFactory(myAnts));
-			myAnts.addRemoveButtonForAnt(antInstallation.IS_USER_ANT, AntBundle.message("remove.action.name"));
+			myAnts.addRemoveButtonForAnt(antInstallation.IS_USER_ANT, ThermitBundle.message("remove.action.name"));
 			myAnts.actionsBuilt();
 			JList list = myAnts.getList();
 			list.setCellRenderer(new AntUIUtil.AntInstallationRenderer(this));
@@ -277,7 +277,7 @@ public class AntSetPanel
 			}
 			catch(AntInstallation.ConfigurationException e)
 			{
-				Messages.showErrorDialog(myParent, e.getMessage(), AntBundle.message("ant.setup.dialog.title"));
+				Messages.showErrorDialog(myParent, e.getMessage(), ThermitBundle.message("ant.setup.dialog.title"));
 				return null;
 			}
 		}
@@ -311,7 +311,7 @@ public class AntSetPanel
 		public MyDialog(final JComponent parent)
 		{
 			super(parent, true);
-			setTitle(AntBundle.message("configure.ant.dialog.title"));
+			setTitle(ThermitBundle.message("configure.ant.dialog.title"));
 			init();
 		}
 

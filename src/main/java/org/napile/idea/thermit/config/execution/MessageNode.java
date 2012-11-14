@@ -18,7 +18,7 @@ package org.napile.idea.thermit.config.execution;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
@@ -110,15 +110,15 @@ final class MessageNode extends DefaultMutableTreeNode
 		AntBuildMessageView.MessageType type = myMessage.getType();
 		if(type == AntBuildMessageView.MessageType.BUILD)
 		{
-			return AntBundle.message("ant.build.message.node.prefix.text");
+			return ThermitBundle.message("ant.build.message.node.prefix.text");
 		}
 		else if(type == AntBuildMessageView.MessageType.TARGET)
 		{
-			return AntBundle.message("ant.target.message.node.prefix.text");
+			return ThermitBundle.message("ant.target.message.node.prefix.text");
 		}
 		else if(type == AntBuildMessageView.MessageType.TASK)
 		{
-			return AntBundle.message("ant.task.message.node.prefix.text");
+			return ThermitBundle.message("ant.task.message.node.prefix.text");
 		}
 		return "";
 	}

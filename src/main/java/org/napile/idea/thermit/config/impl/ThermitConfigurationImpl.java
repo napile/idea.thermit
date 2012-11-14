@@ -30,7 +30,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.ThermitSupport;
 import org.napile.idea.thermit.config.*;
 import org.napile.idea.thermit.config.actions.TargetAction;
@@ -283,7 +283,7 @@ public class ThermitConfigurationImpl extends ThermitConfigurationBase implement
 	{
 		final AntBuildFile[] result = new AntBuildFile[]{null};
 		final AntNoFileException[] ex = new AntNoFileException[]{null};
-		final String title = AntBundle.message("register.ant.build.progress", file.getPresentableUrl());
+		final String title = ThermitBundle.message("register.ant.build.progress", file.getPresentableUrl());
 		ProgressManager.getInstance().run(new Task.Modal(getProject(), title, false)
 		{
 			@Nullable
@@ -900,7 +900,7 @@ public class ThermitConfigurationImpl extends ThermitConfigurationBase implement
 			}
 		}
 
-		final String title = AntBundle.message("loading.ant.config.progress");
+		final String title = ThermitBundle.message("loading.ant.config.progress");
 		queueLater(new Task.Backgroundable(getProject(), title, false)
 		{
 			public void run(@NotNull final ProgressIndicator indicator)

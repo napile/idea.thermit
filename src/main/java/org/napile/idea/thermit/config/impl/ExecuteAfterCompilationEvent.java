@@ -16,7 +16,7 @@
 package org.napile.idea.thermit.config.impl;
 
 import org.jetbrains.annotations.NonNls;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.ExecutionEvent;
 
 public final class ExecuteAfterCompilationEvent extends ExecutionEvent
@@ -42,6 +42,6 @@ public final class ExecuteAfterCompilationEvent extends ExecutionEvent
 
 	public String getPresentableName()
 	{
-		return AntBundle.message("ant.event.after.compilation.presentable.name");
+		return ThermitBundle.message("ant.event.after.compilation.presentable.name");
 	}
 }

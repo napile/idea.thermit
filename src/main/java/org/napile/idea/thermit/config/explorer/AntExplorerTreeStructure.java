@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildModel;
@@ -108,10 +108,10 @@ final class AntExplorerTreeStructure extends AbstractTreeStructure
 		{
 			if(!configuration.isInitialized())
 			{
-				return new Object[]{AntBundle.message("loading.ant.config.progress")};
+				return new Object[]{ThermitBundle.message("loading.ant.config.progress")};
 			}
 			final AntBuildFile[] buildFiles = configuration.getBuildFiles();
-			return buildFiles.length != 0 ? buildFiles : new Object[]{AntBundle.message("ant.tree.structure.no.build.files.message")};
+			return buildFiles.length != 0 ? buildFiles : new Object[]{ThermitBundle.message("ant.tree.structure.no.build.files.message")};
 		}
 
 		if(element instanceof AntBuildFile)

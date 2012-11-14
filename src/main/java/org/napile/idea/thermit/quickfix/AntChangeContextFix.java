@@ -16,7 +16,7 @@
 package org.napile.idea.thermit.quickfix;
 
 import org.jetbrains.annotations.NotNull;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.codeInsight.daemon.impl.HectorComponent;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
@@ -33,13 +33,13 @@ public class AntChangeContextFix extends BaseIntentionAction
 {
 	public AntChangeContextFix()
 	{
-		setText(AntBundle.message("intention.configure.highlighting.text"));
+		setText(ThermitBundle.message("intention.configure.highlighting.text"));
 	}
 
 	@NotNull
 	public final String getFamilyName()
 	{
-		return AntBundle.message("intention.configure.highlighting.family.name");
+		return ThermitBundle.message("intention.configure.highlighting.family.name");
 	}
 
 	public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file)

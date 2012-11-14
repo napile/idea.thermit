@@ -35,7 +35,7 @@ import javax.swing.tree.TreePath;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildListener;
@@ -234,10 +234,10 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 		group.add(new RunAction());
 		group.add(new ShowAllTargetsAction());
 		AnAction action = CommonActionsManager.getInstance().createExpandAllAction(myTreeExpander, this);
-		action.getTemplatePresentation().setDescription(AntBundle.message("ant.explorer.expand.all.nodes.action.description"));
+		action.getTemplatePresentation().setDescription(ThermitBundle.message("ant.explorer.expand.all.nodes.action.description"));
 		group.add(action);
 		action = CommonActionsManager.getInstance().createCollapseAllAction(myTreeExpander, this);
-		action.getTemplatePresentation().setDescription(AntBundle.message("ant.explorer.collapse.all.nodes.action.description"));
+		action.getTemplatePresentation().setDescription(ThermitBundle.message("ant.explorer.collapse.all.nodes.action.description"));
 		group.add(action);
 		group.add(myAntBuildFilePropertiesAction);
 		group.add(new ContextHelpAction(HelpID.ANT));
@@ -251,8 +251,8 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 	private void addBuildFile()
 	{
 		final FileChooserDescriptor descriptor = createXmlDescriptor();
-		descriptor.setTitle(AntBundle.message("select.ant.build.file.dialog.title"));
-		descriptor.setDescription(AntBundle.message("select.ant.build.file.dialog.description"));
+		descriptor.setTitle(ThermitBundle.message("select.ant.build.file.dialog.title"));
+		descriptor.setDescription(ThermitBundle.message("select.ant.build.file.dialog.description"));
 		final VirtualFile[] files = FileChooser.chooseFiles(descriptor, myProject, null);
 		if(files.length == 0)
 		{
@@ -298,7 +298,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 					{
 						StringBuilderSpinAllocator.dispose(message);
 					}
-					Messages.showWarningDialog(myProject, messageText, AntBundle.message("cannot.add.ant.files.dialog.title"));
+					Messages.showWarningDialog(myProject, messageText, ThermitBundle.message("cannot.add.ant.files.dialog.title"));
 				}
 			}
 		});
@@ -312,7 +312,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 			return;
 		}
 		final String fileName = buildFile.getPresentableUrl();
-		final int result = Messages.showYesNoDialog(myProject, AntBundle.message("remove.the.reference.to.file.confirmation.text", fileName), AntBundle.message("confirm.remove.dialog.title"), Messages.getQuestionIcon());
+		final int result = Messages.showYesNoDialog(myProject, ThermitBundle.message("remove.the.reference.to.file.confirmation.text", fileName), ThermitBundle.message("confirm.remove.dialog.title"), Messages.getQuestionIcon());
 		if(result != 0)
 		{
 			return;
@@ -491,7 +491,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 		if(userObject instanceof AntTargetNodeDescriptor)
 		{
 			final AntBuildTargetBase target = ((AntTargetNodeDescriptor) userObject).getTarget();
-			final DefaultActionGroup executeOnGroup = new DefaultActionGroup(AntBundle.message("ant.explorer.execute.on.action.group.name"), true);
+			final DefaultActionGroup executeOnGroup = new DefaultActionGroup(ThermitBundle.message("ant.explorer.execute.on.action.group.name"), true);
 			executeOnGroup.add(new ExecuteOnEventAction(target, ExecuteBeforeCompilationEvent.getInstance()));
 			executeOnGroup.add(new ExecuteOnEventAction(target, ExecuteAfterCompilationEvent.getInstance()));
 			executeOnGroup.addSeparator();
@@ -631,7 +631,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 	{
 		public AddAction()
 		{
-			super(AntBundle.message("add.ant.file.action.name"), AntBundle.message("add.ant.file.action.description"), IconUtil.getAddIcon());
+			super(ThermitBundle.message("add.ant.file.action.name"), ThermitBundle.message("add.ant.file.action.description"), IconUtil.getAddIcon());
 		}
 
 		public void actionPerformed(AnActionEvent e)
@@ -644,7 +644,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 	{
 		public RemoveAction()
 		{
-			super(AntBundle.message("remove.ant.file.action.name"), AntBundle.message("remove.ant.file.action.description"), IconUtil.getRemoveIcon());
+			super(ThermitBundle.message("remove.ant.file.action.name"), ThermitBundle.message("remove.ant.file.action.description"), IconUtil.getRemoveIcon());
 		}
 
 		public void actionPerformed(AnActionEvent e)
@@ -662,7 +662,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 	{
 		public RunAction()
 		{
-			super(AntBundle.message("run.ant.file.or.target.action.name"), AntBundle.message("run.ant.file.or.target.action.description"), AllIcons.Actions.Execute);
+			super(ThermitBundle.message("run.ant.file.or.target.action.name"), ThermitBundle.message("run.ant.file.or.target.action.description"), AllIcons.Actions.Execute);
 		}
 
 		public void actionPerformed(AnActionEvent e)
@@ -676,7 +676,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 			final String place = event.getPlace();
 			if(ActionPlaces.ANT_EXPLORER_TOOLBAR.equals(place))
 			{
-				presentation.setText(AntBundle.message("run.ant.file.or.target.action.name"));
+				presentation.setText(ThermitBundle.message("run.ant.file.or.target.action.name"));
 			}
 			else
 			{
@@ -684,17 +684,17 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 				if(paths != null && paths.length == 1 &&
 						((DefaultMutableTreeNode) paths[0].getLastPathComponent()).getUserObject() instanceof AntBuildFileNodeDescriptor)
 				{
-					presentation.setText(AntBundle.message("run.ant.build.action.name"));
+					presentation.setText(ThermitBundle.message("run.ant.build.action.name"));
 				}
 				else
 				{
 					if(paths == null || paths.length == 1)
 					{
-						presentation.setText(AntBundle.message("run.ant.target.action.name"));
+						presentation.setText(ThermitBundle.message("run.ant.target.action.name"));
 					}
 					else
 					{
-						presentation.setText(AntBundle.message("run.ant.targets.action.name"));
+						presentation.setText(ThermitBundle.message("run.ant.targets.action.name"));
 					}
 				}
 			}
@@ -707,7 +707,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 	{
 		public ShowAllTargetsAction()
 		{
-			super(AntBundle.message("filter.ant.targets.action.name"), AntBundle.message("filter.ant.targets.action.description"), AllIcons.Ant.Filter);
+			super(ThermitBundle.message("filter.ant.targets.action.name"), ThermitBundle.message("filter.ant.targets.action.description"), AllIcons.General.Filter);
 		}
 
 		public boolean isSelected(AnActionEvent event)
@@ -774,7 +774,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 
 		public ExecuteBeforeRunAction(final AntBuildTarget target)
 		{
-			super(AntBundle.message("executes.before.run.debug.acton.name"));
+			super(ThermitBundle.message("executes.before.run.debug.acton.name"));
 			myTarget = target;
 		}
 
@@ -795,7 +795,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 
 		public CreateMetaTargetAction()
 		{
-			super(AntBundle.message("ant.create.meta.target.action.name"), AntBundle.message("ant.create.meta.target.action.description"), null
+			super(ThermitBundle.message("ant.create.meta.target.action.name"), ThermitBundle.message("ant.create.meta.target.action.description"), null
 /*IconLoader.getIcon("/actions/execute.png")*/);
 		}
 
@@ -826,7 +826,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 
 		public RemoveMetaTargetsOrBuildFileAction()
 		{
-			super(AntBundle.message("remove.meta.targets.action.name"), AntBundle.message("remove.meta.targets.action.description"), null);
+			super(ThermitBundle.message("remove.meta.targets.action.name"), ThermitBundle.message("remove.meta.targets.action.description"), null);
 			registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0)), myTree);
 			Disposer.register(AntExplorer.this, new Disposable()
 			{
@@ -908,7 +908,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 
 			if(paths.length == 1)
 			{
-				String text = AntBundle.message("remove.meta.target.action.name");
+				String text = ThermitBundle.message("remove.meta.target.action.name");
 				boolean enabled = false;
 				final DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
 				if(node.getUserObject() instanceof AntBuildFileNodeDescriptor)
@@ -916,7 +916,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 					final AntBuildFileNodeDescriptor descriptor = (AntBuildFileNodeDescriptor) node.getUserObject();
 					if(descriptor.getBuildFile().equals(getCurrentBuildFile()))
 					{
-						text = AntBundle.message("remove.selected.build.file.action.name");
+						text = ThermitBundle.message("remove.selected.build.file.action.name");
 						enabled = true;
 					}
 				}
@@ -937,7 +937,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 			}
 			else
 			{
-				presentation.setText(AntBundle.message("remove.selected.meta.targets.action.name"));
+				presentation.setText(ThermitBundle.message("remove.selected.meta.targets.action.name"));
 				final AntBuildTarget[] targets = getTargetObjectsFromPaths(paths);
 				boolean enabled = targets.length > 0;
 				for(final AntBuildTarget buildTarget : targets)
@@ -959,7 +959,7 @@ public class AntExplorer extends SimpleToolWindowPanel implements DataProvider, 
 
 		public AssignShortcutAction(String actionId)
 		{
-			super(AntBundle.message("ant.explorer.assign.shortcut.action.name"));
+			super(ThermitBundle.message("ant.explorer.assign.shortcut.action.name"));
 			myActionId = actionId;
 		}
 

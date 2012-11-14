@@ -15,7 +15,7 @@
  */
 package org.napile.idea.thermit.config.explorer;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildTarget;
 import org.napile.idea.thermit.config.impl.AntBeforeRunTask;
 import org.napile.idea.thermit.config.impl.AntBeforeRunTaskProvider;
@@ -38,7 +38,7 @@ public final class AntExecuteBeforeRunDialog extends BaseExecuteBeforeRunDialog<
 	@Override
 	protected String getTargetDisplayString()
 	{
-		return AntBundle.message("ant.target");
+		return ThermitBundle.message("ant.target");
 	}
 
 	@Override

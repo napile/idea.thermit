@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.quickfix.AntChangeContextLocalFix;
 import org.napile.idea.thermit.validation.AntInspection;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -69,7 +69,7 @@ public class AntResolveInspection extends AntInspection
 			if(!errors.isEmpty())
 			{
 				final StringBuilder builder = new StringBuilder();
-				builder.append(AntBundle.message("failed.to.load.types")).append(":");
+				builder.append(ThermitBundle.message("failed.to.load.types")).append(":");
 				for(String error : errors)
 				{
 					builder.append("\n").append(error);
@@ -85,7 +85,7 @@ public class AntResolveInspection extends AntInspection
 				final AntDomNamedElement declaringElement = custom.getDeclaringElement();
 				if(declaringElement instanceof AntDomTypeDef)
 				{
-					String failedMessage = AntBundle.message("using.definition.which.type.failed.to.load");
+					String failedMessage = ThermitBundle.message("using.definition.which.type.failed.to.load");
 					final String error = custom.getLoadError();
 					if(error != null)
 					{

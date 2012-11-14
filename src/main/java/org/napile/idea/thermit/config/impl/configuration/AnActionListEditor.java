@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
@@ -52,7 +52,7 @@ public class AnActionListEditor<T> extends JPanel
 
 	public void addAddAction(final Factory<T> newItemFactory)
 	{
-		ReorderableListController<T>.AddActionDescription description = myForm.getListActionsBuilder().addAddAction(AntBundle.message("add.action.name"), newItemFactory, true);
+		ReorderableListController<T>.AddActionDescription description = myForm.getListActionsBuilder().addAddAction(ThermitBundle.message("add.action.name"), newItemFactory, true);
 		description.addPostHandler(new ReorderableListController.ActionNotification<T>()
 		{
 			public void afterActionPerformed(T value)
@@ -90,11 +90,11 @@ public class AnActionListEditor<T> extends JPanel
 			{
 				if(list.size() == 1)
 				{
-					return Messages.showOkCancelDialog(description.getList(), AntBundle.message("delete.selected.ant.configuration.confirmation.text"), ExecutionBundle.message("delete.confirmation.dialog.title"), Messages.getQuestionIcon()) == 0;
+					return Messages.showOkCancelDialog(description.getList(), ThermitBundle.message("delete.selected.ant.configuration.confirmation.text"), ExecutionBundle.message("delete.confirmation.dialog.title"), Messages.getQuestionIcon()) == 0;
 				}
 				else
 				{
-					return Messages.showOkCancelDialog(description.getList(), AntBundle.message("delete.selected.ant.configurations.confirmation.text"), ExecutionBundle.message("delete.confirmation.dialog.title"), Messages.getQuestionIcon()) == 0;
+					return Messages.showOkCancelDialog(description.getList(), ThermitBundle.message("delete.selected.ant.configurations.confirmation.text"), ExecutionBundle.message("delete.confirmation.dialog.title"), Messages.getQuestionIcon()) == 0;
 				}
 			}
 		});

@@ -16,7 +16,7 @@
 
 package org.napile.idea.thermit.config;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class AntNoFileException extends Exception
@@ -25,7 +25,7 @@ public class AntNoFileException extends Exception
 
 	public AntNoFileException(final String message, final VirtualFile file)
 	{
-		super(AntBundle.message("cant.add.file.error.message", file.getPresentableUrl(), message));
+		super(ThermitBundle.message("cant.add.file.error.message", file.getPresentableUrl(), message));
 		myFile = file;
 	}
 

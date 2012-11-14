@@ -11,4 +11,6 @@ import com.intellij.openapi.util.IconLoader;
 public interface ThermitIcons
 {
 	Icon FILE_ICON = IconLoader.findIcon("/org/napile/idea/thermit/icons/thermitFile.png");
+
+	Icon TOOLBAR_ICON = IconLoader.findIcon("/org/napile/idea/thermit/icons/toolWindowThermit.png");
 }

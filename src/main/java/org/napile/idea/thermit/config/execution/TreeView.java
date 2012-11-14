@@ -36,7 +36,7 @@ import javax.swing.tree.TreePath;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildModelBase;
 import org.napile.idea.thermit.config.AntBuildTargetBase;
@@ -176,13 +176,13 @@ public final class TreeView implements AntOutputView, OccurenceNavigator
 			@Nullable
 			public String getNextOccurenceActionName()
 			{
-				return AntBundle.message("ant.execution.next.error.warning.action.name");
+				return ThermitBundle.message("ant.execution.next.error.warning.action.name");
 			}
 
 			@Nullable
 			public String getPreviousOccurenceActionName()
 			{
-				return AntBundle.message("ant.execution.previous.error.warning.action.name");
+				return ThermitBundle.message("ant.execution.previous.error.warning.action.name");
 			}
 		};
 

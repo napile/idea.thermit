@@ -37,7 +37,7 @@ import javax.swing.tree.TreePath;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildTarget;
 import org.napile.idea.thermit.config.ThermitConfiguration;
@@ -65,7 +65,7 @@ public class TargetChooserDialog extends DialogWrapper
 		super(project, false);
 		myProject = project;
 		mySelectedTarget = selectedTarget;
-		setTitle(AntBundle.message("ant.target.choser.title"));
+		setTitle(ThermitBundle.message("ant.target.choser.title"));
 		init();
 	}
 

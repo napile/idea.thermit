@@ -18,7 +18,7 @@ package org.napile.idea.thermit.validation;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.dom.AntDomProperty;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.psi.PsiFileSystemItem;
@@ -36,7 +36,7 @@ public class AntMissingPropertiesFileInspection extends AntInspection
 	@NotNull
 	public String getDisplayName()
 	{
-		return AntBundle.message("ant.missing.properties.file.inspection");
+		return ThermitBundle.message("ant.missing.properties.file.inspection");
 	}
 
 	@NonNls
@@ -57,7 +57,7 @@ public class AntMissingPropertiesFileInspection extends AntInspection
 				final PsiFileSystemItem file = property.getFile().getValue();
 				if(!(file instanceof PropertiesFile))
 				{
-					holder.createProblem(property.getFile(), AntBundle.message("file.doesnt.exist", fileName));
+					holder.createProblem(property.getFile(), ThermitBundle.message("file.doesnt.exist", fileName));
 				}
 			}
 		}

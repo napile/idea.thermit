@@ -15,7 +15,7 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.explorer.AntExplorer;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -26,7 +26,7 @@ public final class RemoveBuildFileAction extends AnAction
 
 	public RemoveBuildFileAction(AntExplorer antExplorer)
 	{
-		super(AntBundle.message("remove.build.file.action.name"));
+		super(ThermitBundle.message("remove.build.file.action.name"));
 		myAntExplorer = antExplorer;
 	}
 

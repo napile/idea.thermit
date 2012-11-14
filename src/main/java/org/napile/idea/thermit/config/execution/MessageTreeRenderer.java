@@ -19,6 +19,7 @@ import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
+import org.napile.idea.thermit.ThermitIcons;
 import com.intellij.icons.AllIcons;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.MultilineTreeCellRenderer;
@@ -64,7 +65,7 @@ final class MessageTreeRenderer extends MultilineTreeCellRenderer
 			AntBuildMessageView.MessageType type = node.getType();
 			if(type == AntBuildMessageView.MessageType.BUILD)
 			{
-				icon = AllIcons.Ant.Build;
+				icon = ThermitIcons.TOOLBAR_ICON;
 			}
 			else if(type == AntBuildMessageView.MessageType.TARGET)
 			{
@@ -78,7 +79,7 @@ final class MessageTreeRenderer extends MultilineTreeCellRenderer
 			{
 				if(node.getPriority() == AntBuildMessageView.PRIORITY_WARN)
 				{
-					icon = AllIcons.Compiler.Warning;
+					icon = AllIcons.General.Warning;
 				}
 				else
 				{
@@ -87,7 +88,7 @@ final class MessageTreeRenderer extends MultilineTreeCellRenderer
 			}
 			else if(type == AntBuildMessageView.MessageType.ERROR)
 			{
-				icon = AllIcons.Compiler.Error;
+				icon = AllIcons.General.Error;
 			}
 		}
 		setIcon(icon);

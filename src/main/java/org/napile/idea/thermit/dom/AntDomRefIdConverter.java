@@ -21,7 +21,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.ThermitSupport;
 import com.intellij.openapi.util.Ref;
 import com.intellij.pom.references.PomService;
@@ -106,7 +106,7 @@ public class AntDomRefIdConverter extends Converter<AntDomElement> implements Cu
 
 					public String getUnresolvedMessagePattern()
 					{
-						return AntBundle.message("cannot.resolve.refid", getCanonicalText());
+						return ThermitBundle.message("cannot.resolve.refid", getCanonicalText());
 					}
 				}
 		};

@@ -16,7 +16,7 @@
 package org.napile.idea.thermit.quickfix;
 
 import org.jetbrains.annotations.NotNull;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.codeInsight.daemon.impl.HectorComponent;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -37,13 +37,13 @@ public class AntChangeContextLocalFix implements LocalQuickFix
 	@NotNull
 	public String getName()
 	{
-		return AntBundle.message("intention.configure.highlighting.text");
+		return ThermitBundle.message("intention.configure.highlighting.text");
 	}
 
 	@NotNull
 	public final String getFamilyName()
 	{
-		return AntBundle.message("intention.configure.highlighting.family.name");
+		return ThermitBundle.message("intention.configure.highlighting.family.name");
 	}
 
 	public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)

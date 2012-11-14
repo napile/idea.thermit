@@ -17,7 +17,7 @@ package org.napile.idea.thermit.validation;
 
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.dom.AntDomProject;
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.util.xml.highlighting.BasicDomElementsInspection;
@@ -34,7 +34,7 @@ public abstract class AntInspection extends BasicDomElementsInspection<AntDomPro
 	@NotNull
 	public String getGroupDisplayName()
 	{
-		return AntBundle.message("ant.inspections.display.name");
+		return ThermitBundle.message("ant.inspections.display.name");
 	}
 
 	@NotNull

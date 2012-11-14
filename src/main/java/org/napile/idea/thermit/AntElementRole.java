@@ -26,13 +26,13 @@ import com.intellij.util.PlatformIcons;
  */
 public enum AntElementRole implements PlatformIcons
 {
-	TARGET_ROLE(AntBundle.message("ant.role.ant.target"), AllIcons.Ant.Target),
-	PROPERTY_ROLE(AntBundle.message("ant.role.ant.property"), PROPERTY_ICON),
-	TASK_ROLE(AntBundle.message("ant.role.ant.task"), TASK_ICON),
-	USER_TASK_ROLE(AntBundle.message("ant.element.role.user.task"), TASK_ICON),
-	PROJECT_ROLE(AntBundle.message("ant.element.role.ant.project.name"), PROPERTY_ICON),
-	MACRODEF_ROLE(AntBundle.message("ant.element.role.macrodef.element"), TASK_ICON),
-	SCRIPTDEF_ROLE(AntBundle.message("ant.element.role.scriptdef.element"), TASK_ICON),
+	TARGET_ROLE(ThermitBundle.message("ant.role.ant.target"), AllIcons.Ant.Target),
+	PROPERTY_ROLE(ThermitBundle.message("ant.role.ant.property"), PROPERTY_ICON),
+	TASK_ROLE(ThermitBundle.message("ant.role.ant.task"), TASK_ICON),
+	USER_TASK_ROLE(ThermitBundle.message("ant.element.role.user.task"), TASK_ICON),
+	PROJECT_ROLE(ThermitBundle.message("ant.element.role.ant.project.name"), PROPERTY_ICON),
+	MACRODEF_ROLE(ThermitBundle.message("ant.element.role.macrodef.element"), TASK_ICON),
+	SCRIPTDEF_ROLE(ThermitBundle.message("ant.element.role.scriptdef.element"), TASK_ICON),
 	@NonNls NULL_ROLE("Ant element", null);
 
 	AntElementRole(String name, Icon icon)

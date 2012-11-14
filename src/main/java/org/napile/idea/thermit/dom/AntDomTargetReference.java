@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.ThermitSupport;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -232,7 +232,7 @@ class AntDomTargetReference extends AntDomReferenceBase implements BindablePsiRe
 
 	public String getUnresolvedMessagePattern()
 	{
-		return AntBundle.message("cannot.resolve.target", getCanonicalText());
+		return ThermitBundle.message("cannot.resolve.target", getCanonicalText());
 	}
 
 	private static class MyResolver implements ResolveCache.Resolver

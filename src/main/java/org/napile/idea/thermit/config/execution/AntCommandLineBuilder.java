@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NonNls;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.ThermitClasses;
 import org.napile.idea.thermit.config.impl.AntBuildFileImpl;
 import org.napile.idea.thermit.config.impl.AntInstallation;
@@ -99,18 +99,18 @@ public class AntCommandLineBuilder
 			jdkName = ThermitConfigurationImpl.DEFAULT_JDK_NAME.get(container);
 			if(jdkName == null || jdkName.length() == 0)
 			{
-				throw new CantRunException(AntBundle.message("project.jdk.not.specified.error.message"));
+				throw new CantRunException(ThermitBundle.message("project.jdk.not.specified.error.message"));
 			}
 			jdk = GlobalThermitConfiguration.findJdk(jdkName);
 		}
 		if(jdk == null)
 		{
-			throw new CantRunException(AntBundle.message("jdk.with.name.not.configured.error.message", jdkName));
+			throw new CantRunException(ThermitBundle.message("jdk.with.name.not.configured.error.message", jdkName));
 		}
 		VirtualFile homeDirectory = jdk.getHomeDirectory();
 		if(homeDirectory == null)
 		{
-			throw new CantRunException(AntBundle.message("jdk.with.name.bad.configured.error.message", jdkName));
+			throw new CantRunException(ThermitBundle.message("jdk.with.name.bad.configured.error.message", jdkName));
 		}
 		myCommandLine.setJdk(jdk);
 
@@ -121,7 +121,7 @@ public class AntCommandLineBuilder
 		final AntInstallation antInstallation = AntBuildFileImpl.ANT_INSTALLATION.get(container);
 		if(antInstallation == null)
 		{
-			throw new CantRunException(AntBundle.message("ant.installation.not.configured.error.message"));
+			throw new CantRunException(ThermitBundle.message("ant.installation.not.configured.error.message"));
 		}
 
 		final String antHome = AntInstallation.HOME_DIR.get(antInstallation.getProperties());

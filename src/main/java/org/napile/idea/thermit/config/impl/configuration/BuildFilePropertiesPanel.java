@@ -38,7 +38,7 @@ import javax.swing.table.TableCellEditor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.impl.AntBuildFileImpl;
 import org.napile.idea.thermit.config.impl.AntInstallation;
@@ -103,7 +103,7 @@ public class BuildFilePropertiesPanel
 		builder.setCenterPanel(myForm.myWholePanel);
 		builder.setDimensionServiceKey(DIMENSION_SERVICE_KEY);
 		builder.setPreferedFocusComponent(myForm.getPreferedFocusComponent());
-		builder.setTitle(AntBundle.message("build.file.properties.dialog.title"));
+		builder.setTitle(ThermitBundle.message("build.file.properties.dialog.title"));
 		builder.removeAllActions();
 		builder.addOkAction();
 		builder.addCancelAction();
@@ -249,7 +249,7 @@ public class BuildFilePropertiesPanel
 		private JTable myPropertiesTable;
 		private JPanel myWholePanel;
 
-		private static final ColumnInfo<BuildFileProperty, String> NAME_COLUMN = new ColumnInfo<BuildFileProperty, String>(AntBundle.message("edit.ant.properties.name.column.name"))
+		private static final ColumnInfo<BuildFileProperty, String> NAME_COLUMN = new ColumnInfo<BuildFileProperty, String>(ThermitBundle.message("edit.ant.properties.name.column.name"))
 		{
 			public String valueOf(BuildFileProperty buildFileProperty)
 			{
@@ -266,7 +266,7 @@ public class BuildFilePropertiesPanel
 				buildFileProperty.setPropertyName(name);
 			}
 		};
-		private static final ColumnInfo<BuildFileProperty, String> VALUE_COLUMN = new ColumnInfo<BuildFileProperty, String>(AntBundle.message("edit.ant.properties.value.column.name"))
+		private static final ColumnInfo<BuildFileProperty, String> VALUE_COLUMN = new ColumnInfo<BuildFileProperty, String>(ThermitBundle.message("edit.ant.properties.value.column.name"))
 		{
 			public boolean isCellEditable(BuildFileProperty buildFileProperty)
 			{
@@ -343,7 +343,7 @@ public class BuildFilePropertiesPanel
 		@Nullable
 		public String getDisplayName()
 		{
-			return AntBundle.message("edit.ant.properties.tab.display.name");
+			return ThermitBundle.message("edit.ant.properties.tab.display.name");
 		}
 
 		public JComponent getPreferedFocusComponent()
@@ -399,7 +399,7 @@ public class BuildFilePropertiesPanel
 				return name1.compareToIgnoreCase(name2);
 			}
 		};
-		private static final ColumnInfo<TargetFilter, String> NAME_COLUMN = new ColumnInfo<TargetFilter, String>(AntBundle.message("ant.target"))
+		private static final ColumnInfo<TargetFilter, String> NAME_COLUMN = new ColumnInfo<TargetFilter, String>(ThermitBundle.message("ant.target"))
 		{
 			public String valueOf(TargetFilter targetFilter)
 			{
@@ -429,7 +429,7 @@ public class BuildFilePropertiesPanel
 				return description1.compareToIgnoreCase(description2);
 			}
 		};
-		private static final ColumnInfo<TargetFilter, String> DESCRIPTION = new ColumnInfo<TargetFilter, String>(AntBundle.message("edit.ant.properties.description.column.name"))
+		private static final ColumnInfo<TargetFilter, String> DESCRIPTION = new ColumnInfo<TargetFilter, String>(ThermitBundle.message("edit.ant.properties.description.column.name"))
 		{
 			public String valueOf(TargetFilter targetFilter)
 			{
@@ -464,7 +464,7 @@ public class BuildFilePropertiesPanel
 		@Nullable
 		public String getDisplayName()
 		{
-			return AntBundle.message("edit.ant.properties.filters.tab.display.name");
+			return ThermitBundle.message("edit.ant.properties.filters.tab.display.name");
 		}
 
 		public JComponent getPreferedFocusComponent()
@@ -501,7 +501,7 @@ public class BuildFilePropertiesPanel
 			myAntGlobalConfiguration = antConfiguration;
 			myProject = project;
 			myAntCommandLine.attachLabel(myAntCmdLineLabel);
-			myAntCommandLine.setDialogCaption(AntBundle.message("run.execution.tab.ant.command.line.dialog.title"));
+			myAntCommandLine.setDialogCaption(ThermitBundle.message("run.execution.tab.ant.command.line.dialog.title"));
 			setLabelFor(myJDKLabel, myJDKs);
 
 			myJDKsController = new ChooseAndEditComboBoxController<Sdk, String>(myJDKs, new Convertor<Sdk, String>()
@@ -563,7 +563,7 @@ public class BuildFilePropertiesPanel
 		@Nullable
 		public String getDisplayName()
 		{
-			return AntBundle.message("edit.ant.properties.execution.tab.display.name");
+			return ThermitBundle.message("edit.ant.properties.execution.tab.display.name");
 		}
 
 		public void reset(AbstractProperty.AbstractPropertyContainer options)
@@ -614,7 +614,7 @@ public class BuildFilePropertiesPanel
 		@Nullable
 		public String getDisplayName()
 		{
-			return AntBundle.message("edit.ant.properties.additional.classpath.tab.display.name");
+			return ThermitBundle.message("edit.ant.properties.additional.classpath.tab.display.name");
 		}
 
 		public JComponent getPreferedFocusComponent()

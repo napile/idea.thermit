@@ -17,7 +17,7 @@ package org.napile.idea.thermit.config.actions;
 
 import java.util.Collections;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildListener;
@@ -34,7 +34,7 @@ import com.intellij.util.ArrayUtil;
 
 public final class TargetAction extends DumbAwareAction
 {
-	public static final String DEFAULT_TARGET_NAME = AntBundle.message("ant.target.name.default.target");
+	public static final String DEFAULT_TARGET_NAME = ThermitBundle.message("ant.target.name.default.target");
 
 	private final String myBuildName;
 	private final String[] myTargets;

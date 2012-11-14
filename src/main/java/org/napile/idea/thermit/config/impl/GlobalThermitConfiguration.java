@@ -22,7 +22,7 @@ import java.util.Map;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.ThermitConfigurationBase;
 import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.application.ApplicationManager;
@@ -51,7 +51,7 @@ public class GlobalThermitConfiguration implements ApplicationComponent, JDOMExt
 	static final ListProperty<AntInstallation> ANTS = ListProperty.create("registeredThermits");
 	private final ExternalizablePropertyContainer myProperties = new ExternalizablePropertyContainer();
 	private final AntInstallation myBundledAnt;
-	public static final String BUNDLED_ANT_NAME = AntBundle.message("ant.reference.bundled.ant.name");
+	public static final String BUNDLED_ANT_NAME = ThermitBundle.message("ant.reference.bundled.ant.name");
 	public final Condition<AntInstallation> IS_USER_ANT = new Condition<AntInstallation>()
 	{
 		public boolean value(AntInstallation antInstallation)

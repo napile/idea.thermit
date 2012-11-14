@@ -20,7 +20,7 @@ import java.util.Comparator;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.execution.CantRunException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
@@ -181,11 +181,11 @@ public abstract class AntReference
 		if(antReference == PROJECT_DEFAULT)
 			antReference = ThermitConfigurationImpl.DEFAULT_ANT.get(container);
 		if(antReference == null)
-			throw new CantRunException(AntBundle.message("cant.run.ant.no.ant.configured.error.message"));
+			throw new CantRunException(ThermitBundle.message("cant.run.ant.no.ant.configured.error.message"));
 		AntInstallation antInstallation = antReference.find(antConfiguration);
 		if(antInstallation == null)
 		{
-			throw new CantRunException(AntBundle.message("cant.run.ant.ant.reference.is.not.configured.error.message", antReference.getName()));
+			throw new CantRunException(ThermitBundle.message("cant.run.ant.ant.reference.is.not.configured.error.message", antReference.getName()));
 		}
 		return antInstallation;
 	}

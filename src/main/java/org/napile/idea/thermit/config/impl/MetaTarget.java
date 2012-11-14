@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildListener;
@@ -45,7 +45,7 @@ public class MetaTarget implements AntBuildTargetBase
 		myBuildFile = buildFile;
 		myTargets = targets;
 		myName = displayName;
-		myDescription = AntBundle.message("meta.target.build.sequence.name.display.name", displayName);
+		myDescription = ThermitBundle.message("meta.target.build.sequence.name.display.name", displayName);
 	}
 
 	public Project getProject()

@@ -15,7 +15,7 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntNoFileException;
 import org.napile.idea.thermit.config.ThermitConfiguration;
 import org.napile.idea.thermit.config.ThermitConfigurationBase;
@@ -53,10 +53,10 @@ public class ThermitAntBuildFile extends AnAction
 			String message = e.getMessage();
 			if(message == null || message.length() == 0)
 			{
-				message = AntBundle.message("cannot.add.build.files.from.excluded.directories.error.message", e.getFile().getPresentableUrl());
+				message = ThermitBundle.message("cannot.add.build.files.from.excluded.directories.error.message", e.getFile().getPresentableUrl());
 			}
 
-			Messages.showWarningDialog(project, message, AntBundle.message("cannot.add.build.file.dialog.title"));
+			Messages.showWarningDialog(project, message, ThermitBundle.message("cannot.add.build.file.dialog.title"));
 		}
 	}
 

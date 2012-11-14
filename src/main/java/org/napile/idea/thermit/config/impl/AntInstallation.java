@@ -28,7 +28,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.ThermitClasses;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -66,7 +66,7 @@ public class AntInstallation
 			return antInstallation.getReference();
 		}
 	};
-	public static final AbstractProperty<String> VERSION = new StringProperty("version", AntBundle.message("ant.unknown.version.string.presentation"));
+	public static final AbstractProperty<String> VERSION = new StringProperty("version", ThermitBundle.message("ant.unknown.version.string.presentation"));
 
 	private final ClassLoaderHolder myClassLoaderHolder;
 	@NonNls
@@ -171,14 +171,14 @@ public class AntInstallation
 	{
 		File antHome = new File(homePath);
 		String antPath = "'" + antHome.getAbsolutePath() + "'";
-		checkExists(antHome, AntBundle.message("path.to.ant.does.not.exist.error.message", antPath));
+		checkExists(antHome, ThermitBundle.message("path.to.ant.does.not.exist.error.message", antPath));
 		File lib = new File(antHome, LIB_DIR);
-		checkExists(lib, AntBundle.message("lib.directory.not.found.in.ant.path.error.message", antPath));
+		checkExists(lib, ThermitBundle.message("lib.directory.not.found.in.ant.path.error.message", antPath));
 		File antJar = new File(lib, ANT_JAR_FILE);
-		checkExists(antJar, AntBundle.message("ant.jar.not.found.in.directory.error.message", lib.getAbsolutePath()));
+		checkExists(antJar, ThermitBundle.message("ant.jar.not.found.in.directory.error.message", lib.getAbsolutePath()));
 		if(antJar.isDirectory())
 		{
-			throw new ConfigurationException(AntBundle.message("ant.jar.is.directory.error.message", antJar.getAbsolutePath()));
+			throw new ConfigurationException(ThermitBundle.message("ant.jar.is.directory.error.message", antJar.getAbsolutePath()));
 		}
 		try
 		{
@@ -186,7 +186,7 @@ public class AntInstallation
 			AntInstallation antInstallation = new AntInstallation();
 			HOME_DIR.set(antInstallation.getProperties(), antHome.getAbsolutePath());
 
-			NAME.set(antInstallation.getProperties(), AntBundle.message("apache.ant.with.version.string.presentation", version));
+			NAME.set(antInstallation.getProperties(), ThermitBundle.message("apache.ant.with.version.string.presentation", version));
 			VERSION.set(antInstallation.getProperties(), version);
 			antInstallation.addClasspathEntry(new AllNZipsUnderDirEntry(lib));
 			return antInstallation;
@@ -231,7 +231,7 @@ public class AntInstallation
 		}
 		catch(IOException e)
 		{
-			throw new ConfigurationException(AntBundle.message("cant.read.from.ant.jar.error.message", antJar.getAbsolutePath()));
+			throw new ConfigurationException(ThermitBundle.message("cant.read.from.ant.jar.error.message", antJar.getAbsolutePath()));
 		}
 		finally
 		{

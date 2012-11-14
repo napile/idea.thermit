@@ -17,7 +17,7 @@ package org.napile.idea.thermit.config.actions;
 
 import java.util.Collections;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildListener;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
 import org.napile.idea.thermit.config.execution.ExecutionHandler;
@@ -33,7 +33,7 @@ public final class RunAction extends AnAction
 
 	public RunAction(AntBuildMessageView antBuildMessageView)
 	{
-		super(AntBundle.message("rerun.ant.action.name"), null, AllIcons.Actions.RefreshUsages);
+		super(ThermitBundle.message("rerun.ant.action.name"), null, AllIcons.Actions.RefreshUsages);
 		myAntBuildMessageView = antBuildMessageView;
 	}
 

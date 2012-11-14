@@ -17,7 +17,7 @@ package org.napile.idea.thermit.dom;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
@@ -55,7 +55,7 @@ public class AntDomFileReference extends FileReference implements AntDomReferenc
 
 	public String getUnresolvedMessagePattern()
 	{
-		return AntBundle.message("file.doesnt.exist", getCanonicalRepresentationText());
+		return ThermitBundle.message("file.doesnt.exist", getCanonicalRepresentationText());
 	}
 
 	@Nullable

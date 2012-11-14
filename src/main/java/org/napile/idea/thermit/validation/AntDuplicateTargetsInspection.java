@@ -18,7 +18,7 @@ package org.napile.idea.thermit.validation;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.dom.AntDomProject;
 import org.napile.idea.thermit.dom.AntDomTarget;
 import org.napile.idea.thermit.dom.TargetResolver;
@@ -37,7 +37,7 @@ public class AntDuplicateTargetsInspection extends AntInspection
 	@NotNull
 	public String getDisplayName()
 	{
-		return AntBundle.message("ant.duplicate.targets.inspection");
+		return ThermitBundle.message("ant.duplicate.targets.inspection");
 	}
 
 	@NonNls
@@ -61,12 +61,12 @@ public class AntDuplicateTargetsInspection extends AntInspection
 					final boolean isFromDifferentFiles = !Comparing.equal(existingTargetProj, duplucatingTargetProj);
 					if(project.equals(existingTargetProj))
 					{
-						final String duplicatedMessage = isFromDifferentFiles ? AntBundle.message("target.is.duplicated.in.imported.file", targetEffectiveName, duplucatingTargetProj != null ? duplucatingTargetProj.getName() : "") : AntBundle.message("target.is.duplicated", targetEffectiveName);
+						final String duplicatedMessage = isFromDifferentFiles ? ThermitBundle.message("target.is.duplicated.in.imported.file", targetEffectiveName, duplucatingTargetProj != null ? duplucatingTargetProj.getName() : "") : ThermitBundle.message("target.is.duplicated", targetEffectiveName);
 						holder.createProblem(existingTarget.getName(), duplicatedMessage);
 					}
 					if(project.equals(duplucatingTargetProj))
 					{
-						final String duplicatedMessage = isFromDifferentFiles ? AntBundle.message("target.is.duplicated.in.imported.file", targetEffectiveName, existingTargetProj != null ? existingTargetProj.getName() : "") : AntBundle.message("target.is.duplicated", targetEffectiveName);
+						final String duplicatedMessage = isFromDifferentFiles ? ThermitBundle.message("target.is.duplicated.in.imported.file", targetEffectiveName, existingTargetProj != null ? existingTargetProj.getName() : "") : ThermitBundle.message("target.is.duplicated", targetEffectiveName);
 						holder.createProblem(duplicatingTarget.getName(), duplicatedMessage);
 					}
 				}

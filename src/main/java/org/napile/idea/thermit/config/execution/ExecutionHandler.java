@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildListener;
@@ -94,13 +94,13 @@ public final class ExecutionHandler
 			}
 			catch(RunCanceledException e)
 			{
-				e.showMessage(project, AntBundle.message("run.ant.erorr.dialog.title"));
+				e.showMessage(project, ThermitBundle.message("run.ant.erorr.dialog.title"));
 				antBuildListener.buildFinished(AntBuildListener.FAILED_TO_RUN, 0);
 				return;
 			}
 			catch(CantRunException e)
 			{
-				ExecutionErrorDialog.show(e, AntBundle.message("cant.run.ant.erorr.dialog.title"), project);
+				ExecutionErrorDialog.show(e, ThermitBundle.message("cant.run.ant.erorr.dialog.title"), project);
 				antBuildListener.buildFinished(AntBuildListener.FAILED_TO_RUN, 0);
 				return;
 			}
@@ -119,7 +119,7 @@ public final class ExecutionHandler
 
 		final boolean startInBackground = buildFile.isRunInBackground();
 
-		new Task.Backgroundable(null, AntBundle.message("ant.build.progress.dialog.title"), true)
+		new Task.Backgroundable(null, ThermitBundle.message("ant.build.progress.dialog.title"), true)
 		{
 
 			public boolean shouldStartInBackground()
@@ -147,7 +147,7 @@ public final class ExecutionHandler
 		final Project project = buildFile.getProject();
 
 		final long startTime = System.currentTimeMillis();
-		LocalHistory.getInstance().putSystemLabel(project, AntBundle.message("ant.build.local.history.label", buildFile.getName()));
+		LocalHistory.getInstance().putSystemLabel(project, ThermitBundle.message("ant.build.local.history.label", buildFile.getName()));
 		final JUnitProcessHandler handler;
 		try
 		{
@@ -159,7 +159,7 @@ public final class ExecutionHandler
 			{
 				public void run()
 				{
-					ExecutionErrorDialog.show(e, AntBundle.message("could.not.start.process.erorr.dialog.title"), project);
+					ExecutionErrorDialog.show(e, ThermitBundle.message("could.not.start.process.erorr.dialog.title"), project);
 				}
 			});
 			antBuildListener.buildFinished(AntBuildListener.FAILED_TO_RUN, 0);
@@ -176,7 +176,7 @@ public final class ExecutionHandler
 		final StatusBar statusbar = WindowManager.getInstance().getStatusBar(project);
 		if(statusbar != null)
 		{
-			statusbar.setInfo(AntBundle.message("ant.build.started.status.message"));
+			statusbar.setInfo(ThermitBundle.message("ant.build.started.status.message"));
 		}
 
 		final CheckCancelTask checkCancelTask = new CheckCancelTask(progress, handler);
@@ -266,7 +266,7 @@ public final class ExecutionHandler
 			messageView = AntBuildMessageView.openBuildMessageView(buildFile.getProject(), buildFile, targets);
 			if(messageView == null)
 			{
-				throw new RunCanceledException(AntBundle.message("canceled.by.user.error.message"));
+				throw new RunCanceledException(ThermitBundle.message("canceled.by.user.error.message"));
 			}
 		}
 		return messageView;

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -48,7 +48,7 @@ public class AntDomMacrodefAttributeReference extends AntDomReferenceBase
 
 	public String getUnresolvedMessagePattern()
 	{
-		return AntBundle.message("unknown.macro.attribute", getCanonicalText());
+		return ThermitBundle.message("unknown.macro.attribute", getCanonicalText());
 	}
 
 	public PsiElement resolve()

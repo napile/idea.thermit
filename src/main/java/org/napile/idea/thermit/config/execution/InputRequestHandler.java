@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.execution.junit2.segments.SegmentReader;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.openapi.project.Project;
@@ -71,7 +71,7 @@ class InputRequestHandler
 			question = choiceInfo;
 		}
 		question.setIcon(Messages.getQuestionIcon());
-		question.setTitle(AntBundle.message("user.inout.request.ant.build.input.dialog.title"));
+		question.setTitle(ThermitBundle.message("user.inout.request.ant.build.input.dialog.title"));
 		question.setMessage(prompt);
 		question.setIcon(Messages.getQuestionIcon());
 		return question.forceUserInput();

@@ -26,7 +26,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
+import org.napile.idea.thermit.ThermitIcons;
 import org.napile.idea.thermit.config.impl.AntClasspathEntry;
 import org.napile.idea.thermit.config.impl.AntInstallation;
 import org.napile.idea.thermit.config.impl.AntReference;
@@ -117,7 +118,7 @@ public class AntUIUtil
 
 	public static void customizeAnt(AbstractProperty.AbstractPropertyContainer antProperties, SimpleColoredComponent component)
 	{
-		component.setIcon(AllIcons.Ant.AntInstallation);
+		component.setIcon(ThermitIcons.TOOLBAR_ICON);
 		String name = AntInstallation.NAME.get(antProperties);
 		component.append(name, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 		String versionString = AntInstallation.VERSION.get(antProperties);
@@ -146,7 +147,7 @@ public class AntUIUtil
 
 			FixedSizeButton button = myComponent.getComponentWithButton().getButton();
 			button.setIcon(IconUtil.getAddIcon());
-			button.setToolTipText(AntBundle.message("ant.property.value.editor.insert.macro.tooltip.text"));
+			button.setToolTipText(ThermitBundle.message("ant.property.value.editor.insert.macro.tooltip.text"));
 			button.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
@@ -218,12 +219,12 @@ public class AntUIUtil
 				if(myProjectJdkName.length() > 0)
 				{
 					setIcon(AllIcons.General.Jdk);
-					append(AntBundle.message("project.jdk.project.jdk.name.list.column.value", myProjectJdkName), selected ? SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES : SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES);
+					append(ThermitBundle.message("project.jdk.project.jdk.name.list.column.value", myProjectJdkName), selected ? SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES : SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES);
 				}
 				else
 				{
 					setIcon(PlatformIcons.INVALID_ENTRY_ICON);
-					append(AntBundle.message("project.jdk.not.specified.list.column.value"), SimpleTextAttributes.ERROR_ATTRIBUTES);
+					append(ThermitBundle.message("project.jdk.not.specified.list.column.value"), SimpleTextAttributes.ERROR_ATTRIBUTES);
 				}
 			}
 			else

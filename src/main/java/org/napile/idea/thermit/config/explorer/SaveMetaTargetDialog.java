@@ -34,7 +34,7 @@ import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFile;
 import org.napile.idea.thermit.config.ThermitConfigurationBase;
 import org.napile.idea.thermit.config.impl.ExecuteCompositeTargetEvent;
@@ -86,7 +86,7 @@ public class SaveMetaTargetDialog extends DialogWrapper
 		}
 		else
 		{
-			Messages.showInfoMessage(getContentPane(), AntBundle.message("save.meta.data.such.sequence.of.targets.already.exists.error.message"), getTitle());
+			Messages.showInfoMessage(getContentPane(), ThermitBundle.message("save.meta.data.such.sequence.of.targets.already.exists.error.message"), getTitle());
 		}
 	}
 
@@ -98,7 +98,7 @@ public class SaveMetaTargetDialog extends DialogWrapper
 	protected JComponent createCenterPanel()
 	{
 		final JPanel panel = new JPanel(new GridBagLayout());
-		final JLabel nameLabel = new JLabel(AntBundle.message("save.meta.data.name.label"));
+		final JLabel nameLabel = new JLabel(ThermitBundle.message("save.meta.data.name.label"));
 		panel.add(nameLabel, new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		myTfName = new JTextField(myInitialEvent.getPresentableName());
 		nameLabel.setLabelFor(myTfName);
@@ -112,12 +112,12 @@ public class SaveMetaTargetDialog extends DialogWrapper
 		{
 			dataModel.addElement(name);
 		}
-		panel.add(new JLabel(AntBundle.message("save.meta.data.targets.label")), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(6, 0, 0, 0), 0, 0));
+		panel.add(new JLabel(ThermitBundle.message("save.meta.data.targets.label")), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(6, 0, 0, 0), 0, 0));
 		panel.add(ScrollPaneFactory.createScrollPane(myTargetList), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 2, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4, 0, 0, 0), 0, 0));
 
-		final JButton upButton = new JButton(AntBundle.message("button.move.up"));
+		final JButton upButton = new JButton(ThermitBundle.message("button.move.up"));
 		panel.add(upButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(6, 6, 0, 0), 0, 0));
-		final JButton downButton = new JButton(AntBundle.message("button.move.down"));
+		final JButton downButton = new JButton(ThermitBundle.message("button.move.down"));
 		panel.add(downButton, new GridBagConstraints(1, 4, 1, GridBagConstraints.REMAINDER, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 6, 0, 0), 0, 0));
 
 		class UpdateAction implements ActionListener

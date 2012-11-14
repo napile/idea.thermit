@@ -15,7 +15,7 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -28,7 +28,7 @@ public final class PauseOutputAction extends ToggleAction
 
 	public PauseOutputAction(AntBuildMessageView antBuildMessageView)
 	{
-		super(AntBundle.message("ant.view.pause.output.action.name"), null, AllIcons.Actions.Pause);
+		super(ThermitBundle.message("ant.view.pause.output.action.name"), null, AllIcons.Actions.Pause);
 		myAntBuildMessageView = antBuildMessageView;
 	}
 

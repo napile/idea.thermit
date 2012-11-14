@@ -15,7 +15,7 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.explorer.AntExplorer;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -29,7 +29,7 @@ public final class AntBuildFilePropertiesAction extends AnAction
 
 	public AntBuildFilePropertiesAction(AntExplorer antExplorer)
 	{
-		super(AntBundle.message("build.file.properties.action.name"), AntBundle.message("build.file.properties.action.description"), AllIcons.Ant.Properties);
+		super(ThermitBundle.message("build.file.properties.action.name"), ThermitBundle.message("build.file.properties.action.description"), AllIcons.Ant.Properties);
 		myAntExplorer = antExplorer;
 		registerCustomShortcutSet(CommonShortcuts.ALT_ENTER, myAntExplorer);
 	}

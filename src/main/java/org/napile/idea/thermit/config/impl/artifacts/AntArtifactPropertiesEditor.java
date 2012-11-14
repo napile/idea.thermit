@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildTarget;
 import org.napile.idea.thermit.config.ThermitConfiguration;
 import org.napile.idea.thermit.config.impl.BuildFileProperty;
@@ -57,7 +57,7 @@ import com.intellij.util.ui.UIUtil;
 public class AntArtifactPropertiesEditor extends ArtifactPropertiesEditor
 {
 	private static final ListProperty<BuildFileProperty> ANT_PROPERTIES = ListProperty.create("thermit-properties");
-	private static final ColumnInfo<BuildFileProperty, String> NAME_COLUMN = new ColumnInfo<BuildFileProperty, String>(AntBundle.message("edit.ant.properties.name.column.name"))
+	private static final ColumnInfo<BuildFileProperty, String> NAME_COLUMN = new ColumnInfo<BuildFileProperty, String>(ThermitBundle.message("edit.ant.properties.name.column.name"))
 	{
 		public String valueOf(BuildFileProperty buildFileProperty)
 		{
@@ -74,7 +74,7 @@ public class AntArtifactPropertiesEditor extends ArtifactPropertiesEditor
 			buildFileProperty.setPropertyName(name);
 		}
 	};
-	private static final ColumnInfo<BuildFileProperty, String> VALUE_COLUMN = new ColumnInfo<BuildFileProperty, String>(AntBundle.message("edit.ant.properties.value.column.name"))
+	private static final ColumnInfo<BuildFileProperty, String> VALUE_COLUMN = new ColumnInfo<BuildFileProperty, String>(ThermitBundle.message("edit.ant.properties.value.column.name"))
 	{
 		public boolean isCellEditable(BuildFileProperty buildFileProperty)
 		{

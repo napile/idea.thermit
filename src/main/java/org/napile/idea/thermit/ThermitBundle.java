@@ -23,14 +23,14 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.PropertyKey;
 import com.intellij.CommonBundle;
 
-public class AntBundle
+public class ThermitBundle
 {
 	private static Reference<ResourceBundle> ourBundle;
 
 	@NonNls
-	protected static final String PATH_TO_BUNDLE = "messages.AntBundle";
+	protected static final String PATH_TO_BUNDLE = "messages.ThermitBundle";
 
-	private AntBundle()
+	private ThermitBundle()
 	{
 	}
 

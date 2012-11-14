@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.AntBuildFileBase;
 import org.napile.idea.thermit.config.AntBuildListener;
 import org.napile.idea.thermit.config.actions.ChangeViewAction;
@@ -101,7 +101,7 @@ public final class AntBuildMessageView extends JPanel implements DataProvider, O
 	}
 
 	private static final Key<AntBuildMessageView> KEY = Key.create("BuildMessageView.KEY");
-	private static final String BUILD_CONTENT_NAME = AntBundle.message("ant.build.tab.content.title");
+	private static final String BUILD_CONTENT_NAME = ThermitBundle.message("ant.build.tab.content.title");
 
 	public static final int PRIORITY_ERR = 0;
 	public static final int PRIORITY_WARN = 1;
@@ -315,7 +315,7 @@ public final class AntBuildMessageView extends JPanel implements DataProvider, O
 				continue;
 			}
 
-			int result = Messages.showYesNoCancelDialog(AntBundle.message("ant.is.active.terminate.confirmation.text"), AntBundle.message("starting.ant.build.dialog.title"), Messages.getQuestionIcon());
+			int result = Messages.showYesNoCancelDialog(ThermitBundle.message("ant.is.active.terminate.confirmation.text"), ThermitBundle.message("starting.ant.build.dialog.title"), Messages.getQuestionIcon());
 
 			switch(result)
 			{
@@ -734,7 +734,7 @@ public final class AntBuildMessageView extends JPanel implements DataProvider, O
 			if(myCloseAllowed)
 				return true;
 
-			int result = Messages.showYesNoCancelDialog(AntBundle.message("ant.process.is.active.terminate.confirmation.text"), AntBundle.message("close.ant.build.messages.dialog.title"), Messages.getQuestionIcon());
+			int result = Messages.showYesNoCancelDialog(ThermitBundle.message("ant.process.is.active.terminate.confirmation.text"), ThermitBundle.message("close.ant.build.messages.dialog.title"), Messages.getQuestionIcon());
 			if(result == 0)
 			{ // yes
 				messageView.stopProcess();
@@ -794,7 +794,7 @@ public final class AntBuildMessageView extends JPanel implements DataProvider, O
 		BuildFailedCommand(String buildName)
 		{
 			super(0);
-			myMessage = new AntMessage(MessageType.ERROR, 0, AntBundle.message("cannot.start.build.name.error.message", buildName), null, 0, 0);
+			myMessage = new AntMessage(MessageType.ERROR, 0, ThermitBundle.message("cannot.start.build.name.error.message", buildName), null, 0, 0);
 		}
 
 		void execute(AntOutputView outputView)
@@ -1014,19 +1014,19 @@ public final class AntBuildMessageView extends JPanel implements DataProvider, O
 
 		if(isAborted)
 		{
-			return AntBundle.message("build.finished.status.ant.build.aborted", formattedBuildTime, theDateAsString);
+			return ThermitBundle.message("build.finished.status.ant.build.aborted", formattedBuildTime, theDateAsString);
 		}
 		else if(errors == 0 && warnings == 0)
 		{
-			return AntBundle.message("build.finished.status.ant.build.completed.successfully", formattedBuildTime, theDateAsString);
+			return ThermitBundle.message("build.finished.status.ant.build.completed.successfully", formattedBuildTime, theDateAsString);
 		}
 		else if(errors == 0)
 		{
-			return AntBundle.message("build.finished.status.ant.build.completed.with.warnings", warnings, formattedBuildTime, theDateAsString);
+			return ThermitBundle.message("build.finished.status.ant.build.completed.with.warnings", warnings, formattedBuildTime, theDateAsString);
 		}
 		else
 		{
-			return AntBundle.message("build.finished.status.ant.build.completed.with.errors.warnings", errors, warnings, formattedBuildTime, theDateAsString);
+			return ThermitBundle.message("build.finished.status.ant.build.completed.with.errors.warnings", errors, warnings, formattedBuildTime, theDateAsString);
 		}
 	}
 

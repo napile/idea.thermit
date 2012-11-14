@@ -15,7 +15,7 @@
  */
 package org.napile.idea.thermit.config.actions;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.config.execution.AntBuildMessageView;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -27,7 +27,7 @@ public final class ChangeViewAction extends AnAction
 
 	public ChangeViewAction(AntBuildMessageView antBuildMessageView)
 	{
-		super(AntBundle.message("ant.view.toggle.tree.text.action.name"), null, AllIcons.Ant.ChangeView);
+		super(ThermitBundle.message("ant.view.toggle.tree.text.action.name"), null, AllIcons.Ant.ChangeView);
 		myAntBuildMessageView = antBuildMessageView;
 	}
 

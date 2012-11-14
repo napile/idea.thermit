@@ -5,7 +5,7 @@
 	<description>Editing, maintaining and running Thermit build scripts inside IntelliJ IDEA.</description>
 	<vendor>napile.org</vendor>
 
-	<resource-bundle>org.napile.idea.thermit.resources.AntActionsBundle</resource-bundle>
+	<resource-bundle>messages.ThermitBundle</resource-bundle>
 	<depends>com.intellij.properties</depends>
 
 	<extensionPoints>
@@ -33,13 +33,13 @@
 		<codeInsight.unresolvedReferenceQuickFixProvider implementation="org.napile.idea.thermit.quickfix.AntUnresolvedRefsFixProvider"/>
 		<hectorComponentProvider implementation="org.napile.idea.thermit.validation.AntHectorPanelProvider"/>
 
-		<localInspection language="XML" shortName="AntDuplicateTargetsInspection" bundle="messages.AntBundle" key="ant.duplicate.targets.inspection"
+		<localInspection language="XML" shortName="AntDuplicateTargetsInspection" bundle="messages.ThermitBundle" key="ant.duplicate.targets.inspection"
 						 groupKey="ant.inspections.display.name" enabledByDefault="true" level="ERROR"
 						 implementationClass="org.napile.idea.thermit.validation.AntDuplicateTargetsInspection"/>
-		<localInspection language="XML" shortName="AntMissingPropertiesFileInspection" bundle="messages.AntBundle" key="ant.missing.properties.file.inspection"
+		<localInspection language="XML" shortName="AntMissingPropertiesFileInspection" bundle="messages.ThermitBundle" key="ant.missing.properties.file.inspection"
 						 groupKey="ant.inspections.display.name" enabledByDefault="true" level="ERROR"
 						 implementationClass="org.napile.idea.thermit.validation.AntMissingPropertiesFileInspection"/>
-		<localInspection language="XML" shortName="AntResolveInspection" displayName="Ant references resolve problems" bundle="messages.AntBundle"
+		<localInspection language="XML" shortName="AntResolveInspection" displayName="Ant references resolve problems" bundle="messages.ThermitBundle"
 						 groupKey="ant.inspections.display.name"
 						 enabledByDefault="true" level="ERROR" implementationClass="org.napile.idea.thermit.dom.AntResolveInspection"/>
 

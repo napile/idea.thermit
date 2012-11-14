@@ -17,7 +17,7 @@ package org.napile.idea.thermit.validation;
 
 import java.util.List;
 
-import org.napile.idea.thermit.AntBundle;
+import org.napile.idea.thermit.ThermitBundle;
 import org.napile.idea.thermit.dom.AntDomCustomElement;
 import org.napile.idea.thermit.dom.AntDomElement;
 import org.napile.idea.thermit.dom.AntDomNamedElement;
@@ -46,7 +46,7 @@ public class AntAnnotator implements DomElementsAnnotator
 					final StringBuilder builder = StringBuilderSpinAllocator.alloc();
 					try
 					{
-						builder.append(AntBundle.message("failed.to.load.types")).append(":");
+						builder.append(ThermitBundle.message("failed.to.load.types")).append(":");
 						for(String error : errors)
 						{
 							builder.append("\n").append(error);
@@ -68,7 +68,7 @@ public class AntAnnotator implements DomElementsAnnotator
 					final AntDomNamedElement declaringElement = custom.getDeclaringElement();
 					if(declaringElement instanceof AntDomTypeDef)
 					{
-						String failedMessage = AntBundle.message("using.definition.which.type.failed.to.load");
+						String failedMessage = ThermitBundle.message("using.definition.which.type.failed.to.load");
 						final String error = custom.getLoadError();
 						if(error != null)
 						{
