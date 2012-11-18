@@ -70,11 +70,11 @@ public class AntInstallation
 
 	private final ClassLoaderHolder myClassLoaderHolder;
 	@NonNls
-	public static final String PATH_TO_ANT_JAR = "lib/thermit.jar";
+	public static final String PATH_TO_ANT_JAR = "lib/thermit.nzip";
 	@NonNls
 	public static final String LIB_DIR = "lib";
 	@NonNls
-	public static final String ANT_JAR_FILE = "thermit.jar";
+	public static final String ANT_JAR_FILE = "thermit.nzip";
 
 	public AntReference getReference()
 	{
