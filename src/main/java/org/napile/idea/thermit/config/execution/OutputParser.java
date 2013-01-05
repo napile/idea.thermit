@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.napile.idea.thermit.ThermitBundle;
 import com.intellij.compiler.impl.javaCompiler.FileObject;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacOutputParser;
-import com.intellij.compiler.impl.javaCompiler.jikes.JikesOutputParser;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -42,16 +42,21 @@ public class OutputParser
 	@NonNls
 	private static final String JAVAC = "javac";
 	@NonNls
+	private static final String NAPILEC = "napilec";
+	@NonNls
 	private static final String ECHO = "echo";
 
-	private static final Logger LOG = Logger.getInstance("#com.intellij.thermit.execution.OutputParser");
+	private static final Logger LOG = Logger.getInstance(OutputParser.class);
 	private final Project myProject;
 	private final AntBuildMessageView myMessageView;
 	private final WeakReference<ProgressIndicator> myProgress;
 	private final String myBuildName;
 	private final OSProcessHandler myProcessHandler;
 	private boolean isStopped;
+
 	private List<String> myJavacMessages;
+	private List<String> myNapileMessages;
+
 	private boolean myFirstLineProcessed;
 	private boolean myStartedSuccessfully;
 	private boolean myIsEcho;
@@ -152,6 +157,10 @@ public class OutputParser
 			{
 				myJavacMessages = new ArrayList<String>();
 			}
+			else if(NAPILEC.equals(tagValue))
+			{
+				myNapileMessages = new ArrayList<String>();
+			}
 			else if(ECHO.equals(tagValue))
 			{
 				myIsEcho = true;
@@ -161,6 +170,11 @@ public class OutputParser
 		if(myJavacMessages != null && (IdeaAntLogger2.MESSAGE == tagName || IdeaAntLogger2.ERROR == tagName))
 		{
 			myJavacMessages.add(tagValue);
+			return;
+		}
+		if(myNapileMessages != null && (IdeaAntLogger2.MESSAGE == tagName || IdeaAntLogger2.ERROR == tagName))
+		{
+			myNapileMessages.add(tagValue);
 			return;
 		}
 
@@ -198,10 +212,18 @@ public class OutputParser
 		}
 		else if(IdeaAntLogger2.TARGET_END == tagName || IdeaAntLogger2.TASK_END == tagName)
 		{
-			final List<String> javacMessages = myJavacMessages;
-			myJavacMessages = null;
-			processJavacMessages(javacMessages, myMessageView, myProject);
+			if(myJavacMessages != null)
+			{
+				processJavacMessages(myJavacMessages, myMessageView, myProject);
+				myJavacMessages = null;
+			}
+			if(myNapileMessages != null)
+			{
+				processNapilecMessages(myNapileMessages, myMessageView, myProject);
+				myNapileMessages = null;
+			}
 			myIsEcho = false;
+
 			if(IdeaAntLogger2.TARGET_END == tagName)
 			{
 				myMessageView.finishTarget();
@@ -213,79 +235,45 @@ public class OutputParser
 		}
 	}
 
-	private static boolean isJikesMessage(String errorMessage)
+	private static void processNapilecMessages(final List<String> napileMessages, final AntBuildMessageView messageView, Project project)
 	{
-		for(int j = 0; j < errorMessage.length(); j++)
+		for(final String str : napileMessages)
 		{
-			if(errorMessage.charAt(j) == ':')
+			try
 			{
-				int offset = getNextTwoPoints(j, errorMessage);
-				if(offset < 0)
+				AntBuildMessageView.MessageType category = AntBuildMessageView.MessageType.MESSAGE;
+				String categoryOfMessage = str.substring(0, str.indexOf(":"));
+				if(categoryOfMessage.equals("ERROR"))
+					category = AntBuildMessageView.MessageType.ERROR;
+
+				int fileEnd = str.indexOf(".ns: (");
+				final String url = str.substring(str.indexOf(":") + 2, fileEnd + 3);
+				String ranges = str.substring(fileEnd + 6, str.indexOf(")", fileEnd));
+				final int line = Integer.parseInt(ranges.substring(0, ranges.indexOf(",")));
+				final int column = Integer.parseInt(ranges.substring(ranges.indexOf(",") + 2, ranges.length()));
+				final String message = str.substring(str.indexOf(")", fileEnd) + 2, str.length());
+
+				final AntBuildMessageView.MessageType c = category;
+				ApplicationManager.getApplication().runReadAction(new Runnable()
 				{
-					continue;
-				}
-				offset = getNextTwoPoints(offset, errorMessage);
-				if(offset < 0)
-				{
-					continue;
-				}
-				offset = getNextTwoPoints(offset, errorMessage);
-				if(offset < 0)
-				{
-					continue;
-				}
-				offset = getNextTwoPoints(offset, errorMessage);
-				if(offset >= 0)
-				{
-					return true;
-				}
+					public void run()
+					{
+						VirtualFile file = VirtualFileManager.getInstance().findFileByUrl("file://" + url);
+						messageView.outputJavacMessage(c, new String[]{message}, file, null, line, column);
+					}
+				});
+			}
+			catch(Exception e)
+			{
+				messageView.outputMessage(str, AntBuildMessageView.PRIORITY_VERBOSE);
+				//throw new UnsupportedOperationException("Unknown how parse string : " + str, e);
 			}
 		}
-		return false;
 	}
 
-	private static int getNextTwoPoints(int offset, String message)
+	private static void processJavacMessages(@NotNull final List<String> javacMessages, final AntBuildMessageView messageView, Project project)
 	{
-		for(int i = offset + 1; i < message.length(); i++)
-		{
-			char c = message.charAt(i);
-			if(c == ':')
-			{
-				return i;
-			}
-			if(Character.isDigit(c))
-			{
-				continue;
-			}
-			return -1;
-		}
-		return -1;
-	}
-
-	private static void processJavacMessages(final List<String> javacMessages, final AntBuildMessageView messageView, Project project)
-	{
-		if(javacMessages == null)
-			return;
-
-		boolean isJikes = false;
-		for(String errorMessage : javacMessages)
-		{
-			if(isJikesMessage(errorMessage))
-			{
-				isJikes = true;
-				break;
-			}
-		}
-
-		com.intellij.compiler.OutputParser outputParser;
-		if(isJikes)
-		{
-			outputParser = new JikesOutputParser(project);
-		}
-		else
-		{
-			outputParser = new JavacOutputParser(project);
-		}
+		com.intellij.compiler.OutputParser outputParser = new JavacOutputParser(project);
 
 		com.intellij.compiler.OutputParser.Callback callback = new com.intellij.compiler.OutputParser.Callback()
 		{
@@ -294,7 +282,7 @@ public class OutputParser
 			@Nullable
 			public String getCurrentLine()
 			{
-				if(javacMessages == null || myIndex >= javacMessages.size())
+				if(myIndex >= javacMessages.size())
 				{
 					return null;
 				}

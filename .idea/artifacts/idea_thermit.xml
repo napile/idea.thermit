@@ -13,6 +13,17 @@
         <element id="directory" name="thermit">
           <element id="directory" name="lib">
             <element id="library" level="project" name="thermit-lib" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/dom4j2.0dev.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/trove4j.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/napile.asm-0.2.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/cli-parser-1.1.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/guava-12.0.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/annotations.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/util.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/picocontainer.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/napile.compiler-0.2.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/intellij-core.nzip" />
+            <element id="file-copy" path="$PROJECT_DIR$/lib/thermit/lib/javax.inject.nzip" />
           </element>
         </element>
         <element id="archive" name="idea.thermit.runner.jar">

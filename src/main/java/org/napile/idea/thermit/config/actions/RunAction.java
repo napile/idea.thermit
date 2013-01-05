@@ -33,7 +33,7 @@ public final class RunAction extends AnAction
 
 	public RunAction(AntBuildMessageView antBuildMessageView)
 	{
-		super(ThermitBundle.message("rerun.ant.action.name"), null, AllIcons.Actions.RefreshUsages);
+		super(ThermitBundle.message("rerun.ant.action.name"), null, AllIcons.Actions.Refresh);
 		myAntBuildMessageView = antBuildMessageView;
 	}
 

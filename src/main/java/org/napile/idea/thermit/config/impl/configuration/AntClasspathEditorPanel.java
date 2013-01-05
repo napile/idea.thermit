@@ -16,26 +16,21 @@
 package org.napile.idea.thermit.config.impl.configuration;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.JPanel;
 
 import org.napile.idea.thermit.config.impl.AllNZipsUnderDirEntry;
 import org.napile.idea.thermit.config.impl.AntClasspathEntry;
 import org.napile.idea.thermit.config.impl.SinglePathEntry;
-import com.intellij.ui.ListUtil;
 import com.intellij.util.config.AbstractProperty;
 import com.intellij.util.config.ListProperty;
 
 public class AntClasspathEditorPanel extends JPanel
 {
 	private ListProperty<AntClasspathEntry> myClasspathProperty;
-	private final Form myForm = new Form();
+	private final AntClasspathEditorForm myForm = new AntClasspathEditorForm();
 	private UIPropertyBinding.Composite myBinding;
 
 	public AntClasspathEditorPanel()
@@ -76,36 +71,6 @@ public class AntClasspathEditorPanel extends JPanel
 			}
 		});
 		return myBinding;
-	}
-
-	public static class Form
-	{
-		private JButton myAddButton;
-		private JButton myAddAllInDir;
-		private JButton myRemoveButton;
-		private JButton myMoveUpButton;
-		private JButton myMoveDownButton;
-		private JPanel myWholePanel;
-		private JList myClasspathList;
-		private final ArrayList<ListUtil.Updatable> myUpdatables = new ArrayList<ListUtil.Updatable>();
-
-		public Form()
-		{
-			myClasspathList.setCellRenderer(new AntUIUtil.ClasspathRenderer());
-
-			myUpdatables.add(ListUtil.addRemoveListener(myRemoveButton, myClasspathList));
-			myUpdatables.add(ListUtil.addMoveUpListener(myMoveUpButton, myClasspathList));
-			myUpdatables.add(ListUtil.addMoveDownListener(myMoveDownButton, myClasspathList));
-		}
-
-		public void enableButtons(boolean enable)
-		{
-			for(Iterator<ListUtil.Updatable> iterator = myUpdatables.iterator(); iterator.hasNext(); )
-			{
-				ListUtil.Updatable updatable = iterator.next();
-				updatable.enable(enable);
-			}
-		}
 	}
 
 	public JComponent getPreferedFocusComponent()
