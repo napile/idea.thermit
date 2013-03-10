@@ -17,7 +17,6 @@ package org.napile.idea.thermit.config.impl;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +54,8 @@ import com.intellij.util.config.IntProperty;
 import com.intellij.util.config.ListProperty;
 import com.intellij.util.config.StringProperty;
 import com.intellij.util.config.ValueProperty;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Convertor;
 import com.intellij.util.containers.HashMap;
+import com.intellij.util.containers.hash.LinkedHashMap;
 
 public class AntBuildFileImpl implements AntBuildFileBase
 {
@@ -332,14 +330,17 @@ public class AntBuildFileImpl implements AntBuildFileBase
 
 	public void updateProperties()
 	{
-		final Map<String, AntBuildTarget> targetByName = ContainerUtil.newMapFromValues(Arrays.asList(getModel().getTargets()).iterator(), new Convertor<AntBuildTarget, String>()
+		// do not change position
+		final AntBuildTarget[] targets = getModel().getTargets();
+		final Map<String, AntBuildTarget> targetByName = new LinkedHashMap<String, AntBuildTarget>(targets.length);
+		for(AntBuildTarget target : targets)
 		{
-			public String convert(AntBuildTarget target)
+			String targetName = target.getName();
+			if(targetName != null)
 			{
-				return target.getName();
+				targetByName.put(targetName, target);
 			}
-		});
-		targetByName.remove(null); // ensure there are no targets with 'null' name
+		}
 
 		synchronized(myOptionsLock)
 		{
