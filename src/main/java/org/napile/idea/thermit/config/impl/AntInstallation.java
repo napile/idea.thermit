@@ -204,7 +204,7 @@ public class AntInstallation
 		InputStream stream = null;
 		try
 		{
-			stream = new UrlClassLoader(Collections.singletonList(antJar.toURL()), null, false, false, true).getResourceAsStream(ThermitClasses.MODULE_FILE_NAME);
+			stream = new UrlClassLoader(Collections.singletonList(antJar.toURL()), null, false, false, true, false).getResourceAsStream(ThermitClasses.MODULE_FILE_NAME);
 
 			DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
 			f.setValidating(false);

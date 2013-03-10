@@ -33,7 +33,7 @@ public class AntResourcesClassLoader extends UrlClassLoader
 
 	public AntResourcesClassLoader(final List<URL> urls, final ClassLoader parentLoader, final boolean canLockJars, final boolean canUseCache)
 	{
-		super(urls, parentLoader, canLockJars, canUseCache, true);
+		super(urls, parentLoader, canLockJars, canUseCache, true, false);
 	}
 
 	protected Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException
