@@ -149,10 +149,10 @@ public class AntBuildFileImpl implements AntBuildFileBase
 	public static final BooleanProperty VERBOSE = new BooleanProperty("verbose", true);
 	public static final BooleanProperty TREE_VIEW = new BooleanProperty("treeView", true);
 	public static final BooleanProperty CLOSE_ON_NO_ERRORS = new BooleanProperty("viewClosedWhenNoErrors", false);
-	public static final AbstractProperty<String> CUSTOM_JDK_NAME = new StringProperty("customJdkName", "");
+	public static final StringProperty CUSTOM_JDK_NAME = new StringProperty("customJdkName", "");
 	public static final ListProperty<TargetFilter> TARGET_FILTERS = ListProperty.create("targetFilters");
 	public static final ListProperty<BuildFileProperty> ANT_PROPERTIES = ListProperty.create("properties");
-	public static final AbstractProperty<String> ANT_COMMAND_LINE_PARAMETERS = new StringProperty("antCommandLine", "");
+	public static final StringProperty ANT_COMMAND_LINE_PARAMETERS = new StringProperty("antCommandLine", "");
 	public static final AbstractProperty<AntReference> ANT_REFERENCE = new ValueProperty<AntReference>("antReference", AntReference.PROJECT_DEFAULT);
 	public static final ListProperty<AntClasspathEntry> ADDITIONAL_CLASSPATH = ListProperty.create("additionalClassPath");
 	public static final AbstractProperty<AntInstallation> RUN_WITH_ANT = new AbstractProperty<AntInstallation>()
@@ -200,14 +200,14 @@ public class AntBuildFileImpl implements AntBuildFileBase
 		myWorkspaceOptions.registerProperty(TREE_VIEW);
 		myWorkspaceOptions.registerProperty(VERBOSE);
 		myWorkspaceOptions.registerProperty(TARGET_FILTERS, "filter", NewInstanceFactory.fromClass(TargetFilter.class));
-		myWorkspaceOptions.registerProperty((StringProperty) ANT_COMMAND_LINE_PARAMETERS);
 
 		myWorkspaceOptions.rememberKey(RUN_WITH_ANT);
 
 		myProjectOptions = new ExternalizablePropertyContainer();
 		myProjectOptions.registerProperty(MAX_HEAP_SIZE);
 		myProjectOptions.registerProperty(MAX_STACK_SIZE);
-		myProjectOptions.registerProperty((StringProperty) CUSTOM_JDK_NAME);
+		myProjectOptions.registerProperty(CUSTOM_JDK_NAME);
+		myProjectOptions.registerProperty(ANT_COMMAND_LINE_PARAMETERS);
 		myProjectOptions.registerProperty(ANT_PROPERTIES, "property", NewInstanceFactory.fromClass(BuildFileProperty.class));
 		myProjectOptions.registerProperty(ADDITIONAL_CLASSPATH, "entry", SinglePathEntry.EXTERNALIZER);
 		myProjectOptions.registerProperty(ANT_REFERENCE, AntReference.EXTERNALIZER);
