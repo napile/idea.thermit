@@ -44,6 +44,7 @@ public class IdeaInputHandler implements InputHandler
 		}
 		final PacketWriter packet = PacketFactory.ourInstance.createPacket(IdeaThermitLogger2.INPUT_REQUEST);
 		packet.appendLimitedString(prompt);
+		packet.appendLimitedString(request.getDefaultValue());
 		if(request instanceof MultipleChoiceInputRequest)
 		{
 			Vector choices = ((MultipleChoiceInputRequest) request).getChoices();
